@@ -67,6 +67,8 @@ import VueAxios from "vue-axios";
 
 Vue.use(VueAxios, axios);
 
+const sortJsonArray = require('sort-json-array');
+
 export default {
   name: "SearchVue",
   data() {
@@ -103,14 +105,14 @@ export default {
               return true;
             else return false;
           });
-          this.data = result;
+          this.data = sortJsonArray(result, 'title');
         });
     },
     reserve() {
       this.loading = true;
 
       setTimeout(() => (this.loading = false), 2000);
-    }
+    },
   }
 };
 </script>
