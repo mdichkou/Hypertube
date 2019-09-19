@@ -30,10 +30,31 @@
             </v-list>
           </v-card>
         </v-col>
-        
-          <ResultSearch v-if="value === 0" :data="dataMovie" :nbr_pages="nbr_p_movies" :imgUrl="imageUrl" />
-          <ResultSearch v-if="value === 1" :data="dataTv" :nbr_pages="nbr_p_tv" :imgUrl="imageUrl" />
-        
+        <v-col cols="8">
+          <ResultSearch
+            v-if="value === 0"
+            :data="dataMovie"
+            :imgUrl="imageUrl"
+            :page="1"
+            :pStart="p_start"
+            :pEnd="p_end"
+          />
+          <ResultSearch v-if="value === 1" :data="dataTv" :imgUrl="imageUrl" />
+          <div class="text-center">
+            <v-pagination
+              v-if="value === 1"
+              v-model="page_tmp"
+              :length="nbr_p_tv"
+              @input="affich_page"
+            ></v-pagination>
+            <v-pagination
+              v-if="value === 0"
+              v-model="page_tmp"
+              :length="nbr_p_movies"
+              @input="affich_page"
+            ></v-pagination>
+          </div>
+        </v-col>
       </v-row>
     </v-container>
   </div>
@@ -68,6 +89,9 @@ export default {
       imageUrl: "",
       nbr_p_movies: 0,
       nbr_p_tv: 0,
+      page_tmp: 1,
+      p_start: 0,
+      p_end: 5
     };
   },
   mounted() {
@@ -82,7 +106,13 @@ export default {
       });
   },
   methods: {
+    affich_page() {
+      this.p_start = (this.page_tmp - 1) * 5;
+      this.p_end = this.p_start + 5;
+      window.scrollTo(0, 0);
+    },
     takeValue: function(value) {
+      this.page_tmp = 1;
       this.value = value;
     },
     signalChange: function() {

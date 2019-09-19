@@ -1,7 +1,6 @@
 <template>
-<v-col cols="8">
-  <v-row @change="reset_funtion">
-     <v-col v-for="(movie,index) in data.slice(p_start, p_end)" :key="index" lg="6" md="6">
+  <v-row>
+    <v-col v-for="(movie,index) in data.slice(pStart, pEnd)" :key="index" lg="6" md="6">
       <v-card
         :loading="loading"
         class="mx-auto my-12"
@@ -41,10 +40,6 @@
       </v-card>
     </v-col>
   </v-row>
-   <div class="text-center">
-            <v-pagination v-model="page" :length="nbr_pages" @input="affich_page"></v-pagination>
-      </div>
-  </v-col>
 </template>
 
 <script>
@@ -53,35 +48,24 @@ export default {
   props: {
     data: Array,
     imgUrl: String,
-    nbr_pages: Number,
+    pStart: Number,
+    pEnd: Number
   },
   data() {
     return {
       loading: false,
-      defImage: "https://www.tellerreport.com/images/no-image.png",
-      page: 1,
-      p_start: 0,
-      p_end: 5,
+      defImage: "https://www.tellerreport.com/images/no-image.png"
     };
   },
   mounted() {
     this.reserve();
-    this.page = 1;
   },
   methods: {
     reserve() {
       this.loading = true;
 
       setTimeout(() => (this.loading = false), 2000);
-    },
-    affich_page() {
-      this.p_start = (this.page - 1) * 5;
-      this.p_end = this.p_start + 5;
-      window.scrollTo(0, 0);
-    },
-    reset_funtion(){
-      this.page = 1;
-    },
+    }
   }
 };
 </script>
