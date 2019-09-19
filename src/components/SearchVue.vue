@@ -112,6 +112,8 @@ export default {
       window.scrollTo(0, 0);
     },
     takeValue: function(value) {
+      this.p_start = 0;
+      this.p_end = 5;
       this.page_tmp = 1;
       this.value = value;
     },
