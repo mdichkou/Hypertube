@@ -1,6 +1,6 @@
 <template>
-  <div class="container-fluid">
-    <div class="row mx-auto">
+  <div>
+    <v-container>
       <section class="col-sm-12 pt-3 px-0">
         <b-form inline class="d-flex justify-content-center">
           <div class="col-md-6 col-8 pl-0">
@@ -15,48 +15,27 @@
           <b-button class="my-2 my-sm-0" type="submit">Search</b-button>
         </b-form>
       </section>
-      <v-container>
-        <v-row no-gutters v-if="data && inputData">
-          <v-col v-for="(movie,index) in data" :key="index" class="mr-3">
-            <v-card
-              :loading="loading"
-              class="mx-auto my-12"
-              max-width="374"
-              v-if="movie.media_type === 'movie' || movie.media_type === 'tv'"
-            >
-              <v-img v-if="movie.poster_path" height="250" :src="imageUrl + movie.poster_path"></v-img>
-
-              <v-card-title v-if="movie.media_type === 'movie'">{{movie.title}}</v-card-title>
-              <v-card-title v-if="movie.media_type === 'tv'">{{movie.name}}</v-card-title>
-              <v-card-text>
-                <v-row align="center">
-                  <v-rating
-                    :value="movie.vote_average"
-                    color="amber"
-                    half-increments
-                    dense
-                    size="14"
-                    readonly
-                  ></v-rating>
-
-                  <div class="grey--text">{{movie.vote_average + "(" + movie.vote_count + ")"}}</div>
-                </v-row>
-
-                <div
-                  v-if="movie.media_type === 'movie'"
-                  class="my-4 subtitle-1 black--text"
-                >{{movie.release_date}}</div>
-                <div
-                  v-if="movie.media_type === 'tv'"
-                  class="my-4 subtitle-1 black--text"
-                >{{movie.first_air_date}}</div>
-                <div>{{ movie.overview }}</div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </div>
+      <v-row no-gutters v-if="dataTv && dataMovie && inputData">
+        <v-col cols="4">
+          <v-card class="mx-auto" max-width="300" tile>
+            <v-list rounded>
+              <v-subheader>Genre</v-subheader>
+              <v-list-item-group v-model="item" color="primary">
+                <v-list-item v-for="(item, i) in items" :key="i" @click="takeValue(i)">
+                  <v-list-item-content>
+                    <v-list-item-title v-text="item.text + ' (' + item.count + ')'"></v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-card>
+        </v-col>
+        <v-col cols="8">
+          <ResultSearch v-if="value === 0" :data="dataMovie" :imgUrl="imageUrl" />
+          <ResultSearch v-if="value === 1" :data="dataTv" :imgUrl="imageUrl" />
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -64,19 +43,26 @@
 import Vue from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
+import ResultSearch from "./ResultSearch";
 
 Vue.use(VueAxios, axios);
 
-const sortJsonArray = require('sort-json-array');
+const sortJsonArray = require("sort-json-array");
 
 export default {
   name: "SearchVue",
+  components: {
+    ResultSearch
+  },
   data() {
     return {
-      loading: false,
+      item: 0,
       selection: 1,
+      value: 0,
+      items: [{ text: "Movies", count: 0 }, { text: "Tv Show", count: 0 }],
       inputData: "",
-      data: null,
+      dataMovie: null,
+      dataTv: null,
       baseUrl: "",
       imageSize: "",
       imageUrl: ""
@@ -94,25 +80,29 @@ export default {
       });
   },
   methods: {
+    takeValue: function(value) {
+      this.value = value;
+    },
     signalChange: function() {
       var url =
         "https://api.themoviedb.org/3/search/multi?api_key=a07a2fef9fafa52ff4d4b6533fbeade8&adult=false&query=";
       url += this.inputData;
       this.inputData &&
         Vue.axios.get(url).then(response => {
-          const result = response.data.results.filter(word => {
-            if (word.media_type == "movie" || word.media_type == "tv")
-              return true;
+          const resultMovie = response.data.results.filter(word => {
+            if (word.media_type == "movie") return true;
             else return false;
           });
-          this.data = sortJsonArray(result, 'title');
+          const resultTv = response.data.results.filter(word => {
+            if (word.media_type == "tv") return true;
+            else return false;
+          });
+          this.dataTv = sortJsonArray(resultTv, "name");
+          this.dataMovie = sortJsonArray(resultMovie, "title");
+          this.items[0].count = resultMovie.length;
+          this.items[1].count = resultTv.length;
         });
-    },
-    reserve() {
-      this.loading = true;
-
-      setTimeout(() => (this.loading = false), 2000);
-    },
+    }
   }
 };
 </script>
