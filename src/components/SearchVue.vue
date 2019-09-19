@@ -17,7 +17,7 @@
       </section>
       <v-row no-gutters v-if="dataTv && dataMovie && inputData">
         <v-col cols="4">
-          <v-card class="mx-auto" max-width="300" tile>
+          <v-card class="mx-auto" max-width="300" tile style="margin-top:60px">
             <v-list rounded>
               <v-subheader>Genre</v-subheader>
               <v-list-item-group v-model="item" color="primary">
@@ -30,10 +30,10 @@
             </v-list>
           </v-card>
         </v-col>
-        <v-col cols="8">
-          <ResultSearch v-if="value === 0" :data="dataMovie" :imgUrl="imageUrl" />
-          <ResultSearch v-if="value === 1" :data="dataTv" :imgUrl="imageUrl" />
-        </v-col>
+        
+          <ResultSearch v-if="value === 0" :data="dataMovie" :nbr_pages="nbr_p_movies" :imgUrl="imageUrl" />
+          <ResultSearch v-if="value === 1" :data="dataTv" :nbr_pages="nbr_p_tv" :imgUrl="imageUrl" />
+        
       </v-row>
     </v-container>
   </div>
@@ -65,7 +65,9 @@ export default {
       dataTv: null,
       baseUrl: "",
       imageSize: "",
-      imageUrl: ""
+      imageUrl: "",
+      nbr_p_movies: 0,
+      nbr_p_tv: 0,
     };
   },
   mounted() {
@@ -101,6 +103,8 @@ export default {
           this.dataMovie = sortJsonArray(resultMovie, "title");
           this.items[0].count = resultMovie.length;
           this.items[1].count = resultTv.length;
+          this.nbr_p_movies = Math.ceil(resultMovie.length / 5);
+          this.nbr_p_tv = Math.ceil(resultTv.length / 5);
         });
     }
   }
