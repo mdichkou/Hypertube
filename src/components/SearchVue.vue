@@ -35,7 +35,7 @@
                 <v-row>
                   <v-col class="pr-4 pt-0">
                     <p>Imdb rating:</p>
-                    <v-slider v-model="slider" class="align-center" :max="10" :min="0" hide-details>
+                    <v-slider v-model="slider" @input="load_data" class="align-center" :max="10" :min="0" hide-details>
                       <template v-slot:append>
                         <v-text-field disabled class="mt-0 pt-0 align-center" v-model="slider" hide-details single-line type="number" style="width: 60px" ></v-text-field>
                       </template>
@@ -45,7 +45,7 @@
                  <v-row>
                   <v-col class="pr-4 pt-0">
                     <p>Production year:</p>
-                    <v-slider v-model="slider2" class="align-center" :max="get_year" :min="1900" hide-details>
+                    <v-slider v-model="slider2" @input="load_data" class="align-center" :max="get_year" :min="1900" hide-details>
                       <template v-slot:append>
                         <v-text-field disabled class="mt-0 pt-0 align-center" v-model="slider2" hide-details single-line type="number" style="width: 60px" ></v-text-field>
                       </template>
@@ -56,7 +56,7 @@
                   <v-col class="pr-4 pt-0">
                     <p>Genre :</p>
                     <v-col class="d-flex" cols="12">
-                      <v-select :items="genre_list" item-text="name" item-value="id" label="Standard" >
+                      <v-select v-model="selected_val" @change="load_data" :items="genre_list" item-text="name" item-value="id" label="Standard" >
 
                       </v-select>
                     </v-col>
@@ -130,9 +130,10 @@ export default {
       p_start: 0,
       p_end: 5,
       get_year: new Date().getFullYear() + 1,
-      slider: 5,
-      slider2: 2002,
+      slider: 0,
+      slider2: 0,
       genre_list: [],
+      selected_val: null,
     };
   },
   mounted() {
@@ -193,6 +194,61 @@ export default {
       Vue.axios.get(url).then(response => {
           this.genre_list = response.data.genres;
       });
+    },
+    load_data: function()
+    {
+        var url = "https://api.themoviedb.org/3/search/multi?api_key=a07a2fef9fafa52ff4d4b6533fbeade8&adult=false&query=";
+        url += this.inputData;
+        if (this.value == 0) // search with movies
+        {
+            this.inputData.trim() &&
+              Vue.axios.get(url).then(response => {
+                const resultMovie = response.data.results.filter(word => {
+                  if (word.vote_average >= this.slider && word.media_type == "movie" && word.release_date.substring(0, 4) >= this.slider2) 
+                  {
+                    if (this.selected_val != null)
+                    {
+                      if (word.genre_ids.includes(this.selected_val))
+                        return true;
+                      else
+                        return false
+                    }
+                    else
+                      return true;
+                  }
+                  else return false;
+                });
+                
+                this.dataMovie = resultMovie;
+                this.items[0].count = resultMovie.length;
+                this.nbr_p_movies = Math.ceil(resultMovie.length / 5);
+              });
+        }
+        else // search with tv
+        {
+            this.inputData.trim() &&
+              Vue.axios.get(url).then(response => {
+                const resultTv = response.data.results.filter(word => {
+                  if (word.vote_average >= this.slider && word.media_type == "tv" && word.first_air_date.substring(0, 4) >= this.slider2)
+                  {
+                    if (this.selected_val != null)
+                    {
+                      if (word.genre_ids.includes(this.selected_val))
+                        return true;
+                      else
+                        return false
+                    }
+                    else
+                      return true;
+                  }
+                  else return false;
+                });
+
+                this.dataTv = resultTv;
+                this.items[1].count = resultTv.length;
+                this.nbr_p_tv = Math.ceil(resultTv.length / 5);
+              });
+        }
     },
   }
 };
