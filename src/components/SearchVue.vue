@@ -27,6 +27,43 @@
                   </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
+
+              <hr>
+
+              <v-subheader>Filtre</v-subheader>
+              <v-card-text>
+                <v-row>
+                  <v-col class="pr-4 pt-0">
+                    <p>Imdb rating:</p>
+                    <v-slider v-model="slider" class="align-center" :max="10" :min="0" hide-details>
+                      <template v-slot:append>
+                        <v-text-field disabled class="mt-0 pt-0 align-center" v-model="slider" hide-details single-line type="number" style="width: 60px" ></v-text-field>
+                      </template>
+                    </v-slider>
+                  </v-col>
+                 </v-row>
+                 <v-row>
+                  <v-col class="pr-4 pt-0">
+                    <p>Production year:</p>
+                    <v-slider v-model="slider2" class="align-center" :max="get_year" :min="1900" hide-details>
+                      <template v-slot:append>
+                        <v-text-field disabled class="mt-0 pt-0 align-center" v-model="slider2" hide-details single-line type="number" style="width: 60px" ></v-text-field>
+                      </template>
+                    </v-slider>
+                  </v-col>
+                 </v-row>
+                 <v-row>
+                  <v-col class="pr-4 pt-0">
+                    <p>Genre :</p>
+                    <v-col class="d-flex" cols="12">
+                      <v-select :items="genre_list" item-text="name" item-value="id" label="Standard" >
+
+                      </v-select>
+                    </v-col>
+                  </v-col>
+                 </v-row>
+              </v-card-text>
+
             </v-list>
           </v-card>
         </v-col>
@@ -91,7 +128,11 @@ export default {
       nbr_p_tv: 0,
       page_tmp: 1,
       p_start: 0,
-      p_end: 5
+      p_end: 5,
+      get_year: new Date().getFullYear() + 1,
+      slider: 5,
+      slider2: 2002,
+      genre_list: [],
     };
   },
   mounted() {
@@ -104,6 +145,7 @@ export default {
         this.imageSize = response.data.images.backdrop_sizes[0];
         this.imageUrl = this.baseUrl + this.imageSize;
       });
+      this.load_genre('movie');
   },
   methods: {
     affich_page() {
@@ -116,29 +158,42 @@ export default {
       this.p_end = 5;
       this.page_tmp = 1;
       this.value = value;
+      if (value == 0)
+        this.load_genre('movie');
+      else
+        this.load_genre('tv');
     },
     signalChange: function() {
-      var url =
-        "https://api.themoviedb.org/3/search/multi?api_key=a07a2fef9fafa52ff4d4b6533fbeade8&adult=false&query=";
-      url += this.inputData;
-      this.inputData &&
-        Vue.axios.get(url).then(response => {
-          const resultMovie = response.data.results.filter(word => {
-            if (word.media_type == "movie") return true;
-            else return false;
-          });
-          const resultTv = response.data.results.filter(word => {
-            if (word.media_type == "tv") return true;
-            else return false;
-          });
-          this.dataTv = sortJsonArray(resultTv, "name");
-          this.dataMovie = sortJsonArray(resultMovie, "title");
-          this.items[0].count = resultMovie.length;
-          this.items[1].count = resultTv.length;
-          this.nbr_p_movies = Math.ceil(resultMovie.length / 5);
-          this.nbr_p_tv = Math.ceil(resultTv.length / 5);
-        });
-    }
+          if (this.inputData.trim() != "")
+          {
+            var url = "https://api.themoviedb.org/3/search/multi?api_key=a07a2fef9fafa52ff4d4b6533fbeade8&adult=false&query=";
+            url += this.inputData;
+            this.inputData &&
+              Vue.axios.get(url).then(response => {
+                const resultMovie = response.data.results.filter(word => {
+                  if (word.media_type == "movie") return true;
+                  else return false;
+                });
+                const resultTv = response.data.results.filter(word => {
+                  if (word.media_type == "tv") return true;
+                  else return false;
+                });
+                this.dataTv = sortJsonArray(resultTv, "name");
+                this.dataMovie = sortJsonArray(resultMovie, "title");
+                this.items[0].count = resultMovie.length;
+                this.items[1].count = resultTv.length;
+                this.nbr_p_movies = Math.ceil(resultMovie.length / 5);
+                this.nbr_p_tv = Math.ceil(resultTv.length / 5);
+              });
+          }
+    },
+    load_genre: function(type_genre)
+    {
+      var url = "https://api.themoviedb.org/3/genre/" + type_genre + "/list?api_key=a07a2fef9fafa52ff4d4b6533fbeade8&language=en-US";
+      Vue.axios.get(url).then(response => {
+          this.genre_list = response.data.genres;
+      });
+    },
   }
 };
 </script>
