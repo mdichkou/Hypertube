@@ -20,11 +20,12 @@
               color="amber"
               half-increments
               dense
+              class="pl-3"
               size="14"
               readonly
             ></v-rating>
 
-            <div class="grey--text">{{movie.vote_average + "(" + movie.vote_count + ")"}}</div>
+            <div class="grey--text pl-2">{{movie.vote_average + "(" + movie.vote_count + ")"}}</div>
           </v-row>
 
           <div
@@ -37,6 +38,12 @@
           >{{movie.first_air_date.substring(0, 4)}}</div>
           <div>{{ movie.overview }}</div>
         </v-card-text>
+        <v-card-actions v-if="actions">
+          <v-btn
+            :href="'/stream/' + movie.release_date.substring(0, 4) + '/'+movie.title"
+            outlined
+          >Watch</v-btn>
+        </v-card-actions>
       </v-card>
     </v-col>
   </v-row>
@@ -54,6 +61,7 @@ export default {
   data() {
     return {
       loading: false,
+      actions: true,
       defImage: "https://www.tellerreport.com/images/no-image.png"
     };
   },

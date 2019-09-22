@@ -12,19 +12,15 @@
     </v-app-bar>
 
     <v-content>
-      <SearchVue />
+      <router-view></router-view>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import SearchVue from "./components/SearchVue";
 
 export default {
   name: "App",
-  components: {
-    SearchVue
-  },
   data: () => ({
     //
   })
