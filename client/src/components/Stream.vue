@@ -8,14 +8,11 @@
 </template>
 
 <script>
-import axios from "axios";
+
 export default {
   name: "Streaming",
   mounted() {
     this.id = this.$route.params.id;
-    // axios.post("http://localhost:1337/api/torrent", {
-    //   id: this.id
-    // });
   },
   data: () => ({
     id: ""

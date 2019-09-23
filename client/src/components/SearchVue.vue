@@ -28,7 +28,7 @@
                 </v-list-item>
               </v-list-item-group>
 
-              <!-- <hr />
+              <hr />
 
               <v-subheader>Filtre</v-subheader>
               <v-card-text>
@@ -90,14 +90,12 @@
                         v-model="selected_val"
                         @change="load_data"
                         :items="genre_list"
-                        item-text="name"
-                        item-value="id"
                         label="Standard"
                       ></v-select>
                     </v-col>
                   </v-col>
                 </v-row>
-              </v-card-text>-->
+              </v-card-text>
             </v-list>
           </v-card>
         </v-col>
@@ -149,6 +147,7 @@ export default {
       value: 0,
       items: [{ text: "Movies", count: 0 }, { text: "Tv Show", count: 0 }],
       inputData: "",
+      dataMovie_all: null,
       dataMovie: null,
       dataTv: null,
       baseUrl: "",
@@ -162,7 +161,9 @@ export default {
       get_year: new Date().getFullYear() + 1,
       slider: 0,
       slider2: 0,
-      genre_list: [],
+      genre_list: ['Standard', 'Action', 'Adventure', 'Animation', 'Biography', 'Comedy', 'Crime', 'Documentary', 'Drama', 
+      'Family', 'Fantasy', 'Film Noir', 'History', 'Horror', 'Music', 'Mystery', 'Musical', 'Romance',
+      'Sci-Fi', 'Short Film', 'Sport', 'Superhero', 'Thriller', 'War', 'Western'],
       selected_val: null
     };
   },
@@ -186,9 +187,19 @@ export default {
         axios
           .get("http://localhost:1337/search?input=" + this.inputData)
           .then(res => {
-            this.dataMovie = sortJsonArray(res.data.movies, "title");
-            this.items[0].count = res.data.movies.length;
-            this.nbr_p_movies = Math.ceil(res.data.movies.length / 5);
+            if (res.data.movies)
+            {
+              this.dataMovie = sortJsonArray(res.data.movies, "title");
+              this.dataMovie_all = this.dataMovie;
+              this.items[0].count = res.data.movies.length;
+              this.nbr_p_movies = Math.ceil(res.data.movies.length / 5);
+            }
+            else
+            {
+              this.dataMovie = [];
+              this.items[0].count = 0;
+              this.nbr_p_movies = 0;
+            }
           });
         // var url =
         //   "https://api.themoviedb.org/3/search/multi?api_key=a07a2fef9fafa52ff4d4b6533fbeade8&adult=false&query=";
@@ -211,64 +222,81 @@ export default {
         //     this.nbr_p_tv = Math.ceil(resultTv.length / 5);
         //   });
       }
+    },
+    load_data: function() {
+        if (this.selected_val == 'Standard')
+            this.selected_val = null;
+      if (this.value == 0)
+      {
+        var Movie_tmp = this.dataMovie_all;
+        if (Movie_tmp)
+        {
+          Movie_tmp = Movie_tmp.filter(word => {
+          if (word.rating >= this.slider && word.year >= this.slider2)
+          {
+            if (this.selected_val != null)
+            {
+              if (word.genres.includes(this.selected_val)) return true
+              else return false;
+            }
+            else
+              return true;
+          }
+          else return false;
+        });
+        this.dataMovie = sortJsonArray(Movie_tmp, "title");
+        this.items[0].count = this.dataMovie.length;
+        this.nbr_p_movies = Math.ceil(this.dataMovie.length / 5);
+        }
+        
+      }
+      // var url =
+      //   "https://api.themoviedb.org/3/search/multi?api_key=a07a2fef9fafa52ff4d4b6533fbeade8&adult=false&query=";
+      // url += this.inputData;
+      // if (this.value == 0) {
+      //   // search with movies
+      //   this.inputData.trim() &&
+      //     axios.get(url).then(response => {
+      //       const resultMovie = response.data.results.filter(word => {
+      //         if (
+      //           word.vote_average >= this.slider &&
+      //           word.media_type == "movie" &&
+      //           word.release_date.substring(0, 4) >= this.slider2
+      //         ) {
+      //           if (this.selected_val != null) {
+      //             if (word.genre_ids.includes(this.selected_val)) return true;
+      //             else return false;
+      //           } else return true;
+      //         } else return false;
+      //       });
+
+      //       this.dataMovie = resultMovie;
+      //       this.items[0].count = resultMovie.length;
+      //       this.nbr_p_movies = Math.ceil(resultMovie.length / 5);
+      //     });
+      // } // search with tv
+      // else {
+      //   this.inputData.trim() &&
+      //     axios.get(url).then(response => {
+      //       const resultTv = response.data.results.filter(word => {
+      //         if (
+      //           word.vote_average >= this.slider &&
+      //           word.media_type == "tv" &&
+      //           word.first_air_date.substring(0, 4) >= this.slider2
+      //         ) {
+      //           if (this.selected_val != null) {
+      //             if (word.genre_ids.includes(this.selected_val)) return true;
+      //             else return false;
+      //           } else return true;
+      //         } else return false;
+      //       });
+
+      //       this.dataTv = resultTv;
+      //       this.items[1].count = resultTv.length;
+      //       this.nbr_p_tv = Math.ceil(resultTv.length / 5);
+      //     });
+      // }
     }
-    // load_genre: function(type_genre) {
-    //   var url =
-    //     "https://api.themoviedb.org/3/genre/" +
-    //     type_genre +
-    //     "/list?api_key=a07a2fef9fafa52ff4d4b6533fbeade8&language=en-US";
-    //   axios.get(url).then(response => {
-    //     this.genre_list = response.data.genres;
-    //   });
-    // },
-    // load_data: function() {
-    //   var url =
-    //     "https://api.themoviedb.org/3/search/multi?api_key=a07a2fef9fafa52ff4d4b6533fbeade8&adult=false&query=";
-    //   url += this.inputData;
-    //   if (this.value == 0) {
-    //     // search with movies
-    //     this.inputData.trim() &&
-    //       axios.get(url).then(response => {
-    //         const resultMovie = response.data.results.filter(word => {
-    //           if (
-    //             word.vote_average >= this.slider &&
-    //             word.media_type == "movie" &&
-    //             word.release_date.substring(0, 4) >= this.slider2
-    //           ) {
-    //             if (this.selected_val != null) {
-    //               if (word.genre_ids.includes(this.selected_val)) return true;
-    //               else return false;
-    //             } else return true;
-    //           } else return false;
-    //         });
-
-    //         this.dataMovie = resultMovie;
-    //         this.items[0].count = resultMovie.length;
-    //         this.nbr_p_movies = Math.ceil(resultMovie.length / 5);
-    //       });
-    //   } // search with tv
-    //   else {
-    //     this.inputData.trim() &&
-    //       axios.get(url).then(response => {
-    //         const resultTv = response.data.results.filter(word => {
-    //           if (
-    //             word.vote_average >= this.slider &&
-    //             word.media_type == "tv" &&
-    //             word.first_air_date.substring(0, 4) >= this.slider2
-    //           ) {
-    //             if (this.selected_val != null) {
-    //               if (word.genre_ids.includes(this.selected_val)) return true;
-    //               else return false;
-    //             } else return true;
-    //           } else return false;
-    //         });
-
-    //         this.dataTv = resultTv;
-    //         this.items[1].count = resultTv.length;
-    //         this.nbr_p_tv = Math.ceil(resultTv.length / 5);
-    //       });
-    //   }
-    // }
   }
 };
 </script>
