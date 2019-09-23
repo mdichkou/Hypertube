@@ -1,5 +1,5 @@
 <template>
-  <div>Stream {{ year + " " + name }}</div>
+  <div>Stream {{"imdb id " + id }}</div>
 </template>
 
 <script>
@@ -7,16 +7,13 @@ import axios from "axios";
 export default {
   name: "Streaming",
   mounted() {
-    this.name = this.$route.params.name;
-    this.year = this.$route.params.year;
+    this.id = this.$route.params.id;
     axios.post("http://localhost:4000/api/torrent", {
-      name: this.name,
-      year: this.year
+      id: this.id
     });
   },
   data: () => ({
-    name : "",
-    year: ""
+    id: ""
   })
 };
 </script>

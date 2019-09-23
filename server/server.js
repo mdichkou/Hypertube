@@ -23,7 +23,14 @@ const opts = {
     // Defaults to true
     trackers: [
         'udp://tracker.openbittorrent.com:80',
-        'udp://tracker.ccc.de:80'
+        'udp://tracker.ccc.de:80',
+        'udp://open.demonii.com:1337/announce',
+        'udp://tracker.coppersurfer.tk:6969',
+        'udp://glotorrents.pw:6969/announce',
+        'udp://tracker.opentrackr.org:1337/announce',
+        'udp://torrent.gresille.org:80/announce',
+        'udp://p4p.arenabg.com:1337',
+        'udp://tracker.leechers-paradise.org:6969'
     ],
 }
 app.use(cors())
@@ -35,36 +42,40 @@ app.use(bodyParser.urlencoded({
 
 app.post('/api/torrent', async (req, res) => {
     const {
-        name,
-        year
+        id
     } = req.body;
-    cloudscraper.get('https://yts.lt/api/v2/list_movies.json?query_term=' + name).then((res, err) => {
+    cloudscraper.get('https://yts.lt/api/v2/list_movies.json?query_term=' + id).then((res, err) => {
         if (err) console.log(err.message);
         var data = JSON.parse(res);
         var movies = data.data.movies;
-        var integer = parseInt(year, 10);
+        console.log(data.data.movies)
         movies.forEach(element => {
-            if (element.title === name && element.year === integer) {
-                element.torrents.forEach(element => {
-                    if (element.quality === '720p') {
-                        var engine = torrentStream('magnet:?xt=urn:btih:' + element.hash, opts);
-
-                        engine.on('ready', function () {
-                            engine.files.forEach(function (file) {
-                                console.log('filename:', file.name);
-                                var stream = file.createReadStream();
-                                // stream is readable stream to containing the file content
-                            });
-                        });
-                    }
+            element.torrents.forEach(element => {
+                var engine = torrentStream('magnet:?xt=urn:btih:' + element.hash, opts);
+                engine.on('ready', function () {
+                    engine.files.forEach(function (file) {
+                        console.log('filename:', file.name);
+                        var stream = file.createReadStream();
+                        // stream is readable stream to containing the file content
+                    });
                 });
-            }
-            else {
-                console.log("movie not found");
-            }
+            });
         });
 
     });
+})
+
+const getMovies = async (input) => {
+    try {
+        return await cloudscraper.get('https://yts.lt/api/v2/list_movies.json?query_term=' + input);
+    } catch (error) {
+        console.error(error)
+    }
+}
+app.get('/api/search', async (req, res) => {
+    const data = await getMovies(req.query.input);
+    const movies = JSON.parse(data);
+    res.send(movies.data)
 })
 
 app.listen(port, function () {

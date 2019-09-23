@@ -11,13 +11,13 @@ const router = new Router({
     routes: [
         {
             name: 'home',
-            path:  '/',
-            component:  SearchVue
+            path: '/',
+            component: SearchVue
         },
         {
             name: 'stream',
-            path:  '/stream/:year/:name',
-            component:  Streaming
+            path: '/stream/:id',
+            component: Streaming
         },
     ]
 })
