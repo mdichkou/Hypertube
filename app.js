@@ -8,7 +8,7 @@ const expressLayouts = require('express-ejs-layouts');
 var app = express();
 var torrentStream = require('torrent-stream');
 var fs = require('fs');
-
+const imdb = require('imdb-api');
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
 
@@ -149,12 +149,20 @@ const getMovies = async (input) => {
       console.error(error)
   }
 }
+
 app.get('/search', async (req, res) => {
   const data = await getMovies(req.query.input);
   const movies = JSON.parse(data);
   res.send(movies.data)
 })
 
+app.post('/search/getimg', function(req, res) {
+  imdb.get({id: req.body.imdb_id}, {apiKey: '88736563', timeout: 30000})
+  .then(respo => {
+    console.log(respo);
+    res.send(respo.poster);
+  }).catch(console.log);
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -28,7 +28,7 @@
                 </v-list-item>
               </v-list-item-group>
 
-              <hr />
+              <hr>
 
               <v-subheader>Filtre</v-subheader>
               <v-card-text>
@@ -100,7 +100,7 @@
           </v-card>
         </v-col>
         <v-col cols="8">
-          <ResultSearch :data="dataMovie" :page="1" :pStart="p_start" :pEnd="p_end" />
+          <ResultSearch :data="dataMovie" :page="1" :pStart="p_start" :pEnd="p_end"/>
           <!-- <ResultSearch
             v-if="value === 1"
             :data="dataTv"
@@ -161,9 +161,33 @@ export default {
       get_year: new Date().getFullYear() + 1,
       slider: 0,
       slider2: 0,
-      genre_list: ['Standard', 'Action', 'Adventure', 'Animation', 'Biography', 'Comedy', 'Crime', 'Documentary', 'Drama', 
-      'Family', 'Fantasy', 'Film Noir', 'History', 'Horror', 'Music', 'Mystery', 'Musical', 'Romance',
-      'Sci-Fi', 'Short Film', 'Sport', 'Superhero', 'Thriller', 'War', 'Western'],
+      genre_list: [
+        "Standard",
+        "Action",
+        "Adventure",
+        "Animation",
+        "Biography",
+        "Comedy",
+        "Crime",
+        "Documentary",
+        "Drama",
+        "Family",
+        "Fantasy",
+        "Film Noir",
+        "History",
+        "Horror",
+        "Music",
+        "Mystery",
+        "Musical",
+        "Romance",
+        "Sci-Fi",
+        "Short Film",
+        "Sport",
+        "Superhero",
+        "Thriller",
+        "War",
+        "Western"
+      ],
       selected_val: null
     };
   },
@@ -181,74 +205,60 @@ export default {
       this.value = value;
       // if (value == 0) this.load_genre("movie");
       // else this.load_genre("tv");
-    },
+    }, 
     signalChange: function() {
       if (this.inputData.trim() != "") {
-        axios
-          .get("http://localhost:1337/search?input=" + this.inputData)
+        axios.get("http://localhost:1337/search?input=" + this.inputData)
           .then(res => {
-            if (res.data.movies)
-            {
+            if (res.data.movies) {
+              res.data.movies.forEach(function(mov) {
+                axios.post("http://localhost:1337/search/getimg", {
+                    imdb_id: mov.imdb_code
+                  })
+                  .then(resp => {
+                    mov.medium_cover_image = resp.data;
+                  });
+              });
               this.dataMovie = sortJsonArray(res.data.movies, "title");
               this.dataMovie_all = this.dataMovie;
-              this.items[0].count = res.data.movies.length;
-              this.nbr_p_movies = Math.ceil(res.data.movies.length / 5);
-            }
-            else
-            {
+              this.items[0].count = this.dataMovie.length;
+              this.nbr_p_movies = Math.ceil(this.dataMovie.length / 5);
+            } else {
               this.dataMovie = [];
               this.items[0].count = 0;
               this.nbr_p_movies = 0;
             }
-          });
-        // var url =
-        //   "https://api.themoviedb.org/3/search/multi?api_key=a07a2fef9fafa52ff4d4b6533fbeade8&adult=false&query=";
-        // url += this.inputData;
-        // this.inputData &&
-        //   axios.get(url).then(response => {
-        //     const resultMovie = response.data.results.filter(word => {
-        //       if (word.media_type == "movie") return true;
-        //       else return false;
-        //     });
-        //     const resultTv = response.data.results.filter(word => {
-        //       if (word.media_type == "tv") return true;
-        //       else return false;
-        //     });
-        //     this.dataTv = sortJsonArray(resultTv, "name");
-        //     this.dataMovie = sortJsonArray(resultMovie, "title");
-        //     this.items[0].count = resultMovie.length;
-        //     this.items[1].count = resultTv.length;
-        //     this.nbr_p_movies = Math.ceil(resultMovie.length / 5);
-        //     this.nbr_p_tv = Math.ceil(resultTv.length / 5);
-        //   });
+        });
       }
     },
+    change_imgs: function(data) {
+      data.forEach(function(mov) {
+        axios.post("http://localhost:1337/search/getimg", {
+            imdb_id: mov.imdb_code
+          })
+          .then(resp => {
+            mov.medium_cover_image = resp.data;
+          });
+      });
+      return data;
+    },
     load_data: function() {
-        if (this.selected_val == 'Standard')
-            this.selected_val = null;
-      if (this.value == 0)
-      {
+      if (this.selected_val == "Standard") this.selected_val = null;
+      if (this.value == 0) {
         var Movie_tmp = this.dataMovie_all;
-        if (Movie_tmp)
-        {
+        if (Movie_tmp) {
           Movie_tmp = Movie_tmp.filter(word => {
-          if (word.rating >= this.slider && word.year >= this.slider2)
-          {
-            if (this.selected_val != null)
-            {
-              if (word.genres.includes(this.selected_val)) return true
-              else return false;
-            }
-            else
-              return true;
-          }
-          else return false;
-        });
-        this.dataMovie = sortJsonArray(Movie_tmp, "title");
-        this.items[0].count = this.dataMovie.length;
-        this.nbr_p_movies = Math.ceil(this.dataMovie.length / 5);
+            if (word.rating >= this.slider && word.year >= this.slider2) {
+              if (this.selected_val != null) {
+                if (word.genres.includes(this.selected_val)) return true;
+                else return false;
+              } else return true;
+            } else return false;
+          });
+          this.dataMovie = sortJsonArray(Movie_tmp, "title");
+          this.items[0].count = this.dataMovie.length;
+          this.nbr_p_movies = Math.ceil(this.dataMovie.length / 5);
         }
-        
       }
       // var url =
       //   "https://api.themoviedb.org/3/search/multi?api_key=a07a2fef9fafa52ff4d4b6533fbeade8&adult=false&query=";
