@@ -218,7 +218,7 @@ export default {
                     imdb_id: mov.imdb_code
                   })
                   .then(resp => {
-                    mov.medium_cover_image = resp.data;
+                    mov.medium_cover_image = resp.data.poster;
                   });
               });
               this.dataMovie = sortJsonArray(res.data.movies, "title");
@@ -232,18 +232,6 @@ export default {
             }
           });
       }
-    },
-    change_imgs: function(data) {
-      data.forEach(function(mov) {
-        axios
-          .post("http://localhost:1337/search/getimg", {
-            imdb_id: mov.imdb_code
-          })
-          .then(resp => {
-            mov.medium_cover_image = resp.data;
-          });
-      });
-      return data;
     },
     load_data: function() {
       if (this.selected_val == "Standard") this.selected_val = null;

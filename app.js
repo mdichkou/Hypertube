@@ -155,7 +155,7 @@ app.get('/search', async (req, res) => {
 app.post('/search/getimg', function(req, res) {
   imdb.get({id: req.body.imdb_id}, {apiKey: '88736563', timeout: 30000})
   .then(respo => {
-    res.send(respo.poster);
+    res.send(respo);
   }).catch(console.log);
 });
 

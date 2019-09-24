@@ -10,7 +10,7 @@
         <v-card-text>
           <v-row align="center">
             <v-rating
-              :value="movie.rating"
+              :value="movie.rating / 2"
               color="amber"
               half-increments
               dense
@@ -30,7 +30,7 @@
           <div>{{ movie.description_full }}</div>
         </v-card-text>
         <v-card-actions v-if="actions">
-          <v-btn :href="'/stream/' + movie.imdb_code" outlined>Watch</v-btn>
+          <v-btn :href="'/video/' + movie.imdb_code" outlined>Watch</v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
