@@ -28,7 +28,7 @@
                 </v-list-item>
               </v-list-item-group>
 
-              <hr>
+              <hr />
 
               <v-subheader>Filtre</v-subheader>
               <v-card-text>
@@ -100,7 +100,7 @@
           </v-card>
         </v-col>
         <v-col cols="8">
-          <ResultSearch :data="dataMovie" :page="1" :pStart="p_start" :pEnd="p_end"/>
+          <ResultSearch :data="dataMovie" :page="1" :pStart="p_start" :pEnd="p_end" />
           <!-- <ResultSearch
             v-if="value === 1"
             :data="dataTv"
@@ -205,14 +205,16 @@ export default {
       this.value = value;
       // if (value == 0) this.load_genre("movie");
       // else this.load_genre("tv");
-    }, 
+    },
     signalChange: function() {
       if (this.inputData.trim() != "") {
-        axios.get("http://localhost:1337/search?input=" + this.inputData)
+        axios
+          .get("http://localhost:1337/search?input=" + this.inputData)
           .then(res => {
-            if (res.data.movies) {
+            if (res.data.movie_count > 0) {
               res.data.movies.forEach(function(mov) {
-                axios.post("http://localhost:1337/search/getimg", {
+                axios
+                  .post("http://localhost:1337/search/getimg", {
                     imdb_id: mov.imdb_code
                   })
                   .then(resp => {
@@ -224,16 +226,17 @@ export default {
               this.items[0].count = this.dataMovie.length;
               this.nbr_p_movies = Math.ceil(this.dataMovie.length / 5);
             } else {
-              this.dataMovie = [];
+              this.dataMovie = null;
               this.items[0].count = 0;
               this.nbr_p_movies = 0;
             }
-        });
+          });
       }
     },
     change_imgs: function(data) {
       data.forEach(function(mov) {
-        axios.post("http://localhost:1337/search/getimg", {
+        axios
+          .post("http://localhost:1337/search/getimg", {
             imdb_id: mov.imdb_code
           })
           .then(resp => {

@@ -72,15 +72,12 @@ var namemovie , yearmovie;
 
 app.get('/video/:id', function(req, result) {
     id = req.params.id;
-    console.log(id);
     cloudscraper.get('https://yts.lt/api/v2/list_movies.json?query_term=' + id).then((res, err) => {
       const getTorrentFile = new Promise(function (resolve, reject) { 
       if (err) console.log(err.message);
       var data = JSON.parse(res);
-      console.log(data);
       var movies = data.data.movies;
       var integer = parseInt(yearmovie, 10);
-      console.log(movies)
       movies.forEach(element => {
         if (element.imdb_code === id) {
           element.torrents.forEach(element => {
@@ -110,7 +107,6 @@ app.get('/video/:id', function(req, result) {
           if (req.headers.range)
           {
             const ranges = parseRange(file.length, req.headers.range, { combine: true });
-            console.log(ranges);
             if (ranges === -1) {
                 // 416 Requested Range Not Satisfiable
                 result.statusCode = 416;
@@ -159,7 +155,6 @@ app.get('/search', async (req, res) => {
 app.post('/search/getimg', function(req, res) {
   imdb.get({id: req.body.imdb_id}, {apiKey: '88736563', timeout: 30000})
   .then(respo => {
-    console.log(respo);
     res.send(respo.poster);
   }).catch(console.log);
 });
