@@ -30,7 +30,7 @@
           <div>{{ movie.description_full }}</div>
         </v-card-text>
         <v-card-actions v-if="actions">
-          <v-btn :href="'/video/' + movie.imdb_code" outlined>Watch</v-btn>
+          <v-btn @click="dataShare(movie)" outlined>Watch</v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
@@ -62,6 +62,13 @@ export default {
       this.loading = true;
 
       setTimeout(() => (this.loading = false), 2000);
+    },
+    dataShare(movie)
+    {
+      //:href="'/video/' + movie.imdb_code"
+      this.$router.push({path: `/video/${movie.imdb_code}`, params: {hash: 'test'}})
+      // this.$store.dispatch("dataShare", movie)
+      console.log(this.$store.state.data)
     }
   }
 };

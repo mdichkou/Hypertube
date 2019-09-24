@@ -1,6 +1,6 @@
 <template>
-  <div v-if="data" :style="{ backgroundImage: `url(${bgImg})` }" class="body-content fill-height fluid grid-list-xl">
-    <div class="cont">
+  <div v-if="data" :style="{ backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url(${bgImg})` }"   class="body-content fill-height fluid grid-list-xl">
+    <div  class="cont">
       <div class="wrapper">
         <div class="row bg animated fadeInDown">
           <div class="medium-5 column">
@@ -25,6 +25,9 @@
             <span class="sub-left">
               <b>Duration:</b> : {{data.runtime}}
             </span>
+             <span v-if="data.production != 'N/A'" class="sub-left">
+              <b>Production:</b> {{data.production}}
+            </span>
             <span class="sub-left">
               <b>Director:</b> {{data.director}}
             </span>
@@ -41,9 +44,9 @@
             </p>
           </div>
           <div class="medium-7 column text-right">
-            <div class="button">
+            <div class="button" v-for="(Hash,index) in listHashes" :key="index">
               <span class="fa fa-play"></span>
-              <a :href="'/stream/'+ this.id">Watch</a>
+              <a :href="'/stream/'+ Hash.hash"> Watch - {{ Hash.type }} - {{ Hash.quality }} </a>
             </div>
           </div>
         </div>
@@ -55,22 +58,34 @@
 <script>
 import axios from "axios";
 export default {
+  mounted() {
+  },
   name: "Video",
   created() {
     this.id = this.$route.params.id;
-    axios
-      .post("http://localhost:1337/search/getimg", {
+    axios.post("http://localhost:1337/search/getimg", {
         imdb_id: this.id
       })
       .then(resp => {
         this.data = resp.data;
-        this.bgImg = resp.data.poster;
+        axios.get('https://api.themoviedb.org/3/find/' + this.id + '?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&language=en-US&external_source=imdb_id')
+        .then(resp2 => {
+          this.bgImg = 'http://image.tmdb.org/t/p/w1280' + resp2.data.movie_results[0].poster_path;
+        })
+      });
+    axios.post("http://localhost:1337/getHashes", {
+        imdb_id: this.id
+      })
+      .then(resp => {
+        console.log(resp.data);
+        this.listHashes = resp.data;
       });
   },
   data: () => ({
     id: "",
     data: null,
-    bgImg: ""
+    bgImg: "",
+    listHashes: []
   })
 };
 </script>
@@ -78,19 +93,20 @@ export default {
 @import url("https://fonts.googleapis.com/css?family=Maven+Pro");
 @import url("https://fonts.googleapis.com/css?family=Orbitron");
 .body-content {
-  background-repeat: no-repeat;
-  background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
+    background-size: cover;
 }
 .wrapper {
   background-repeat: no-repeat;
   background-size: 350%;
   height: 100%;
+  background: linear-gradient(to left, rgba(42, 159, 255, 0.2) 0%, #212120 97%, #212120 100%);
 }
 .bg {
   position: relative;
   top: 6%;
   transform: translateY(-10%);
-  /* background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/324479/martian.jpg); */
   background-repeat: no-repeat;
   background-position: center-center;
   background-size: cover;
@@ -103,8 +119,7 @@ export default {
 .titl {
   font-family: "Orbitron";
   font-size: 2.75em;
-  margin-top: 20%;
-  text-transform: uppercase;
+  margin-top: 100px;
 }
 .sub {
   font-family: "Orbitron";
@@ -171,6 +186,10 @@ p,
 .sub-left b {
   font-weight: bold;
 }
+.button a {
+  color: #fff !important;
+  text-decoration: none;
+}
 .medium-7 {
   padding-top: 14px;
 }
@@ -188,15 +207,18 @@ p,
   margin-right: auto;
   margin-top: 0;
   margin-bottom: 0;
-  max-width: 90rem;
+  max-width: 60rem;
 }
 
 .cont {
   margin: 0 auto;
   top: 11%;
-  right: 20%;
-  left: 20%;
+  right: 23%;
+  left: 23%;
   position: absolute;
+  background-size: cover;
+  box-shadow: 0px 1px 39px 7px black;
+  background-position: left;
 }
 @media only screen and (max-width: 40.063em) {
   .cont {
@@ -206,28 +228,13 @@ p,
     position: relative;
   }
 }
-/*
- @media only screen and (min-width: 64.063em)
-{
-.column, .columns {
-    position: relative;
-    padding-left: 0.9375rem;
-    padding-right: 0.9375rem;
-    float: left;
-    }
-}*/
 
-/*@media only screen and (min-width: 40.063em){
-.medium-5 {
-    width: 41.66667%;
-}
-}*/
-@media only screen and (min-width: 40.063em) {
+/* @media only screen and (min-width: 40.063em) {
   button,
   .button {
     display: inline-block;
   }
-}
+} */
 @media only screen and (min-width: 40.063em) {
   .column,
   .columns {
@@ -237,6 +244,7 @@ p,
     float: left;
   }
 }
+
 [class*="column"] + [class*="column"]:last-child {
   float: right;
 }

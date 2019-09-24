@@ -137,7 +137,6 @@ app.get('/video/:id', function(req, result) {
     });
 });
 
-
 const getMovies = async (input) => {
   try {
       return await cloudscraper.get('https://yts.lt/api/v2/list_movies.json?query_term=' + input);
@@ -157,6 +156,13 @@ app.post('/search/getimg', function(req, res) {
   .then(respo => {
     res.send(respo);
   }).catch(console.log);
+});
+
+app.post('/getHashes', async (req, res) => {
+  const data = await getMovies(req.body.imdb_id);
+  const movies = JSON.parse(data);
+  console.log(movies.data.movies[0].torrents);
+  res.send(movies.data.movies[0].torrents);
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
