@@ -15,7 +15,7 @@
           <b-button class="my-2 my-sm-0" type="submit">Search</b-button>
         </b-form>
       </section>
-      <v-row no-gutters v-if="dataMovie && inputData">
+      <v-row no-gutters v-if="dataMovie">
         <v-col cols="4">
           <v-card class="mx-auto" max-width="300" tile style="margin-top:60px">
             <v-list rounded>
@@ -101,14 +101,6 @@
         </v-col>
         <v-col cols="8">
           <ResultSearch :data="dataMovie" :page="1" :pStart="p_start" :pEnd="p_end" />
-          <!-- <ResultSearch
-            v-if="value === 1"
-            :data="dataTv"
-            :imgUrl="imageUrl"
-            :page="1"
-            :pStart="p_start"
-            :pEnd="p_end"
-          />-->
           <div class="text-center">
             <v-pagination
               v-if="value === 1"
@@ -148,6 +140,7 @@ export default {
       items: [{ text: "Movies", count: 0 }, { text: "Tv Show", count: 0 }],
       inputData: "",
       dataMovie_all: null,
+      popularMovies: null,
       dataMovie: null,
       dataTv: null,
       baseUrl: "",
@@ -191,7 +184,9 @@ export default {
       selected_val: null
     };
   },
-  mounted() {},
+  mounted() {
+    this.getPopulerMovie();
+  },
   methods: {
     affich_page() {
       this.p_start = (this.page_tmp - 1) * 5;
@@ -203,18 +198,14 @@ export default {
       this.p_end = 5;
       this.page_tmp = 1;
       this.value = value;
-      // if (value == 0) this.load_genre("movie");
-      // else this.load_genre("tv");
     },
     signalChange: function() {
       if (this.inputData.trim() != "") {
-        axios
-          .get("http://localhost:1337/search?input=" + this.inputData)
+        axios.get("http://localhost:1337/search?input=" + this.inputData)
           .then(res => {
             if (res.data.movie_count > 0) {
               res.data.movies.forEach(function(mov) {
-                axios
-                  .post("http://localhost:1337/search/getimg", {
+                axios.post("http://localhost:1337/search/getimg", {
                     imdb_id: mov.imdb_code
                   })
                   .then(resp => {
@@ -231,6 +222,13 @@ export default {
               this.nbr_p_movies = 0;
             }
           });
+      }
+      else
+      {
+        this.dataMovie = sortJsonArray(this.popularMovies, "title");
+        this.dataMovie_all = this.dataMovie;
+        this.items[0].count = this.dataMovie.length;
+        this.nbr_p_movies = Math.ceil(this.dataMovie.length / 5);
       }
     },
     load_data: function() {
@@ -251,52 +249,22 @@ export default {
           this.nbr_p_movies = Math.ceil(this.dataMovie.length / 5);
         }
       }
-      // var url =
-      //   "https://api.themoviedb.org/3/search/multi?api_key=a07a2fef9fafa52ff4d4b6533fbeade8&adult=false&query=";
-      // url += this.inputData;
-      // if (this.value == 0) {
-      //   // search with movies
-      //   this.inputData.trim() &&
-      //     axios.get(url).then(response => {
-      //       const resultMovie = response.data.results.filter(word => {
-      //         if (
-      //           word.vote_average >= this.slider &&
-      //           word.media_type == "movie" &&
-      //           word.release_date.substring(0, 4) >= this.slider2
-      //         ) {
-      //           if (this.selected_val != null) {
-      //             if (word.genre_ids.includes(this.selected_val)) return true;
-      //             else return false;
-      //           } else return true;
-      //         } else return false;
-      //       });
-
-      //       this.dataMovie = resultMovie;
-      //       this.items[0].count = resultMovie.length;
-      //       this.nbr_p_movies = Math.ceil(resultMovie.length / 5);
-      //     });
-      // } // search with tv
-      // else {
-      //   this.inputData.trim() &&
-      //     axios.get(url).then(response => {
-      //       const resultTv = response.data.results.filter(word => {
-      //         if (
-      //           word.vote_average >= this.slider &&
-      //           word.media_type == "tv" &&
-      //           word.first_air_date.substring(0, 4) >= this.slider2
-      //         ) {
-      //           if (this.selected_val != null) {
-      //             if (word.genre_ids.includes(this.selected_val)) return true;
-      //             else return false;
-      //           } else return true;
-      //         } else return false;
-      //       });
-
-      //       this.dataTv = resultTv;
-      //       this.items[1].count = resultTv.length;
-      //       this.nbr_p_tv = Math.ceil(resultTv.length / 5);
-      //     });
-      // }
+    },
+    getPopulerMovie() {
+      axios.post("http://localhost:1337/search/popularvideo")
+      .then(res => {
+        res.data.movies.forEach(function(mov) {
+            axios.post("http://localhost:1337/search/getimg", {
+                imdb_id: mov.imdb_code
+            })
+            .then(resp => {
+                mov.medium_cover_image = resp.data.poster;
+            });
+        });
+        this.popularMovies = res.data.movies;
+        this.signalChange();
+        //console.log(this.popularMovies);
+      });
     }
   }
 };

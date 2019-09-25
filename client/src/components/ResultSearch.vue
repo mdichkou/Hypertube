@@ -68,7 +68,6 @@ export default {
       //:href="'/video/' + movie.imdb_code"
       this.$router.push({path: `/video/${movie.imdb_code}`, params: {hash: 'test'}})
       // this.$store.dispatch("dataShare", movie)
-      console.log(this.$store.state.data)
     }
   }
 };
