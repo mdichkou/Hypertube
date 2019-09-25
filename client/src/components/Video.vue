@@ -77,7 +77,6 @@ export default {
         imdb_id: this.id
       })
       .then(resp => {
-        console.log(resp.data);
         this.listHashes = resp.data;
       });
   },
