@@ -1,10 +1,14 @@
 <template>
   <v-row>
-      <v-card v-for="(movie,index) in data.slice(pStart, pEnd)" :key="index"  :loading="loading" class="card card-right col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
-        <v-img  class="card-img-top" v-if="movie.large_cover_image"  :src="movie.large_cover_image"></v-img>
+      <v-card v-for="(movie,index) in data.slice(pStart, pEnd)" :key="index"  :loading="loading" class="card-content  card card-right col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+        <div class="image">
+           <v-img  class="card-img-top" v-if="movie.large_cover_image"  :src="movie.large_cover_image"></v-img>
         <v-img   class="card-img-top" v-else  :src="defImage"></v-img>
+         <div class="card-content-overlay"></div>
+        </div>
+       
 
-        <v-card-title>{{movie.title}}</v-card-title>
+        <v-card-title >{{movie.title}}</v-card-title>
         <!-- <v-card-title v-if="movie.media_type === 'tv'">{{movie.name}}</v-card-title> -->
         <v-card-text class="card-body">
           <v-row align="center">
@@ -20,13 +24,14 @@
 
             <div class="grey--text pl-2">{{movie.rating}}</div>
           </v-row>
-
-          <!-- <div class="my-4 subtitle-1 black--text">{{movie.year}}</div>
-          <div>{{ movie.description_full }}</div> -->
+          <div class="content-details fadeIn-bottom">
+          <div class="description">{{ movie.description_full.substring(0, 370) }}</div>
+               <div class="my-4 subtitle-1  description">{{movie.year}}</div>
+                 <v-card-actions v-if="actions">
+                   <v-btn class="watch" @click="dataShare(movie)" outlined><span class="fa fa-play"></span>Watch</v-btn>
+               </v-card-actions>
+          </div>
         </v-card-text>
-        <!-- <v-card-actions v-if="actions">
-          <v-btn @click="dataShare(movie)" outlined>Watch</v-btn>
-        </v-card-actions> -->
       </v-card>
   </v-row>
 </template>
@@ -66,6 +71,7 @@ export default {
 };
 </script>
 <style>
+@import url("https://fonts.googleapis.com/css?family=Orbitron");
 .card-right{
   width: 300px;
   float: left;
@@ -78,5 +84,74 @@ export default {
     padding-left: 0
   }
 }
+.name{
+  font-family: 'Orbitron'
+}
+.card-content .card-content-overlay {
+  background: rgba(0,0,0,0.7);
+  position: absolute;
+  height: 99%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 0;
+  -webkit-transition: all 0.4s ease-in-out 0s;
+  -moz-transition: all 0.4s ease-in-out 0s;
+  transition: all 0.4s ease-in-out 0s;
+}
+.card-content:hover .card-content-overlay{
+  opacity: 1;
+}
+.content-details {
+  position: absolute;
+  text-align: center;
+  padding-left: 1em;
+  padding-right: 1em;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  -webkit-transition: all 0.3s ease-in-out 0s;
+  -moz-transition: all 0.3s ease-in-out 0s;
+  transition: all 0.3s ease-in-out 0s;
+}
+.card-content:hover .content-details{
+  top: 50%;
+  left: 50%;
+  opacity: 1;
+}
 
+.fadeIn-bottom{
+  top: 80%;
+}
+
+.fadeIn-top{
+  top: 20%;
+}
+
+.fadeIn-left{
+  left: 20%;
+}
+
+.fadeIn-right{
+  left: 80%;
+}
+.description{
+  color: white;
+  text-align: justify;
+  text-justify: inter-word;
+}
+.image{
+  position: relative;
+}
+.watch{
+  color: #fff !important; 
+  margin: 0 auto;
+
+}
 </style>
