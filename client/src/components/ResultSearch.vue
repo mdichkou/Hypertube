@@ -1,13 +1,12 @@
 <template>
   <v-row>
-    <v-col v-for="(movie,index) in data.slice(pStart, pEnd)" :key="index" lg="6" md="6">
-      <v-card :loading="loading" class="mx-auto my-12" max-width="374">
-        <v-img v-if="movie.medium_cover_image" height="250" :src="movie.medium_cover_image"></v-img>
-        <v-img v-else height="250" :src="defImage"></v-img>
+      <v-card v-for="(movie,index) in data.slice(pStart, pEnd)" :key="index"  :loading="loading" class="card card-right col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+        <v-img  class="card-img-top" v-if="movie.large_cover_image"  :src="movie.large_cover_image"></v-img>
+        <v-img   class="card-img-top" v-else  :src="defImage"></v-img>
 
         <v-card-title>{{movie.title}}</v-card-title>
         <!-- <v-card-title v-if="movie.media_type === 'tv'">{{movie.name}}</v-card-title> -->
-        <v-card-text>
+        <v-card-text class="card-body">
           <v-row align="center">
             <v-rating
               :value="movie.rating / 2"
@@ -22,21 +21,15 @@
             <div class="grey--text pl-2">{{movie.rating}}</div>
           </v-row>
 
-          <div class="my-4 subtitle-1 black--text">{{movie.year}}</div>
-          <!-- <div
-            v-if="movie.media_type === 'tv'"
-            class="my-4 subtitle-1 black--text"
-          >{{movie.first_air_date.substring(0, 4)}}</div>-->
-          <div>{{ movie.description_full }}</div>
+          <!-- <div class="my-4 subtitle-1 black--text">{{movie.year}}</div>
+          <div>{{ movie.description_full }}</div> -->
         </v-card-text>
-        <v-card-actions v-if="actions">
+        <!-- <v-card-actions v-if="actions">
           <v-btn @click="dataShare(movie)" outlined>Watch</v-btn>
-        </v-card-actions>
+        </v-card-actions> -->
       </v-card>
-    </v-col>
   </v-row>
 </template>
-
 <script>
 
 
@@ -61,7 +54,7 @@ export default {
     reserve() {
       this.loading = true;
 
-      setTimeout(() => (this.loading = false), 2000);
+      setTimeout(() => (this.loading = false), 1000);
     },
     dataShare(movie)
     {
@@ -72,3 +65,18 @@ export default {
   }
 };
 </script>
+<style>
+.card-right{
+  width: 300px;
+  float: left;
+}
+@media only screen and (max-width: 800px) {
+  .card {
+    width: 100% !important;
+  }
+  .div-left{
+    padding-left: 0
+  }
+}
+
+</style>

@@ -16,8 +16,8 @@
         </b-form>
       </section>
       <v-row no-gutters v-if="dataMovie">
-        <v-col cols="4">
-          <v-card class="mx-auto" max-width="300" tile style="margin-top:60px">
+          <div class="div-left col-lg-3 col-md-4  col-sm-12 col-12">
+          <v-card class="card" >
             <v-list rounded>
               <v-subheader>Genre</v-subheader>
               <v-list-item-group v-model="item" color="primary">
@@ -34,7 +34,7 @@
               <v-card-text>
                 <v-row>
                   <v-col class="pr-4 pt-0">
-                    <p>Imdb rating:</p>
+                    <p style="color:black">Imdb rating:</p>
                     <v-slider
                       v-model="slider"
                       @input="load_data"
@@ -59,7 +59,7 @@
                 </v-row>
                 <v-row>
                   <v-col class="pr-4 pt-0">
-                    <p>Production year:</p>
+                    <p style="color:black">Production year:</p>
                     <v-slider
                       v-model="slider2"
                       @input="load_data"
@@ -84,7 +84,7 @@
                 </v-row>
                 <v-row>
                   <v-col class="pr-4 pt-0">
-                    <p>Genre :</p>
+                    <p style="color:black">Genre :</p>
                     <v-col class="d-flex" cols="12">
                       <v-select
                         v-model="selected_val"
@@ -98,10 +98,10 @@
               </v-card-text>
             </v-list>
           </v-card>
-        </v-col>
-        <v-col cols="8">
+          </div>
+          <div class="div-right col-lg-9 col-md-8  col-sm-12 col-12">
           <ResultSearch :data="dataMovie" :page="1" :pStart="p_start" :pEnd="p_end" />
-          <div class="text-center">
+           <div  class="text-center">
             <v-pagination
               v-if="value === 1"
               v-model="page_tmp"
@@ -115,7 +115,7 @@
               @input="affich_page"
             ></v-pagination>
           </div>
-        </v-col>
+           </div>
       </v-row>
     </v-container>
   </div>
@@ -150,7 +150,7 @@ export default {
       nbr_p_tv: 0,
       page_tmp: 1,
       p_start: 0,
-      p_end: 5,
+      p_end: 8,
       get_year: new Date().getFullYear() + 1,
       slider: 0,
       slider2: 0,
@@ -189,13 +189,13 @@ export default {
   },
   methods: {
     affich_page() {
-      this.p_start = (this.page_tmp - 1) * 5;
-      this.p_end = this.p_start + 5;
+      this.p_start = (this.page_tmp - 1) * 8;
+      this.p_end = this.p_start + 8;
       window.scrollTo(0, 0);
     },
     takeValue: function(value) {
       this.p_start = 0;
-      this.p_end = 5;
+      this.p_end = 8;
       this.page_tmp = 1;
       this.value = value;
     },
@@ -207,7 +207,7 @@ export default {
               this.dataMovie = sortJsonArray(res.data.data.movies, "title");
               this.dataMovie_all = this.dataMovie;
               this.items[0].count = this.dataMovie.length;
-              this.nbr_p_movies = Math.ceil(this.dataMovie.length / 5);
+              this.nbr_p_movies = Math.ceil(this.dataMovie.length / 8);
             } else {
               this.dataMovie = null;
               this.items[0].count = 0;
@@ -220,7 +220,7 @@ export default {
         this.dataMovie = sortJsonArray(this.popularMovies, "title");
         this.dataMovie_all = this.dataMovie;
         this.items[0].count = this.dataMovie.length;
-        this.nbr_p_movies = Math.ceil(this.dataMovie.length / 5);
+        this.nbr_p_movies = Math.ceil(this.dataMovie.length / 8);
       }
     },
     load_data: function() {
@@ -238,7 +238,7 @@ export default {
           });
           this.dataMovie = sortJsonArray(Movie_tmp, "title");
           this.items[0].count = this.dataMovie.length;
-          this.nbr_p_movies = Math.ceil(this.dataMovie.length / 5);
+          this.nbr_p_movies = Math.ceil(this.dataMovie.length / 8);
         }
       }
     },
@@ -252,3 +252,52 @@ export default {
   }
 };
 </script>
+<style>
+.container{
+  
+  max-width: 1700px;
+ 
+}
+.card{
+   padding: 0;
+   /* margin-right: 5px; */
+   margin-top: 20px;
+  transform: perspective(800px);
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+.div-left{
+    float:left;
+    padding-left:10px;
+}
+.div-right{
+    float:right;
+    padding-left:40px !important;
+}
+.text-center{
+  margin-top: 8px;
+}
+/* @media (min-width: 601px){
+ .div-left {
+    width: 26.33333%;
+}
+}
+@media (min-width: 601px){
+ .div-right {
+    width: 66.66666%;
+}
+} */
+/* @media only screen and (max-width: 1132px) {
+  .card {
+    width: 80% !important;
+  }
+  .div-left{
+    padding-left: 0
+  }
+} */
+@media only screen and (max-width: 768px) {
+  .div-right {
+    padding-left: 0 !important;
+  }
+}
+</style>
