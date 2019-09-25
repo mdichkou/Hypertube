@@ -51,51 +51,56 @@ const opts = {
 }
 
 
-app.get('/video/:hash', function (req, result) {
-  hash = req.params.hash;
+app.get('/video/:hash', function(req, res) {
   const getTorrentFile = new Promise(function (resolve, reject) {
-    var engine = torrentStream('magnet:?xt=urn:btih:' + hash, opts);
-    engine.on('ready', function () {
-      engine.files.forEach(function (file, idx) {
-        const ext = path.extname(file.name).slice(1);
-        if (ext === 'mp4') {
-          file.ext = ext;
-          resolve(file);
-        }
+
+  var hash = req.params.hash;
+  var engine = torrentStream('magnet:?xt=urn:btih:'+ hash +'', opts);
+  
+      engine.on('ready', function() {
+        engine.files.forEach(function (file, idx) {
+          const ext = path.extname(file.name).slice(1);
+          if (ext === 'mkv' || ext === 'mp4') {
+            file.ext = ext;
+            resolve(file);
+          }
+        });
       });
+  });
+    res.setHeader('Accept-Ranges', 'bytes');
+    getTorrentFile.then(function(file) {
+        res.setHeader('Content-Length', file.length);
+        res.setHeader('Content-Type', `video/${file.ext}`);
+        if (req.headers.range)
+        {
+          const ranges = parseRange(file.length, req.headers.range, { combine: true });
+          console.log(ranges);
+          if (ranges === -1) {
+              // 416 Requested Range Not Satisfiable
+              res.statusCode = 416;
+              return res.end();
+            } else if (ranges === -2 || ranges.type !== 'bytes' || ranges.length > 1) {
+              // 200 OK requested range malformed or multiple ranges requested, stream entire video
+              if (req.method !== 'GET') return res.end();
+              return file.createReadStream().pipe(res);
+            } else {
+              // 206 Partial Content valid range requested
+              const range = ranges[0];
+              res.statusCode = 206;
+              res.setHeader('Content-Length', 1 + range.end - range.start);
+              res.setHeader('Content-Range', `bytes ${range.start}-${range.end}/${file.length}`);
+              if (req.method !== 'GET') return res.end();
+              return file.createReadStream(range).pipe(res);
+            }
+        }
+        else
+        {
+          var stream = file.createReadStream();
+        }
+        }).catch(function (e) {
+          console.error(e);
+          res.end(e);
     });
-  });
-  result.setHeader('Accept-Ranges', 'bytes');
-  getTorrentFile.then(function (file) {
-    result.setHeader('Content-Length', file.length);
-    result.setHeader('Content-Type', `video/${file.ext}`);
-    if (req.headers.range) {
-      const ranges = parseRange(file.length, req.headers.range, { combine: true });
-      if (ranges === -1) {
-        // 416 Requested Range Not Satisfiable
-        result.statusCode = 416;
-        return result.end();
-      } else if (ranges === -2 || ranges.type !== 'bytes' || ranges.length > 1) {
-        // 200 OK requested range malformed or multiple ranges requested, stream entire video
-        if (req.method !== 'GET') return result.end();
-        return file.createReadStream().pipe(result);
-      } else {
-        // 206 Partial Content valid range requested
-        const range = ranges[0];
-        result.statusCode = 206;
-        result.setHeader('Content-Length', 1 + range.end - range.start);
-        result.setHeader('Content-Range', `bytes ${range.start}-${range.end}/${file.length}`);
-        if (req.method !== 'GET') return result.end();
-        return file.createReadStream(range).pipe(result);
-      }
-    }
-    else {
-      var stream = file.createReadStream();
-    }
-  }).catch(function (e) {
-    console.error(e);
-    result.end(e);
-  });
 });
 
 const getMovies = async (input) => {

@@ -1,7 +1,7 @@
 <template>
   <div class="embed-responsive embed-responsive-21by9">
     <!-- Stream {{ this.$route.params.year + " " + this.$route.params.name }} -->
-    <video width="320" height="240" autoplay controls intrinsicsize>
+    <video width="320" height="240" autoplay controls intrinsicsize controlsList="nodownload">
       <source :src="'http://localhost:1337/video/'+this.hash" type="video/mp4" />
       <track
         v-for="(subtitle,index) in SubTitles"

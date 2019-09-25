@@ -4,3 +4,4 @@ server/storage
 server/torrent-stream
 server/torrent-stream
 public
+client/public/subtitles
