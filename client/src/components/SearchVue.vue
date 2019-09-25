@@ -201,18 +201,10 @@ export default {
     },
     signalChange: function() {
       if (this.inputData.trim() != "") {
-        axios.get("http://localhost:1337/search?input=" + this.inputData)
+        axios.get("https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" + this.inputData)
           .then(res => {
-            if (res.data.movie_count > 0) {
-              res.data.movies.forEach(function(mov) {
-                axios.post("http://localhost:1337/search/getimg", {
-                    imdb_id: mov.imdb_code
-                  })
-                  .then(resp => {
-                    mov.medium_cover_image = resp.data.poster;
-                  });
-              });
-              this.dataMovie = sortJsonArray(res.data.movies, "title");
+            if (res.data.data.movie_count > 0) {
+              this.dataMovie = sortJsonArray(res.data.data.movies, "title");
               this.dataMovie_all = this.dataMovie;
               this.items[0].count = this.dataMovie.length;
               this.nbr_p_movies = Math.ceil(this.dataMovie.length / 5);
@@ -251,19 +243,10 @@ export default {
       }
     },
     getPopulerMovie() {
-      axios.post("http://localhost:1337/search/popularvideo")
+      axios.get("https://yts.unblocked4u.net/api/v2/list_movies.json?sort_by=download_count&order_by=desc&limit=15")
       .then(res => {
-        res.data.movies.forEach(function(mov) {
-            axios.post("http://localhost:1337/search/getimg", {
-                imdb_id: mov.imdb_code
-            })
-            .then(resp => {
-                mov.medium_cover_image = resp.data.poster;
-            });
-        });
-        this.popularMovies = res.data.movies;
+        this.popularMovies = res.data.data.movies;
         this.signalChange();
-        //console.log(this.popularMovies);
       });
     }
   }

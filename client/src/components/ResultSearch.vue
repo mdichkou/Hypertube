@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col v-for="(movie,index) in data.slice(pStart, pEnd)" :key="index" lg="6" md="6">
-      <v-card v-if="movie.medium_cover_image.indexOf('yts') == -1" :loading="loading" class="mx-auto my-12" max-width="374">
+      <v-card :loading="loading" class="mx-auto my-12" max-width="374">
         <v-img v-if="movie.medium_cover_image" height="250" :src="movie.medium_cover_image"></v-img>
         <v-img v-else height="250" :src="defImage"></v-img>
 

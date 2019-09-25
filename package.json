@@ -22,6 +22,7 @@
     "opensubtitles-api": "^5.0.1",
     "range-parser": "^1.2.1",
     "request": "^2.88.0",
-    "torrent-stream": "^1.1.0"
+    "torrent-stream": "^1.1.0",
+    "yts.to": "^0.1.4"
   }
 }

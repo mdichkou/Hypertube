@@ -22,8 +22,7 @@ export default {
   mounted() {
     this.id = this.$route.params.id;
     this.hash = this.$route.params.hash;
-    axios
-      .post("http://localhost:1337/getSubt", {
+    axios.post("http://localhost:1337/getSubt", {
         imdb_id: this.id
       })
       .then(resp => {

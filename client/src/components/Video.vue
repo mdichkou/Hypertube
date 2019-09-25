@@ -46,7 +46,7 @@
           <div class="medium-7 column text-right">
             <div class="button" v-for="(Hash,index) in listHashes" :key="index">
               <span class="fa fa-play"></span>
-              <a :href="'/stream/'+ id +'/'+ Hash.hash"> Watch - {{ Hash.type }} - {{ Hash.quality }} </a>
+              <a @click="streamVideo(Hash)"> Watch - {{ Hash.type }} - {{ Hash.quality }} </a>
             </div>
           </div>
         </div>
@@ -63,9 +63,7 @@ export default {
   name: "Video",
   created() {
     this.id = this.$route.params.id;
-    axios.post("http://localhost:1337/search/getimg", {
-        imdb_id: this.id
-      })
+    axios.post("http://localhost:1337/search/getimg", {imdb_id: this.id})
       .then(resp => {
         this.data = resp.data;
         axios.get('https://api.themoviedb.org/3/find/' + this.id + '?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&language=en-US&external_source=imdb_id')
@@ -73,11 +71,9 @@ export default {
           this.bgImg = 'http://image.tmdb.org/t/p/w1280' + resp2.data.movie_results[0].poster_path;
         })
       });
-    axios.post("http://localhost:1337/getHashes", {
-        imdb_id: this.id
-      })
+    axios.get("https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" + this.id)
       .then(resp => {
-        this.listHashes = resp.data;
+        this.listHashes = resp.data.data.movies[0].torrents;
       });
   },
   data: () => ({
@@ -85,7 +81,12 @@ export default {
     data: null,
     bgImg: "",
     listHashes: []
-  })
+  }),
+  methods : {
+    streamVideo(Hash) {
+      this.$router.push({path: `/stream/${this.id}/${Hash.hash}`, params: {hash: 'test'}})
+    },
+  }
 };
 </script>
 <style>
