@@ -124,21 +124,30 @@ app.post('/search/getimg', function (req, res) {
 app.post('/getSubt', async (req, res) => {
   OpenSubtitles.search({
     imdbid: req.body.imdb_id
-  }).then(subtitles => {
-    const values = Object.values(subtitles)
-    values.forEach(subtitle => {
-      var url = subtitle.vtt;
-      var options = {
-        directory: "./client/public/subtitles/" + req.body.imdb_id,
-        filename: subtitle.lang + ".vtt"
-      }
-      if (fs.existsSync(options.directory)) {
-        console.log('already exist')
-      } else {
+  }).then(async subtitles => {
+    if (fs.existsSync("./client/public/subtitles/" + req.body.imdb_id)) {
+    } else {
+      const values = Object.values(subtitles)
+      values.forEach((subtitle, index) => {
+        var url = subtitle.vtt;
+        var options = {
+          directory: "./client/public/subtitles/" + req.body.imdb_id,
+          filename: subtitle.lang + ".vtt"
+        }
         download(url, options);
+      })
+    }
+    var transformation = [];
+    const values = Object.values(subtitles)
+
+    for (var i = 0; i < values.length; i++) {
+      var options = {
+        directory: "./client/public/subtitles/" + req.body.imdb_id + '/',
+        filename: values[i].lang + ".vtt"
       }
-    })
-    res.send(subtitles);
+      if (fs.existsSync(options.directory + options.filename)) transformation.push(values[i]);
+    }
+    res.send(transformation);
   })
 });
 
