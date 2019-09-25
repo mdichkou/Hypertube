@@ -111,6 +111,16 @@ const getMovies = async (input) => {
   }
 }
 
+const popularvideo = async () => {
+  try {
+    return await cloudscraper.get('https://yts.lt/api/v2/list_movies.json?sort_by=download_count&order_by=desc&limit=15');
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+
+
 app.get('/search', async (req, res) => {
   const data = await getMovies(req.query.input);
   const movies = JSON.parse(data);
@@ -124,11 +134,22 @@ app.post('/search/getimg', function (req, res) {
     }).catch(console.log);
 });
 
+
+app.post('/search/popularvideo', async (req, res) => {
+  const data = await popularvideo();
+  const movies = JSON.parse(data);
+  res.send(movies.data);
+});
+
+
 app.post('/getHashes', async (req, res) => {
   const data = await getMovies(req.body.imdb_id);
   const movies = JSON.parse(data);
   res.send(movies.data.movies[0].torrents);
 });
+
+
+
 
 app.post('/getSubt', async (req, res) => {
   const data = await getMovies(req.body.imdb_id);
