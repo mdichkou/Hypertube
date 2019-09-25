@@ -8,7 +8,10 @@ const expressLayouts = require('express-ejs-layouts');
 var app = express();
 var torrentStream = require('torrent-stream');
 var fs = require('fs');
+var download = require('download-file')
 const imdb = require('imdb-api');
+const OS = require('opensubtitles-api');
+const OpenSubtitles = new OS('TemporaryUserAgent');
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
 
@@ -27,18 +30,12 @@ app.use(function (req, res, next) {
 
 
 const opts = {
-  connections: 100,     // Max amount of peers to be connected to.
-  uploads: 10,          // Number of upload slots.
-  //tmp: '/tmp',          // Root folder for the files storage.
-  // Defaults to '/tmp' or temp folder specific to your OS.
-  // Each torrent will be placed into a separate folder under /tmp/torrent-stream/{infoHash}
-  path: './public', // Where to save the files. Overrides `tmp`.
-  verify: true,         // Verify previously stored data before starting
-  // Defaults to true
-  dht: true,            // Whether or not to use DHT to initialize the swarm.
-  // Defaults to true
-  tracker: true,        // Whether or not to use trackers from torrent file or magnet link
-  // Defaults to true
+  connections: 100,
+  uploads: 10,
+  path: './public',
+  verify: true,
+  dht: true,
+  tracker: true,
   trackers: [
     'udp://tracker.openbittorrent.com:80',
     'udp://tracker.ccc.de:80',
@@ -51,29 +48,13 @@ const opts = {
     'udp://p4p.arenabg.com:1337',
     'udp://tracker.leechers-paradise.org:6969',
   ],
-  // Allows to declare additional custom trackers to use
-  // Defaults to empty
 }
 
-// app.get('/', (req, res) => {
-//   res.render("video")
-// })
-var namemovie, yearmovie;
 
-// app.post("/torrent", (req, res) => {
-//   const {
-//     name,
-//     year
-//   } = req.body;
-//   namemovie = name;
-//   console.log(req.body)
-//   yearmovie = year;
-// });
-
-app.get('/video/:id', function (req, result) {
-  id = req.params.id;
+app.get('/video/:hash', function (req, result) {
+  hash = req.params.hash;
   const getTorrentFile = new Promise(function (resolve, reject) {
-    var engine = torrentStream('magnet:?xt=urn:btih:' + id, opts);
+    var engine = torrentStream('magnet:?xt=urn:btih:' + hash, opts);
     engine.on('ready', function () {
       engine.files.forEach(function (file, idx) {
         const ext = path.extname(file.name).slice(1);
@@ -142,6 +123,28 @@ app.post('/getHashes', async (req, res) => {
   const data = await getMovies(req.body.imdb_id);
   const movies = JSON.parse(data);
   res.send(movies.data.movies[0].torrents);
+});
+
+app.post('/getSubt', async (req, res) => {
+  const data = await getMovies(req.body.imdb_id);
+  OpenSubtitles.search({
+    imdbid: req.body.imdb_id
+  }).then(subtitles => {
+    const values = Object.values(subtitles)
+    values.forEach(subtitle => {
+      var url = subtitle.vtt;
+      var options = {
+        directory: "./client/public/subtitles/" + req.body.imdb_id,
+        filename: subtitle.lang + ".vtt"
+      }
+      if (fs.existsSync(options.directory)) {
+        console.log('already exist')
+      } else {
+        download(url, options);
+      }
+    })
+    res.send(subtitles);
+  })
 });
 
 app.use(express.static(path.join(__dirname, 'public')));

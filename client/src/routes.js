@@ -17,7 +17,7 @@ const router = new Router({
         },
         {
             name: 'stream',
-            path: '/stream/:id',
+            path: '/stream/:id/:hash',
             component: Streaming
         },
         {

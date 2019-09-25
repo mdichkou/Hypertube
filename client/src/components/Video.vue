@@ -46,7 +46,7 @@
           <div class="medium-7 column text-right">
             <div class="button" v-for="(Hash,index) in listHashes" :key="index">
               <span class="fa fa-play"></span>
-              <a :href="'/stream/'+ Hash.hash"> Watch - {{ Hash.type }} - {{ Hash.quality }} </a>
+              <a :href="'/stream/'+ id +'/'+ Hash.hash"> Watch - {{ Hash.type }} - {{ Hash.quality }} </a>
             </div>
           </div>
         </div>
