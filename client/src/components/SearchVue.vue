@@ -12,24 +12,12 @@
               @input="signalChange"
             />
           </div>
-          <b-button class="my-2 my-sm-0" type="submit">Search</b-button>
         </b-form>
       </section>
       <v-row no-gutters v-if="dataMovie">
           <div class="div-left col-lg-3 col-md-4  col-sm-12 col-12">
           <v-card class="card" >
             <v-list rounded>
-              <v-subheader>Genre</v-subheader>
-              <v-list-item-group v-model="item" color="primary">
-                <v-list-item v-for="(item, i) in items" :key="i" @click="takeValue(i)">
-                  <v-list-item-content>
-                    <v-list-item-title v-text="item.text + ' (' + item.count + ')'"></v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-
-              <hr />
-
               <v-subheader>Filtre</v-subheader>
               <v-card-text>
                 <v-row>
@@ -103,13 +91,6 @@
           <ResultSearch :data="dataMovie" :page="1" :pStart="p_start" :pEnd="p_end" />
            <div  class="text-center">
             <v-pagination
-              v-if="value === 1"
-              v-model="page_tmp"
-              :length="nbr_p_tv"
-              @input="affich_page"
-            ></v-pagination>
-            <v-pagination
-              v-if="value === 0"
               v-model="page_tmp"
               :length="nbr_p_movies"
               @input="affich_page"
@@ -136,7 +117,6 @@ export default {
     return {
       item: 0,
       selection: 1,
-      value: 0,
       items: [{ text: "Movies", count: 0 }, { text: "Tv Show", count: 0 }],
       inputData: "",
       dataMovie_all: null,
@@ -193,12 +173,6 @@ export default {
       this.p_end = this.p_start + 8;
       window.scrollTo(0, 0);
     },
-    takeValue: function(value) {
-      this.p_start = 0;
-      this.p_end = 8;
-      this.page_tmp = 1;
-      this.value = value;
-    },
     signalChange: function() {
       if (this.inputData.trim() != "") {
         axios.get("https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" + this.inputData)
@@ -225,7 +199,6 @@ export default {
     },
     load_data: function() {
       if (this.selected_val == "Standard") this.selected_val = null;
-      if (this.value == 0) {
         var Movie_tmp = this.dataMovie_all;
         if (Movie_tmp) {
           Movie_tmp = Movie_tmp.filter(word => {
@@ -240,7 +213,6 @@ export default {
           this.items[0].count = this.dataMovie.length;
           this.nbr_p_movies = Math.ceil(this.dataMovie.length / 8);
         }
-      }
     },
     getPopulerMovie() {
       axios.get("https://yts.unblocked4u.net/api/v2/list_movies.json?sort_by=download_count&order_by=desc&limit=15")

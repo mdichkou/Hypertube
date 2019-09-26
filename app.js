@@ -2,7 +2,6 @@ var express = require('express');
 const parseRange = require('range-parser');
 var path = require('path');
 var cors = require('cors');
-var cloudscraper = require('cloudscraper');
 var bodyParser = require("body-parser");
 const expressLayouts = require('express-ejs-layouts');
 var app = express();
@@ -122,11 +121,11 @@ app.post('/search/getimg', function (req, res) {
 
 
 app.post('/getSubt', async (req, res) => {
-  OpenSubtitles.search({
-    imdbid: req.body.imdb_id
-  }).then(async subtitles => {
-    if (fs.existsSync("./client/public/subtitles/" + req.body.imdb_id)) {
-    } else {
+  if (fs.existsSync("./client/public/subtitles/" + req.body.imdb_id)) {
+  } else {
+    OpenSubtitles.search({
+      imdbid: req.body.imdb_id
+    }).then(async subtitles => {
       const values = Object.values(subtitles)
       values.forEach((subtitle, index) => {
         var url = subtitle.vtt;
@@ -134,21 +133,21 @@ app.post('/getSubt', async (req, res) => {
           directory: "./client/public/subtitles/" + req.body.imdb_id,
           filename: subtitle.lang + ".vtt"
         }
-        download(url, options);
-      })
-    }
-    var transformation = [];
-    const values = Object.values(subtitles)
+        download(url, options, (err) => {
 
-    for (var i = 0; i < values.length; i++) {
-      var options = {
-        directory: "./client/public/subtitles/" + req.body.imdb_id + '/',
-        filename: values[i].lang + ".vtt"
+        });
+      })
+      var transformation = [];
+      for (var i = 0; i < values.length; i++) {
+        var options = {
+          directory: "./client/public/subtitles/" + req.body.imdb_id + '/',
+          filename: values[i].lang + ".vtt"
+        }
+        if (fs.existsSync(options.directory + options.filename)) transformation.push(values[i]);
       }
-      if (fs.existsSync(options.directory + options.filename)) transformation.push(values[i]);
-    }
-    res.send(transformation);
-  })
+      res.send(transformation);
+    })
+  }
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
