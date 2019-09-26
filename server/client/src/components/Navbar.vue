@@ -1,0 +1,53 @@
+<template>
+  <div>
+    <v-toolbar short>
+      <v-toolbar-title>
+          <v-icon class="mb-1">local_movies</v-icon>
+          <span class="grey--text">HYPER</span>
+            <span>TUBE</span>
+      </v-toolbar-title>
+
+      <div class="flex-grow-1"></div>
+
+      <v-toolbar-items>
+        <v-btn v-if="this.$route.name === 'signup' || this.$route.name === 'forgot'" to="/login" text>{{ $t('Login.login') }}</v-btn>
+        <v-btn v-if="this.$route.name === 'login'" to="/signup" text>{{ $t('Login.new') }}</v-btn>
+        <v-divider vertical inset></v-divider>
+        <v-btn text @click="ToEN">EN</v-btn>
+        <v-divider vertical inset></v-divider>
+        <v-btn text @click="ToFR">FR</v-btn>
+      </v-toolbar-items>
+
+    </v-toolbar>
+  </div>
+</template>
+
+<script>
+import i18n from '../i18n'
+
+export default {
+    data() {
+        return {
+            
+        }
+    },
+    methods: {
+      ToEN(){
+        if (this.$route.params.lang == 'fr')
+          this.$router.push({path: `/en/${this.$route.name}`})
+        i18n.locale = 'en'
+      },
+      ToFR() {
+        if (this.$route.params.lang == 'en')
+            this.$router.push({path: `/fr/${this.$route.name}`})
+        i18n.locale = 'fr'
+      },
+      // ToSignup() {
+      //   this.$router.push({path: `/${i18n.locale}/signup`})
+      // },
+      // ToLogin() {
+      //   this.$router.push({path: `/${i18n.locale}/login`})
+      // }
+    }
+}
+</script>

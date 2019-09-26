@@ -1,0 +1,231 @@
+<template>
+<v-container fill-height fluid grid-list-xl class="containers">
+    <v-layout v-if="dialog">
+        <v-card flat class="ma-auto" color="rgb(255, 0, 0, 0)">
+            <v-img :src="providerLogo" height="120px" width="120px" style="position:absolute;border-radius:50%"></v-img>
+                <v-progress-circular class="mx-auto"
+                :size="120"
+                :width="7"
+                color="blue lighten-2"
+                indeterminate
+                ></v-progress-circular>
+        </v-card>
+    </v-layout>
+    <v-layout justify-space-around wrap style="z-index:20;background-color=black" v-else>
+    <v-flex xs12>
+        <v-card max-width="450px" elevation="15" class="ma-auto" height="500px" dark style="background:rgba(0, 0, 0, 0.7);">
+            <v-toolbar flat height="50px"  style="background:rgba(0, 0, 0, 0.5);">
+            <v-icon color="white" class="mx-1">lock_open</v-icon>
+            <v-toolbar-title class="white--text">{{ $t('Login.login') }}</v-toolbar-title>
+            </v-toolbar>
+            <v-form v-model="valid" ref="form" lazy-validation class="mx-3 mt-4">
+                <v-text-field outlined class="purple-input" v-model="username" :counter="20" :rules="nameRules" label="Username" required />
+                <v-text-field outlined v-model="password" :rules="passwordRules" label="Password" :type="show1 ? 'text' : 'password'"
+                    @click:append="show1 = !show1" :append-icon="show1 ? 'visibility' : 'visibility_off'" :counter="20" required/>
+                <v-btn block :disabled="!valid || !isEmpty" @click="LoginUser" class="ma-1 font-weight-light"  color="blue lighteb-2">
+                    <span class="white--text"> {{ $t('Login.login') }} </span>
+                </v-btn>
+                <span>{{ $t('Login.with') }}</span>
+                <v-btn @click="githubLogin" icon fab>
+                    <v-avatar size="30">
+                        <v-img src="../../public/github_white.png"></v-img>
+                    </v-avatar>
+                </v-btn>
+                <v-btn @click="schoolLogin" icon fab>
+                    <v-avatar size="30">
+                        <v-img src="../../public/42_white.png"></v-img>
+                    </v-avatar>
+                </v-btn>
+                <v-btn @click="googleLogin" icon fab>
+                    <v-avatar size="30">
+                        <v-img src="../../public/google_white.png"></v-img>
+                    </v-avatar>
+                </v-btn>
+                <v-btn class="ma-1 white--text" to="forgot" color="white" absolute bottom left text>
+                    <span> {{ $t('Login.forgot') }} </span>
+                </v-btn>
+        </v-form>
+        </v-card>
+    </v-flex>
+    </v-layout>
+    <v-snackbar v-model="snackbar" :timeout="5000" color="error" right top class="mt-4">
+        <v-icon color="white">error</v-icon>
+        <span>{{ text }}</span>
+    <v-btn color="white" text  @click="snackbar = false">
+        Close
+    </v-btn>
+    </v-snackbar>
+    <v-snackbar v-model="snackbar2" :timeout="5000" color="success" right top class="mt-4">
+        <v-icon color="white">done</v-icon>
+        <span>{{ text }}</span>
+    <v-btn color="white" text  @click="snackbar2 = false">
+        Close
+    </v-btn>
+    </v-snackbar>
+</v-container>
+</template>
+
+<script>
+import Axios from 'axios'
+import i18n  from '../i18n'
+
+export default {
+    mounted() {
+        console.log(this.$route.params.provider)
+        if (this.$route.params.status == 'success')
+        {
+            this.snackbar2 = true;
+            this.text = this.$route.params.text;
+        }
+        if (this.$route.params.provider == 'github' || this.$route.params.provider == 'google')
+        {
+            this.provider = this.$route.params.provider;
+            this.dialog = true;
+            let path = this.$route.fullPath;
+            Axios.get(`http://localhost:3001${path}`)
+             .then(res => {
+                 if (res.data.status == "success")
+                 {
+                     window.localStorage.setItem('token', res.data.msg);
+                     this.$router.push({name: 'settings'})
+                 }
+                 else
+                 {
+                     if (res.data.msg == "Email or Username Already Exists")
+                    {
+                        this.dialog = false;
+                        this.$router.push({name: 'login'})
+                    }
+                    this.snackbar = true;
+                    this.text = res.data.msg;
+                 }
+                 console.log(res);
+             })
+             .catch(error => {
+                 console.log(error)
+             }) 
+        }
+        if (this.$route.params.provider == '42')
+        {
+            this.provider = '42';
+            this.dialog = true;
+            let path = this.$route.query.code;
+            var data = {
+                grant_type: 'authorization_code',
+                client_id: '6a8ef9439cdba2ee20ac0de6b9cdbe3296f0f24fe0480d0b924ecb1dfb3d7745',
+                client_secret: 'd5b672599193d4e50eda1791609611c0d0e8f488348d8235fafc138537afb04d',
+                code: path,
+                redirect_uri: 'http://localhost:8080/login/42'
+            }
+            Axios.post(`https://api.intra.42.fr/oauth/token`, data)
+             .then(res => {
+                 this.GetSchoolData(res.data.access_token)
+                 console.log(res);
+             })
+             .catch(error => {
+                 console.log(error)
+             }) 
+        }
+        //console.log(this.$route.fullPath);
+    },
+    data() {
+        return {
+            provider: 'hyper',
+            dialog: false,
+            valid: true,
+            show1: false,
+            snackbar2: false,
+            snackbar: false,
+            timeout: 5000,
+            text: '',  
+            username: '',
+            nameRules: [
+                v => !!v || 'Username is required',
+                v => (v && v.length <= 20) || 'Userame must be less than 10 characters'
+            ],
+            password: '',
+            passwordRules: [
+                v => !!v || 'Password is required',
+                v => (v && v.length <= 20) || 'Name must be less than 12 characters'
+            ],
+        }
+    },
+    
+    methods: {
+        GetSchoolData(token)
+        {
+            Axios.post('http://localhost:3001/login/42', {token: token})
+             .then(res => {
+                if (res.data.status == "success")
+                {
+                    console.log(res.data)
+                    window.localStorage.setItem('token', res.data.msg);
+                    this.$router.push({name: 'settings'})
+                }
+                else
+                {
+                    if (res.data.msg == "Email or Username Already Exists")
+                    {
+                        this.dialog = false;
+                        this.$router.push({name: 'login'})
+                    }
+                    this.snackbar = true;
+                    this.text = res.data.msg;
+                }
+                 console.log(res);
+             })
+             .catch(error => {
+                 console.log(error)
+             }) 
+        },
+        githubLogin() {
+            window.location =  "https://github.com/login/oauth/authorize?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Flogin%2Fgithub&scope=user%3Aemail&client_id=27a9974ecf7cb9a53415"
+            //window.location = "https://github.com/login/oauth/authorize?client_id=27a9974ecf7cb9a53415&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Flogin%2Fgithub&scope=user%3Aemail&response_type=code&state=DmczMSlJxoEos8UWitSsGAoPm0mIqa34sHuSLCC5"
+        },
+        googleLogin() {
+            window.location = "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Flogin%2Fgoogle&scope=profile%20email&client_id=720391957482-1jhj256krm792l7l8qb3at7jf5qv5ep4.apps.googleusercontent.com"
+        },
+        schoolLogin() {
+            window.location = "https://api.intra.42.fr/oauth/authorize?client_id=6a8ef9439cdba2ee20ac0de6b9cdbe3296f0f24fe0480d0b924ecb1dfb3d7745&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Flogin%2F42&response_type=code"
+        },
+        LoginUser() {
+            Axios.post("http://localhost:3001/login", {
+                username: this.username,
+                password: this.password
+            })
+            .then(response => {
+                if (response.data.status == "failure")
+                {
+                    this.snackbar = true;
+                    this.text = response.data.msg;
+                }
+                else if (response.data.status == "success")
+                {
+                    window.localStorage.setItem('token', response.data.Token);
+                    this.$router.push({name: 'settings'});
+                }
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        },
+        removeDiv() {
+            this.status = 0
+        }
+    },
+    computed: {
+        providerLogo()
+        {
+            return require("../../public/" + this.provider + '_white.png');
+        },
+        isEmpty() {
+            return  this.username && this.password
+        },
+        title() {
+            return this.$store.state.title
+        }
+    }
+}
+</script>
+

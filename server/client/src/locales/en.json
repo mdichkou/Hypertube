@@ -1,0 +1,24 @@
+{
+  "message": "hello i18n !!",
+  "Login": {
+    "login": "Login",
+    "forgot": "FORGOT PASSWORD ?",
+    "with": "Login with ",
+    "new": "SIGNUP",
+    "resset": "Resset password"
+  },
+  "Signup": {
+      "drag": "Drag your image",
+      "select": "Select a file",
+      "or": "OR",
+      "signup": "Signup",
+      "del": "Delete image"
+  },
+  "Settings": {
+      "update": "UPDATE PROFILE",
+      "profile": "PROFILE",
+      "settings": "SETTINGS",
+      "home": "HOME",
+      "cheeze": "Set new profile picture"
+  }
+}
