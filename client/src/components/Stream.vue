@@ -62,6 +62,7 @@
 
 <script>
 import axios from "axios";
+import i18n from '../i18n'
 import { truncate } from 'fs';
 export default {
   name: "Streaming",
@@ -99,11 +100,11 @@ export default {
   //////////////
 
 
-
+  axios.defaults.headers.common["x-auth-token"] = token;
   axios.get("http://localhost:3001/video/checkHash/" + this.hash)
       .then(res => {
         if (res.data == 'ERROR')
-          this.$router.push({name: 'home'});
+          this.$router.push({path: `${i18n.locale}/login`});
       })
       .catch(err => {
         this.$router.push({path: `${i18n.locale}/login`});
@@ -129,11 +130,11 @@ export default {
             if (resp) this.SubTitles = resp.data;
           })
           .catch(err => {
-            this.$router.push({name: 'home'});
+            this.$router.push({path: `${i18n.locale}/login`});
           });
         })
         .catch(err => {
-          this.$router.push({ name: "home" });
+          this.$router.push({path: `${i18n.locale}/login`});
         });
 
     

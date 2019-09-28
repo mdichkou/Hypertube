@@ -98,6 +98,7 @@
 
 <script>
 import axios from "axios";
+import i18n from '../i18n'
 
 export default {
   mounted() {},
@@ -116,20 +117,16 @@ export default {
         this.data = resp.data;
         if (resp.data == "ERROR") this.$router.push({ name: "home" });
         delete axios.defaults.headers.common["x-auth-token"];
-        axios
-          .get(
-            "https://api.themoviedb.org/3/find/" +
-              this.id +
-              "?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&language=en-US&external_source=imdb_id"
-          )
+        axios.get("https://api.themoviedb.org/3/find/" + this.id + "?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&language=en-US&external_source=imdb_id")
           .then(resp2 => {
-            this.bgImg =
-              "http://image.tmdb.org/t/p/w1280" +
-              resp2.data.movie_results[0].poster_path;
+            if (resp2.data.movie_results[0])
+            {
+              this.bgImg ="http://image.tmdb.org/t/p/w1280" + resp2.data.movie_results[0].poster_path;
+            }
           });
       })
       .catch(err => {
-        this.$router.push({ name: "home" });
+         this.$router.push({path: `${i18n.locale}/login`});
       });
     delete axios.defaults.headers.common["x-auth-token"];
     axios
@@ -141,7 +138,7 @@ export default {
         this.listHashes2 = resp.data.data.movies[0].torrents;
       })
       .catch(err => {
-        this.$router.push({ name: "login" });
+         this.$router.push({path: `${i18n.locale}/login`});
       });
     // add
     axios.defaults.headers.common["x-auth-token"] = token;
@@ -152,7 +149,7 @@ export default {
         this.loader = false;
       })
       .catch(err => {
-        this.$router.push({ name: "login" });
+         this.$router.push({path: `${i18n.locale}/login`});
       });
   },
 

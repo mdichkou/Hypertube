@@ -46,7 +46,7 @@ const opts = {
 }
 
 
-router.get('/checkHash/:hash', function(req, res) {
+router.get('/checkHash/:hash', auth, function(req, res) {
 	const getTorrentFile = new Promise(function (resolve, reject) {
 		var hash = req.params.hash;
 		try {
