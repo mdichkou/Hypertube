@@ -22,9 +22,9 @@
             <div class="profile-card__txt">{{userData.first_name}} {{userData.last_name}}</div>
 
             <div class="profile-card-ctr">
-              <div class="profile-card__button button--blue js-message-btn">
-                <a href="/settings">Setting</a>
-              </div>
+              <!-- <v-btn x-large class="white--text font-weight-medium subtitle-1" style="padding-left:30px;padding-right:20px;border-radius:20px;background: linear-gradient(45deg, #1da1f2, #0e71c8);" v-if="this.$route.params.id == undefined">
+                Settings
+              </v-btn> -->
               <div
                 v-on:click="seen = !seen"
                 class="profile-card__button button--blue js-message-btn"
@@ -87,9 +87,7 @@ export default {
     function isNumeric(value) {
       return /^\d+$/.test(value);
     }
-    if (
-      this.$route.params.id != undefined &&
-      isNumeric(this.$route.params.id)
+    if (this.$route.params.id != undefined && isNumeric(this.$route.params.id)
     ) {
       Axios.post("http://localhost:3001/profile/visit", {
         id: this.$route.params.id

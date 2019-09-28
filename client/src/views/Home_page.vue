@@ -10,12 +10,12 @@
               <div class="row">
                 <!--Grid column-->
                 <div class="col-md-6 white-text text-center text-md-left mt-xl-5 mb-5 wow fadeInLeft" data-wow-delay="0.3s">
-                  <h1 class="h1-responsive font-weight-bold mt-sm-5">Watch movies in unlimited access </h1>
+                  <h1 class="h1-responsive font-weight-bold mt-sm-5"> {{ $t('Landing.title') }} </h1>
                   <hr class="hr-light">
-                  <h6 class="mb-4">It only takes a minute to register for your account
+                  <h6 class="mb-4"> {{ $t('Landing.title_2') }}
                     </h6>
-                  <a href="/en/registre" class="btn btn-white">Signup now</a>
-                  <a href="/en/login" class="btn btn-outline-white">Login</a>
+                    <v-btn @click="ToSignup" large class="mr-2 font-weight-light ">{{ $t('Landing.signup') }}</v-btn>
+                    <v-btn @click="ToLogin" large outlined color="white">{{ $t('Landing.login') }}</v-btn>
                 </div>
                 <!--Grid column-->
                 <!--Grid column-->
@@ -44,10 +44,20 @@
         
 </template>
 <script>
+import i18n from '../i18n'
+
 export default {
-    
+    methods: {
+      ToSignup() {
+        this.$router.push({path: `/${i18n.locale}/signup`})
+      },
+      ToLogin() {
+        this.$router.push({path: `/${i18n.locale}/login`})
+      }
+    }
 }
 </script>
+  
 <style>
     /* Required for full background image */
 
@@ -58,13 +68,13 @@ export default {
 @media (max-width: 740px) {
 
   .view {
-    height: 1000px;
+    height: 100%;
   }
 }
 @media (min-width: 800px) and (max-width: 850px) {
  
   .view {
-    height: 600px;
+    height: 100%;
   }
 }
 

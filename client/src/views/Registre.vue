@@ -17,17 +17,20 @@
                         <v-card class="pa-2" id="uploads" v-if="isDragging != 'success'"
                         @dragenter="onDragEnter" @dragleave="onDragLeave" @drop="onDrop"
                         @dragover.prevent :color="uploadColor">
-                            <v-layout row wrap  justify-space-between>
-                                <v-flex class="mt-1" xs-4>
+                            <v-layout row wrap  justify-space-around>
+                                <v-flex class="mt-1 ml-1" hidden-xs-only md-4>
                                     <v-icon  color="white" class="mx-2 mb-1">cloud_upload</v-icon>
                                     <span class="white--text subtitle-1"> {{ $t('Signup.drag') }}</span>
                                 </v-flex>
-                                <v-flex class="mt-1" xs-4>
+                                <v-flex class="mt-1 ml-1" hidden-sm-and-up>
+                                    <v-icon  color="white" class="mx-2 mb-1">cloud_upload</v-icon>
+                                </v-flex>
+                                <v-flex class="mt-1" hidden-xs-only md-4>
                                     
                                     <span class="white--text title ml-3">{{ $t('Signup.or') }}</span>
                                 </v-flex>
 
-                                <v-flex xs-4>
+                                <v-flex md-4>
                                     <v-btn color="white" @click="imageLoad">
                                         <span class="black--text subtitle-1">{{ $t('Signup.select') }}</span>
                                         <v-icon color="black">arrow_drop_down</v-icon>
@@ -59,11 +62,11 @@
                             </v-layout>
                         </v-card>
                            
-                            <v-card class="mt-2" v-if="cardLang == 'fr'">
+                            <v-card class="mt-2" v-if="cardLang == 'fr'" style="background:rgba(0, 0, 0, 0);">
                                 <v-text-field  outlined  v-model="credentials.first_name" :counter="20" :rules="frFirstRules" label="Prénom" required/>
                                 <v-text-field outlined v-model="credentials.last_name" :counter="20" :rules="frLastRules" label="Nom de famille" required class="purple-input"/>
                                 <v-text-field outlined class="purple-input" v-model="credentials.username" :counter="20" :rules="frNameRules" label="Nom d'utilisateur" required />
-                                <v-text-field outlined v-model="credentials.email" :counter="50" :rules="frEmailRules" label="Adresse Email" required/>
+                                <v-text-field outlined v-model="credentials.email" :rules="frEmailRules" label="Adresse Email" required/>
                                 <v-text-field  outlined v-model="credentials.password" :rules="frPasswordRules" label="Mot de passe" :type="show1 ? 'text' : 'password'"
                                 @click:append="show1 = !show1" :append-icon="show1 ? 'visibility' : 'visibility_off'" :counter="20" required/>
                                 <v-btn block :disabled="!valid || !isEmpty" @click="registerUser" class="my-2 font-weight-light"  color="blue lighten-2">
@@ -71,11 +74,11 @@
                                 </v-btn>
                             </v-card>
 
-                            <v-card class="mt-2" v-else>
+                            <v-card class="mt-2" v-else style="background:rgba(0, 0, 0, 0);">
                                 <v-text-field  outlined  v-model="credentials.first_name" :counter="20" :rules="firstNameRules" label="First name" required/>
                                 <v-text-field outlined v-model="credentials.last_name" :counter="20" :rules="lastNameRules" label="Last name" required class="purple-input"/>
                                 <v-text-field outlined class="purple-input" v-model="credentials.username" :counter="20" :rules="nameRules" label="Username" required />
-                                <v-text-field outlined v-model="credentials.email" :counter="50" :rules="emailRules" label="Email Address" required/>
+                                <v-text-field outlined v-model="credentials.email" :rules="emailRules" label="Email Address" required/>
                                 <v-text-field  outlined v-model="credentials.password" :rules="passwordRules" label="Password" :type="show1 ? 'text' : 'password'"
                                 @click:append="show1 = !show1" :append-icon="show1 ? 'visibility' : 'visibility_off'" :counter="20" required/>
                                 <v-btn block :disabled="!valid || !isEmpty" @click="registerUser" class="my-2 font-weight-light"  color="blue lighten-2">
@@ -149,7 +152,7 @@ export default {
             ],
             frEmailRules: [
                 v => !!v || 'E-mail est requis',
-                v => /^(?!.{50})(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail doit être valide'
+                v => /^(?!.{254})(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail doit être valide'
             ],
             frPasswordRules: [
                 v => !!v || 'Mot de passe est requis',
@@ -169,7 +172,7 @@ export default {
             ],
             emailRules: [
                 v => (!!v || i18n.locale == 'fr') || 'E-mail is required',
-                v => /^(?!.{50})(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail must be valid',
+                v => /^(?!.{254})(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail must be valid',
             ],
             passwordRules: [
                 v => !!v || 'Password is required',
@@ -227,6 +230,7 @@ export default {
             document.getElementById('profile-upload').click();
         },
         onFileLoad(e) {
+            console.log(e);
         },
         registerUser() {
             if (this.imgData == '')
@@ -253,7 +257,7 @@ export default {
                 } 
             })
             .catch(err => {
-                this.$router.push({ name: "home" });
+                console.log(err)
             })
         },
         getImageSize(size)

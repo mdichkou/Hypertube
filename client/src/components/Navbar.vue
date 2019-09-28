@@ -2,11 +2,11 @@
   <div>
     <v-toolbar short>
       <v-toolbar-title class="toolbar">
-          <a href="/home_page" class="hyper">
-          <v-icon class="mb-1">local_movies</v-icon>
+         <v-btn @click="ToHome" class="title font-weight-light" text>
+          <v-icon >local_movies</v-icon>
           <span class="grey--text">HYPER</span>
             <span>TUBE</span>
-            </a>
+          </v-btn>
       </v-toolbar-title>
 
       <div class="flex-grow-1"></div>
@@ -37,16 +37,25 @@ export default {
       ToEN(){
         if (i18n.locale == 'fr')
         {
-          this.$router.push({path: `/en/${this.$route.name}`})
+          if (this.$route.name == 'home_page')
+              this.$router.push({path: `/en`})
+          else
+            this.$router.push({path: `/en/${this.$route.name}`})
           i18n.locale = 'en';
         }
       },
       ToFR() {
         if (i18n.locale == 'en')
         {
-          this.$router.push({path: `/fr/${this.$route.name}`})
+          if (this.$route.name == 'home_page')
+              this.$router.push({path: `/fr`})
+          else
+              this.$router.push({path: `/fr/${this.$route.name}`})
           i18n.locale = 'fr'
         }
+      },
+      ToHome() {
+       this.$router.push({path: `/${i18n.locale}`})
       },
       ToSignup() {
         this.$router.push({path: `/${i18n.locale}/signup`})

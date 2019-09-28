@@ -254,13 +254,21 @@ export default {
  
 }
 .card{
-   padding: 0 !important;
    /* margin-right: 5px; */
    margin-top: 20px;
   transform: perspective(800px);
   transform-style: preserve-3d;
   cursor: pointer;
+  background: rgba(0, 0, 0, 0.7) !important
 }
+.card *{
+  color: white !important
+}
+
+.v-menu__content *{
+  color: white !important
+}
+
 .div-left{
     float:left;
     padding-left:10px;

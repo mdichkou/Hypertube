@@ -108,6 +108,21 @@ export default {
 .name {
   font-family: "Orbitron";
 }
+
+.v-list{
+ background: rgba(0, 0, 0, 0.7) !important;
+}
+
+.card{
+ border: none !important;
+}
+.card-content{
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+.v-card__title{
+ color: #fff !important;
+}
+
 .card-content .card-content-overlay {
   background: rgba(0, 0, 0, 0.7);
   position: absolute;

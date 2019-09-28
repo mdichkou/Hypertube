@@ -107,7 +107,7 @@ export default {
                  if (res.data.status == "success")
                  {
                      window.localStorage.setItem('token', res.data.msg);
-                     this.$router.push({name: 'settings'})
+                     this.$router.push({name: 'home'})
                  }
                  else
                  {
@@ -121,7 +121,7 @@ export default {
                  }
              })
              .catch(error => {
-                 this.$router.push({ name: "home" });
+                 this.$router.push({ name: "login" });
              }) 
         }
         if (this.$route.params.provider == '42')
@@ -141,7 +141,7 @@ export default {
                  this.GetSchoolData(res.data.access_token)
              })
              .catch(error => {
-                 this.$router.push({ name: "home" });
+                 this.$router.push({ name: "login" });
              }) 
         }
     },
@@ -176,7 +176,7 @@ export default {
                 if (res.data.status == "success")
                 {
                     window.localStorage.setItem('token', res.data.msg);
-                    this.$router.push({name: 'settings'})
+                    this.$router.push({name: 'home'})
                 }
                 else
                 {
@@ -190,7 +190,7 @@ export default {
                 }
              })
              .catch(error => {
-                 this.$router.push({ name: "home" });
+                 this.$router.push({ name: "login" });
              }) 
         },
         githubLogin() {
@@ -217,11 +217,11 @@ export default {
                 else if (response.data.status == "success")
                 {
                     window.localStorage.setItem('token', response.data.Token);
-                    this.$router.push({name: 'settings'});
+                    this.$router.push({name: 'home'});
                 }
             })
             .catch(error => {
-                this.$router.push({ name: "home" });
+                this.$router.push({ name: "login" });
             })
         },
         removeDiv() {

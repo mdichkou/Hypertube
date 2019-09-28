@@ -41,5 +41,19 @@
     "Home": {
         "rating": "Évaluation IMDB:",
         "year": "Année de production:"
+    },
+    "Landing": {
+        "title": "Regarder des films en accès illimité ",
+        "title_2": "Cela ne prend qu'une minute pour vous inscrire à votre compte",
+        "signup": "S'inscrire maintenant",
+        "login": "S'identifier"
+    },
+    "Video": {
+        "prody": "Année de production :",
+        "dur": "Durée :",
+        "prod": "Production :",
+        "direct": "Réalisateur :",
+        "write": "Écrivains :",
+        "stars": "Acteurs :"
     }
 }

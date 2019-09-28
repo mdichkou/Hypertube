@@ -42,7 +42,7 @@
               />
             </v-flex>
 
-            <v-flex xs12 md5>
+            <v-flex class="z7am" xs12 md5>
               <v-text-field
                 class="ma-0 pa-0"
                 :rules="nameRules"
@@ -52,7 +52,7 @@
                 required
               />
             </v-flex>
-            <v-flex xs12 md5>
+            <v-flex class="z7am" xs12 md5>
               <v-text-field
                 class="ma-0 pa-0"
                 v-model="userData.email"
@@ -62,7 +62,7 @@
               />
             </v-flex>
 
-            <v-flex xs12 md5>
+            <v-flex class="z7am" xs12 md5>
               <v-text-field
                 class="ma-0 pa-0"
                 v-model="userData.first_name"
@@ -72,7 +72,7 @@
                 required
               />
             </v-flex>
-            <v-flex xs12 md5>
+            <v-flex class="z7am" xs12 md5>
               <v-text-field
                 class="ma-0 pa-0"
                 v-model="userData.last_name"
@@ -82,7 +82,7 @@
                 required
               />
             </v-flex>
-            <v-flex xs12 md10 v-if="outsource === false">
+            <v-flex class="z7am" xs12 md10 v-if="outsource === false">
               <v-text-field
                 class="ma-0 pa-0"
                 :label="password"
@@ -94,7 +94,7 @@
                 required
               />
             </v-flex>
-            <v-flex xs12 text-xs-right>
+            <v-flex class="z7am" xs12 text-xs-right>
               <v-btn
                 block
                 :disabled="!valid"
@@ -312,6 +312,10 @@ export default {
 </script>
 
 <style>
+ .z7am{
+     margin-top: 35px;
+ }
+
 .avatar:hover {
   cursor: pointer;
   opacity: 0.9;

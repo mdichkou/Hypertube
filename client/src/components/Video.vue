@@ -34,27 +34,27 @@
                 {{data.rating}}
               </span>
               <span class="sub-left">
-                <b>Production year:</b>
+                <b>{{ $t("Video.prody") }}</b>
                 {{data.year}}
               </span>
               <span class="sub-left">
-                <b>Duration:</b>
+                <b>{{ $t("Video.dur") }}</b>
                 : {{data.runtime}}
               </span>
               <span v-if="data.production != 'N/A'" class="sub-left">
-                <b>Production:</b>
+                <b>{{ $t("Video.prod") }}</b>
                 {{data.production}}
               </span>
               <span class="sub-left">
-                <b>Director:</b>
+                <b>{{ $t("Video.direct") }}</b>
                 {{data.director}}
               </span>
               <span class="sub-left">
-                <b>Writers:</b>
+                <b>{{ $t("Video.write") }}</b>
                 {{data.writer}}
               </span>
               <span class="sub-left">
-                <b>Stars:</b>
+                <b>{{ $t("Video.stars") }}</b>
                 {{data.actors}}
               </span>
               <div class="break"></div>

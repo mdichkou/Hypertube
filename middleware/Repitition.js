@@ -6,7 +6,7 @@ var methods = {
         return new Promise((resolve, reject) => {
             let regex = new RegExp(/^[a-zA-Z]{3,20}$/i);
             let userRegex = new RegExp(/^[a-zA-Z0-9]{3,20}$/i);
-            let mailRegex = new RegExp(/^(?!.{50})(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+            let mailRegex = new RegExp(/^(?!.{254})(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
             let passRegex = new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{5,20}$/)
 
             if (!(regex.test(first_name)))

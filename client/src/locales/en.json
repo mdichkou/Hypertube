@@ -44,5 +44,19 @@
   "Home": {
       "rating": "IMDB évaluation:",
       "year": "Production year:"
-  }
+  },
+  "Landing": {
+    "title": "Watch movies in unlimited access ",
+    "title_2": "It only takes a minute to register for your account",
+    "signup": "Signup now",
+    "login": "Login"
+  },
+  "Video": {
+    "prody": "Production year :",
+    "dur": "Duration :",
+    "prod": "Production :",
+    "direct": "Director :",
+    "write": "Writers :",
+    "stars": "Stars :"
+}
 }
