@@ -1,6 +1,5 @@
 node_modules
+client/node_modules
 .DS_Store
-server/storage
-server/torrent-stream
-server/torrent-stream
 client/public/subtitles
+./public
