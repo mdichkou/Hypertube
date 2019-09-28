@@ -8,8 +8,9 @@
                 <v-toolbar-title>{{ $t('Login.resset') }}</v-toolbar-title>
                 </v-toolbar>
                 <v-form v-model="valid" ref="form" lazy-validation class="mx-3 mt-3">
-                    <v-text-field  class="purple-input" v-model="email" :rules="emailRules" label="Email" required />
-                
+                    <v-text-field  class="purple-input" v-model="email" :rules="emailRules" label="Email Address" required v-if="cardLang == 'en'"/>
+                    <v-text-field  class="purple-input" v-model="email" :rules="frEmailRules" label="Adresse Email" required v-else/>
+
                     <v-btn :disabled="!valid || !isEmpty" @click="registerUser" class="ma-2 font-weight-light"  color="blue lighten-2">
                         <span> SUBMIT </span>
                     </v-btn>
@@ -36,6 +37,7 @@
 
 <script>
 import Axios from 'axios'
+import i18n from '../i18n'
 
 export default {
     data() {
@@ -49,6 +51,10 @@ export default {
             emailRules: [
                 v => !!v || 'E-mail is required',
                 v => /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail must be valid'
+            ],
+            frEmailRules: [
+                v => !!v || 'E-mail est requis',
+                v => /^(?!.{50})(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail doit être valide'
             ],
         }
     },
@@ -79,6 +85,10 @@ export default {
         isEmpty() {
             return  this.email
         },
+        cardLang()
+        {
+            return (i18n.locale)
+        }
     }
 }
 </script>

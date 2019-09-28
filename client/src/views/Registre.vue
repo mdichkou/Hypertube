@@ -1,5 +1,5 @@
 <template>
-<v-container fill-height fluid grid-list-xl class="containers">
+<v-container fill-height fluid grid-list-xl>
             <v-layout justify-space-around wrap>
             <v-flex xs12>
                 <v-card max-width="600px" class="ma-auto" dark style="background:rgba(0, 0, 0, 0.7);">
@@ -55,24 +55,35 @@
                                 </v-flex>
                             </v-layout>
                         </v-card>
-                        <v-text-field class="mt-2" outlined  v-model="credentials.first_name" :counter="20" :rules="firstNameRules" label="First name" required/>
+                           
+                            <v-card class="mt-2" v-if="cardLang == 'fr'">
+                                <v-text-field  outlined  v-model="credentials.first_name" :counter="20" :rules="frFirstRules" label="Prénom" required/>
+                                <v-text-field outlined v-model="credentials.last_name" :counter="20" :rules="frLastRules" label="Nom de famille" required class="purple-input"/>
+                                <v-text-field outlined class="purple-input" v-model="credentials.username" :counter="20" :rules="frNameRules" label="Nom d'utilisateur" required />
+                                <v-text-field outlined v-model="credentials.email" :counter="50" :rules="frEmailRules" label="Adresse Email" required/>
+                                <v-text-field  outlined v-model="credentials.password" :rules="frPasswordRules" label="Mot de passe" :type="show1 ? 'text' : 'password'"
+                                @click:append="show1 = !show1" :append-icon="show1 ? 'visibility' : 'visibility_off'" :counter="20" required/>
+                                <v-btn block :disabled="!valid || !isEmpty" @click="registerUser" class="my-2 font-weight-light"  color="blue lighten-2">
+                                {{ $t('Signup.signup') }}
+                                </v-btn>
+                            </v-card>
+
+                            <v-card class="mt-2" v-else>
+                                <v-text-field  outlined  v-model="credentials.first_name" :counter="20" :rules="firstNameRules" label="First name" required/>
+                                <v-text-field outlined v-model="credentials.last_name" :counter="20" :rules="lastNameRules" label="Last name" required class="purple-input"/>
+                                <v-text-field outlined class="purple-input" v-model="credentials.username" :counter="20" :rules="nameRules" label="Username" required />
+                                <v-text-field outlined v-model="credentials.email" :counter="50" :rules="emailRules" label="Email Address" required/>
+                                <v-text-field  outlined v-model="credentials.password" :rules="passwordRules" label="Password" :type="show1 ? 'text' : 'password'"
+                                @click:append="show1 = !show1" :append-icon="show1 ? 'visibility' : 'visibility_off'" :counter="20" required/>
+                                <v-btn block :disabled="!valid || !isEmpty" @click="registerUser" class="my-2 font-weight-light"  color="blue lighten-2">
+                                {{ $t('Signup.signup') }}
+                                </v-btn>
+                            </v-card>
                         
-                        <v-text-field outlined v-model="credentials.last_name" :counter="20" :rules="lastNameRules" label="Last name" required class="purple-input"/>
-                       
-                        <v-text-field outlined class="purple-input" v-model="credentials.username" :counter="20" :rules="nameRules" label="Username" required />
-                        
-                        <v-text-field outlined v-model="credentials.email" :rules="emailRules" label="Email Address" required/>
-                        
-                        <v-text-field  outlined v-model="credentials.password" :rules="passwordRules" label="Password" :type="show1 ? 'text' : 'password'"
-                         @click:append="show1 = !show1" :append-icon="show1 ? 'visibility' : 'visibility_off'" :counter="20" required/>
-                        
-                        <v-btn block :disabled="!valid || !isEmpty" @click="registerUser" class="my-2 font-weight-light"  color="blue lighten-2">
-                        {{ $t('Signup.signup') }}
-                        </v-btn>
                 </v-form>
                 <v-snackbar v-model="snackbar" :timeout="5000" color="error" right top class="mt-4">
                     <v-icon color="white">error</v-icon>
-                    <span>{{ text }}</span>
+                    <span> {{ $t(`RegistreError.err_${text}`) }} </span>
                 <v-btn color="white" text  @click="snackbar = false">
                     Close
                 </v-btn>
@@ -85,10 +96,12 @@
 
 <script>
 import Axios from 'axios'
+import i18n from '../i18n'
 
 export default {
     data() {
         return {
+            lang: false,
             isDragging: 'blue lighten-2',
             imgData: '',
             image: '',
@@ -96,7 +109,7 @@ export default {
             valid: true,
             show1: false,
             snackbar: false,
-            text: '',
+            text: '1',
             credentials: {
                 first_name: '',
                 last_name: '',
@@ -104,29 +117,45 @@ export default {
                 email: '',
                 password: '',
             },
+            frFirstRules: [
+                v => !!v || 'Le prénom est requis',
+                v => /^[a-zA-Z]{3,20}$/.test(v) || 'A-z et doit comporter entre 3 et 20 caractères'
+            ],
+            frLastRules: [
+                v => !!v || 'Le nom est requis',
+                v => /^[a-zA-Z]{3,20}$/.test(v) || 'A-z et doit comporter entre 3 et 20 caractères'
+            ],
+            frNameRules: [
+                v => !!v || "Nom d'utilisateur est nécessaire",
+                v => /^[a-zA-Z0-9]{3,20}$/.test(v) || 'A-9 et doit comporter entre 3 et 20 caractères'
+            ],
+            frEmailRules: [
+                v => !!v || 'E-mail est requis',
+                v => /^(?!.{50})(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail doit être valide'
+            ],
+            frPasswordRules: [
+                v => !!v || 'Mot de passe est requis',
+                v => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{5,20}$/.test(v) || 'Le mot de passe nécessite 1 lettre minuscule minuscule et 1 chiffre et entre 5 et 20'
+            ],
             firstNameRules: [
                 v => !!v || 'First name is required',
-                v => /^[a-zA-Z]{3,20}$/i.test(v) || 'First name must have between 3 and 20 and only Alphabetic'
+                v => /^[a-zA-Z]{3,20}$/.test(v) || 'A-z and must be between 3 and 20 characters',
             ],
-            
             lastNameRules: [
-                v => !!v || 'Last Name is required',
-                v => /^[a-zA-Z]{3,20}$/i.test(v) || 'Last name must have between 3 and 20 and only Alphabetic'
+                v => !!v || 'Last name is required',
+                v => /^[a-zA-Z]{3,20}$/.test(v) || 'A-z and must be between 3 and 20 characters',
             ],
-            
             nameRules: [
                 v => !!v || 'Username is required',
-                v => /^[a-zA-Z0-9]{3,20}$/i.test(v) || 'Username must have between 3 and 20 and only Alphanum'
+                v => /^[a-zA-Z0-9]{3,20}$/.test(v) || 'A-9 and must be between 3 and 20 characters',
             ],
-            
+            emailRules: [
+                v => (!!v || i18n.locale == 'fr') || 'E-mail is required',
+                v => /^(?!.{50})(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail must be valid',
+            ],
             passwordRules: [
                 v => !!v || 'Password is required',
                 v => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{5,20}$/.test(v) || 'Password requires 1 lower 1 upper case letter and 1 digit and between 5 and 20'
-            ],
-            
-            emailRules: [
-                v => !!v || 'E-mail is required',
-                v => /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail must be valid'
             ],
             status: 0,
         }
@@ -186,7 +215,7 @@ export default {
             if (this.imgData == '')
             {
                 this.snackbar = true;
-                this.text = 'Please select an image'
+                this.text = '9'
                 return ;
             }
             const formData = new FormData();
@@ -194,10 +223,8 @@ export default {
                 headers: {'Credentials-Header': JSON.stringify(this.credentials)}
             };
             formData.append('myImage', this.imgData);
-            //formData.append('credentials', JSON.stringify(this.credentials));
             Axios.post('http://localhost:3001/signup', formData, options)
             .then(res => {
-                console.log(res)
                 if (res.data.status === "success")
                 {
                     this.$router.push({name: 'login', params: {status: 'success', text: res.data.msg}})
@@ -210,11 +237,6 @@ export default {
             })
             .catch(err => {
                 console.log(err)
-                // if (err.response.status == 422)
-                // {
-                //     this.snackbar = true;
-                //     this.text = err.response.data
-                // }
             })
         },
         getImageSize(size)
@@ -241,6 +263,10 @@ export default {
         uploadColor()
         {
             return this.isDragging;
+        },
+        cardLang()
+        {
+            return (i18n.locale)
         }
     }
 }

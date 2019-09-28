@@ -36,7 +36,8 @@ function    checkFileType(file, cb){
     if (mimetype && extname)
         return cb(null, true);
     else
-        return cb(file.originalname + " isn't an image");
+        return("8")
+        // return cb(file.originalname + " isn't an image");
 }
 
 function UploadImage(req, res)
@@ -53,7 +54,7 @@ function UploadImage(req, res)
             else
             {
                 if (req.file == undefined)
-                    reject("No File Selected");
+                    reject("9");
                 else
                     resolve('images/'+fileName)
             }

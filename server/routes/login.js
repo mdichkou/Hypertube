@@ -5,14 +5,13 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios')
 const passport = require('passport')
 const Repitition = require('../middleware/Repitition')
-let   error = 0;
 
 
 function    usernameExists(username) {
     return new Promise((resolve, reject) => {
         db.query('SELECT * FROM users WHERE username = ?',[username], function (error, results, fields) {
             if (results.length == 1) resolve("username Success") 
-            else reject("Wrong Username")
+            else reject("1")
         })
     })
 }
@@ -21,7 +20,7 @@ function    correctPassword(username, password) {
     return new Promise((resolve, reject) => {
         db.query('SELECT password FROM users WHERE username = ?', [username], function (error, results, fields) {
             if (bcrypt.compareSync(password, results[0].password)) resolve("password Success") 
-            else reject("Wrong Password")
+            else reject("2")
         })
     })
 }
@@ -31,7 +30,7 @@ function   isMailVerif(username, req) {
         db.query('SELECT * FROM `users` WHERE username = ?',[username], function (error, results, fields){
             if (results[0].email_verified == 1){
                 resolve(jwt.sign({ id: results[0].id}, 'jwtPrivateKey'));
-            } else reject("Mail is not verified")
+            } else reject("3")
         })
     })
 }
@@ -51,7 +50,6 @@ router.post('/42', (req, res) => {
     let options = {
         headers: {'Authorization': 'Bearer ' + req.body.token}
     };
-   // console.log(req.body.token)
     axios.get("https://api.intra.42.fr/v2/me", options)
     .then(Response => {
         let user = Response.data;

@@ -20,6 +20,16 @@ router.get('/', auth, (req, res) => {
     })
 })
 
+router.post('/switchLang', auth, (req, res) => {
+    const query = "UPDATE users SET lang = ? WHERE id = ?"
+    db.query(query, [req.body.lang ,req.id], (error, results) => {
+        if (results)
+            res.send({status: "success", msg: "done"})
+        else if (error)
+            res.send({status: "failure", msg: error.message})
+    })
+})
+
 router.post('/visit', auth, (req, res) => {
     const query = "SELECT * FROM users WHERE id = ?"
     db.query(query, [req.body.id], (error, results) => {
@@ -39,9 +49,8 @@ router.post('/visit', auth, (req, res) => {
 })
 
 router.post('/searchUser', auth, (req, res) => {
-    //console.log(req.body.search)
-    const query = "SELECT id, username, avatar FROM users WHERE username LIKE '%" + req.body.search + "%' LIMIT 5"
-    db.query(query, [], (error, results) => {
+    const query = "SELECT id, username, avatar FROM users WHERE username LIKE '%" + req.body.search + "%' AND id != ? LIMIT 5"
+    db.query(query, [req.id], (error, results) => {
         if (results.length == 0)
             res.send({status: "success", users: "No Users Found"})
         else if (results.length > 0)

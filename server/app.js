@@ -17,6 +17,11 @@ const jwt = require('jsonwebtoken');
 const app = express()
 const port = process.env.PORT || 3001
 
+app.use(express.static(__dirname + '/public'));
+app.set('views', __dirname + '/public');
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
+
 app.use(express.json())
 app.use(bodyParser.json())
 app.use(passport.initialize());
@@ -93,6 +98,9 @@ app.use('/login', login);
 app.use('/forgot', forgot);
 app.use('/settings', settings);
 app.use('/profile', profile);
+app.get('*', (req, res) => {
+	res.render('404.html')
+})
 
 app.listen(port, function() {
 	console.log('Example app listening on port ' + port);

@@ -21,12 +21,14 @@ router.get('/', auth, (req, res) => {
             if (isNumeric(results[0].password))
                 pass = '1';
             let user = {
+                id: results[0].id,
                 username: results[0].username,
                 first_name: results[0].first_name,
                 last_name: results[0].last_name,
                 email:results[0].email,
                 avatar: results[0].avatar,
                 password: pass,
+                lang: results[0].lang
             }
             res.send(user)
         }
@@ -138,7 +140,7 @@ function userUpdate_2(first_name, last_name, username,email, id)
         const query = "UPDATE users SET first_name = ?, last_name = ?, username = ?, email = ? WHERE id = ?"
         db.query(query, [first_name, last_name, username,email, id], (error, results) => {
             if (results)
-                resolve("Data Updated successfully")
+                resolve("1")
             else
                 reject("updateQuery didn't deliver")
         })
@@ -153,13 +155,13 @@ function CheckData_2(first_name, last_name, username, email)
         let mailRegex = new RegExp(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
 
         if (!(regex.test(first_name)))
-            reject("First name must have between 3 and 20 and only Alphabetic")
+            reject("1")
         else if (!(regex.test(last_name)))
-            reject("last name must have between 3 and 20 and only Alphabetic")
+            reject("2")
         else if (!(userRegex.test(username)))
-            reject("Username must have between 3 and 20 and only Alphanum")
+            reject("3")
         else if (!(mailRegex.test(email)))
-            reject("Email is not Valid")
+            reject("4")
         else
         resolve("data_clear")
     })

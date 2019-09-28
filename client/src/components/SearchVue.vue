@@ -4,10 +4,17 @@
       <section class="col-sm-12 pt-3 px-0">
         <b-form inline class="d-flex justify-content-center">
           <div class="col-md-6 col-8 pl-0">
-            <b-input
+            <b-input v-if="cardLang == 'fr'"
               class="w-100 mr-sm-2"
               type="text"
-              placeholder="Enter Search Term"
+              :placeholder="this.fr"
+              v-model="inputData"
+              @input="signalChange"
+            />
+            <b-input v-else
+              class="w-100 mr-sm-2"
+              type="text"
+              :placeholder="this.en"
               v-model="inputData"
               @input="signalChange"
             />
@@ -22,7 +29,7 @@
               <v-card-text>
                 <v-row>
                   <v-col class="pr-4 pt-0">
-                    <p style="color:black">Imdb rating:</p>
+                    <p style="color:black">{{ $t("Home.rating") }}</p>
                     <v-slider
                       v-model="slider"
                       @input="load_data"
@@ -47,7 +54,7 @@
                 </v-row>
                 <v-row>
                   <v-col class="pr-4 pt-0">
-                    <p style="color:black">Production year:</p>
+                    <p style="color:black"> {{ $t("Home.year") }} </p>
                     <v-slider
                       v-model="slider2"
                       @input="load_data"
@@ -79,6 +86,8 @@
                         @change="load_data"
                         :items="genre_list"
                         label="Standard"
+                        :item-text="cardLang"
+                        item-value="value"
                       ></v-select>
                     </v-col>
                   </v-col>
@@ -105,6 +114,7 @@
 <script>
 import axios from "axios";
 import ResultSearch from "./ResultSearch";
+import i18n from '../i18n'
 
 const sortJsonArray = require("sort-json-array");
 
@@ -115,6 +125,8 @@ export default {
   },
   data() {
     return {
+      en: 'Enter Movie Name',
+      fr: 'Entrez le nom du film',
       item: 0,
       selection: 1,
       items: [{ text: "Movies", count: 0 }, { text: "Tv Show", count: 0 }],
@@ -135,31 +147,31 @@ export default {
       slider: 0,
       slider2: 0,
       genre_list: [
-        "Standard",
-        "Action",
-        "Adventure",
-        "Animation",
-        "Biography",
-        "Comedy",
-        "Crime",
-        "Documentary",
-        "Drama",
-        "Family",
-        "Fantasy",
-        "Film Noir",
-        "History",
-        "Horror",
-        "Music",
-        "Mystery",
-        "Musical",
-        "Romance",
-        "Sci-Fi",
-        "Short Film",
-        "Sport",
-        "Superhero",
-        "Thriller",
-        "War",
-        "Western"
+        {value: "Standard", en: "Standard", fr: "Standard"},
+        {value: "Action",   en: "Action", fr: "Action"},
+        {value: "Adventure", en: "Adventure", fr:  "Aventure"},
+        {value: "Animation", en: "Animation", fr: "Animation"},
+        {value: "Biography", en: "Biography", fr: "Biographie"},
+        {value: "Comedy", en: "Comedy", fr: "Comédie"},
+        {value: "Crime", en: "Crime", fr: "Criminalité"},
+        {value: "Documentary", en: "Documentary", fr: "Criminalité"},
+        {value: "Drama", en: "Drama", fr: "Drame"},
+        {value: "Family", en: "Family", fr: "Famille"},
+        {value: "Fantasy", en: "Fantasy", fr: "Fantaisie"},
+        {value: "Film Noir", en: "Dark movie", fr: "Film Noir"},
+        {value: "History", en: "History", fr: "Histoire"},
+        {value: "Horror", en: "Horror", fr: "Horreur"},
+        {value: "Music", en: "Music", fr: "Musique"},
+        {value: "Mystery", en: "Mystery", fr: "Mystére"},
+        {value: "Musical", en: "Musical", fr: "Musicale"},
+        {value: "Romance", en: "Romance", fr:  "Romance"},
+        {value: "Sci-Fi", en: "Sci-Fi", fr: "Science-fiction"},
+        {value: "Short Film", en: "Short Film", fr: "Court métrage"},
+        {value: "Sport", en: "Sport", fr: "Sport"},
+        {value: "Superhero", en: "Superhero", fr: "Super héros"},
+        {value: "Thriller", en: "Thriller", fr: "Thriller"},
+        {value: "War", en: "War", fr: "Guerre"},
+        {value: "Western", en: "Western", fr: "Occidentale"}
       ],
       selected_val: null
     };
@@ -225,17 +237,23 @@ export default {
         this.signalChange();
       });
     }
+  },
+  computed: {
+      cardLang()
+      {
+          return (i18n.locale)
+      }
   }
 };
 </script>
 <style>
 .container{
   
-  max-width: 1700px;
+  max-width: 1700px !important;
  
 }
 .card{
-   padding: 0;
+   padding: 0 !important;
    /* margin-right: 5px; */
    margin-top: 20px;
   transform: perspective(800px);

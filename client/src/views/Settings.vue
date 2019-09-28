@@ -23,20 +23,20 @@
                         </v-flex>
 
                         <v-flex xs12 md5>
-                            <v-text-field class="ma-0 pa-0" :rules="nameRules" v-model="userData.username" :counter="20" label="Username" required />
+                            <v-text-field class="ma-0 pa-0" :rules="nameRules" v-model="userData.username" :counter="20" :label="username" required />
                         </v-flex>
                         <v-flex xs12 md5>
-                            <v-text-field class="ma-0 pa-0" v-model="userData.email" :rules="emailRules" label="Email Address" required/>
+                            <v-text-field class="ma-0 pa-0" v-model="userData.email" :rules="emailRules" :label="Email" required/>
                         </v-flex>
                         
                         <v-flex xs12 md5>
-                            <v-text-field class="ma-0 pa-0" v-model="userData.first_name" :counter="20" :rules="firstNameRules" label="First name" required/>
+                            <v-text-field class="ma-0 pa-0" v-model="userData.first_name" :counter="20" :rules="firstNameRules" :label="FirstName" required/>
                         </v-flex>
                         <v-flex xs12 md5>
-                            <v-text-field class="ma-0 pa-0" v-model="userData.last_name" :counter="20" :rules="lastNameRules" label="Last name" required/>
+                            <v-text-field class="ma-0 pa-0" v-model="userData.last_name" :counter="20" :rules="lastNameRules" :label="LastName" required/>
                         </v-flex>
                         <v-flex xs12 md10 v-if="outsource === false">
-                            <v-text-field class="ma-0 pa-0" label="Password" v-model="userData.password" :type="show ? 'text' : 'password'"
+                            <v-text-field class="ma-0 pa-0" :label="password" v-model="userData.password" :type="show ? 'text' : 'password'"
                               @click:append="show = !show" :append-icon="show ? 'visibility' : 'visibility_off'" :counter="20" required/>
                         </v-flex>
                         <v-flex xs12 text-xs-right>
@@ -51,14 +51,14 @@
     </v-layout>
         <v-snackbar v-model="snackbar" :timeout="5000" color="error" right top class="mt-4">
                 <v-icon color="white">error</v-icon>
-                <span>{{ text }}</span>
+                <span> {{ $t(`RegistreError.err_${text}`) }} </span>
             <v-btn color="white" text  @click="snackbar = false">
                 Close
             </v-btn>
             </v-snackbar>
             <v-snackbar v-model="snackbar2" :timeout="5000" color="success" right top class="mt-4">
                 <v-icon color="white">done</v-icon>
-                <span>{{ text }}</span>
+                <span> {{ $t(`RegistreError.success`) }} </span>
             <v-btn color="white" text  @click="snackbar2 = false">
                 Close
             </v-btn>
@@ -101,7 +101,7 @@ export default {
             snackbar: false,
             snackbar2: false,
             valid: true,
-            text: '',
+            text: 1,
             outsource: false,
             userData: {
                 first_name: '',
@@ -117,20 +117,28 @@ export default {
             image: '',
             image2: '',
             firstNameRules: [
-                v => !!v || 'First name is required',
-                v => /^[a-zA-Z]{3,20}$/.test(v) || 'A-z and must be between 3 and 20 characters'
+                v => (!!v || i18n.locale == 'fr') || 'First name is required',
+                v => !!v || 'Le prénom est requis',
+                v => (/^[a-zA-Z]{3,20}$/.test(v) || i18n.locale == 'fr') || 'A-z and must be between 3 and 20 characters',
+                v => /^[a-zA-Z]{3,20}$/.test(v) || 'A-z et doit comporter entre 3 et 20 caractères'
             ],
             lastNameRules: [
-                v => !!v || 'Last name is required',
-                v => /^[a-zA-Z]{3,20}$/.test(v) || 'A-z and must be between 3 and 20 characters'
+                v => (!!v || i18n.locale == 'fr') || 'Last name is required',
+                v => !!v || 'Le nom est requis',
+                v => (/^[a-zA-Z]{3,20}$/.test(v) || i18n.locale == 'fr') || 'A-z and must be between 3 and 20 characters',
+                v => /^[a-zA-Z]{3,20}$/.test(v) || 'A-z et doit comporter entre 3 et 20 caractères'
             ],
             nameRules: [
-                v => !!v || 'Username is required',
-                v => /^[a-zA-Z0-9]{3,20}$/.test(v) || 'A-9 and must be between 3 and 20 characters'
+                v => (!!v || i18n.locale == 'fr') || 'Username is required',
+                v => !!v || "Nom d'utilisateur est nécessaire",
+                v => (/^[a-zA-Z0-9]{3,20}$/.test(v) || i18n.locale == 'fr') || 'A-9 and must be between 3 and 20 characters',
+                v => /^[a-zA-Z0-9]{3,20}$/.test(v) || 'A-9 et doit comporter entre 3 et 20 caractères'
             ],
             emailRules: [
-                v => !!v || 'E-mail is required',
-                v => /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail must be valid'
+                v => (!!v || i18n.locale == 'fr') || 'E-mail is required',
+                v => !!v || 'E-mail est requis',
+                v => (/^(?!.{50})(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || i18n.locale == 'fr') || 'E-mail must be valid',
+                v => /^(?!.{50})(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail doit être valide'
             ],
         }
     },
@@ -220,6 +228,41 @@ export default {
         }
     },
     computed: {
+        username()
+        {
+            if (i18n.locale == 'fr')
+                return "Nom d'utilisateur"
+            else
+                return "Username"
+        },
+        FirstName()
+        {
+            if (i18n.locale == 'fr')
+                return "Prénom"
+            else
+                return "First name"
+        },
+        LastName()
+        {
+            if (i18n.locale == 'fr')
+                return "Nom de famille"
+            else
+                return "Last name"
+        },
+        Email()
+        {
+            if (i18n.locale == 'fr')
+                return "Adresse Email"
+            else
+                return "Email Address"
+        },
+        password()
+        {
+            if (i18n.locale == 'fr')
+                return "Mot de passe"
+            else
+                return "Password"
+        }
     }
 
 }

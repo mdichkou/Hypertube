@@ -1,11 +1,9 @@
 <template>
   <v-row>
       <v-card v-for="(movie,index) in data.slice(pStart, pEnd)" :key="index"  :loading="loading" class="card-content  card card-right col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
-        <div class="image">
            <v-img  class="card-img-top" v-if="movie.large_cover_image"  :src="movie.large_cover_image"></v-img>
         <v-img   class="card-img-top" v-else  :src="defImage"></v-img>
          <div class="card-content-overlay"></div>
-        </div>
        
 
         <v-card-title >{{movie.title}}</v-card-title>

@@ -9,6 +9,7 @@ import Profile from './views/Profile.vue'
 import Video from './components/Video'
 import SearchVue from './components/SearchVue'
 import Streaming from './components/Stream'
+import NOT from './components/404'
 import i18n from './i18n'
 
 Vue.use(Router)
@@ -18,9 +19,9 @@ const router = new Router({
   base: process.env.BASE_URL,
   routes: [
         {
-            name: 'home',
-            path: '/home',
-            component: SearchVue
+          name: 'home',
+          path: '/home',
+          component: SearchVue
         },
         {
             name: 'stream',
@@ -33,24 +34,9 @@ const router = new Router({
             component: Video
         },
         {
-          path: '/signup',
-          name: 'signup', 
-          component: Registre
-        },
-        {
-          path: '/login',
-          name: 'login', 
-          component: Login
-        },
-        {
           path: '/login/:provider',
           name: 'ExtLogin', 
           component: Login
-        },
-        {
-          path: '/forgot',
-          name: 'forgot', 
-          component: Forgot
         },
         {
           path: '/settings',
@@ -69,21 +55,55 @@ const router = new Router({
         },
         {
           path: '*',
-          component: Login
-        }
+          component: NOT
+        },
+        {
+          path: '/:lang',
+          component: {
+            render (c) {return c('router-view')}
+          },
+          children: [
+            {
+              path: 'signup',
+              name: 'signup', 
+              component: Registre
+            },
+            {
+              path: 'login',
+              name: 'login', 
+              component: Login
+            },
+            {
+              path: 'forgot',
+              name: 'forgot', 
+              component: Forgot
+            },
+          ]
+        },
    ]
 })
 
 const   openRoutes = ['ExtLogin', 'login', 'signup', 'forgot']
+const   langRoutes = ['login', 'signup', 'forgot']
 //const   allRoutes = ['ExtLogin', 'login', 'signup', 'forgot', 'profile', 'settings', 'home']
 
 router.beforeEach((to, from, next) => {
-    if (openRoutes.includes(to.name))
+    if (langRoutes.includes(to.name))
+    {
+      let language = to.params.lang;
+      if (language != 'fr' && language != 'en')
+        language = 'en'
+      if (i18n.locale != language)
+        i18n.locale = language
+    }
+    if (openRoutes.includes(to.name) && !window.localStorage.token)
         next()
+    else if (openRoutes.includes(to.name) && window.localStorage.token)
+        next('/home')
     else if (window.localStorage.token)
         next()
     else
-        next('/login')
-  })
+        next('en/login')
+})
 
 export default router;

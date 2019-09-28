@@ -6,19 +6,19 @@ var methods = {
         return new Promise((resolve, reject) => {
             let regex = new RegExp(/^[a-zA-Z]{3,20}$/i);
             let userRegex = new RegExp(/^[a-zA-Z0-9]{3,20}$/i);
-            let mailRegex = new RegExp(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+            let mailRegex = new RegExp(/^(?!.{50})(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
             let passRegex = new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{5,20}$/)
 
             if (!(regex.test(first_name)))
-                reject("First name must have between 3 and 20 and only Alphabetic")
+                reject("1")
             else if (!(regex.test(last_name)))
-                reject("last name must have between 3 and 20 and only Alphabetic")
+                reject("2")
             else if (!(userRegex.test(username)))
-                reject("Username must have between 3 and 20 and only Alphanum")
+                reject("3")
             else if (!(mailRegex.test(email)))
-                reject("Email is not Valid")
+                reject("4")
             else if (!(passRegex.test(password)))
-                reject("Password requires 1 lower 1 upper case letter and 1 digit and between 5 and 20")
+                reject("5")
             else
             resolve("data_clear")
         })
@@ -35,10 +35,10 @@ var methods = {
                 if (results[0].id === id)
                     resolve("username Success")
                 else
-                    reject("Username Already Exists") 
+                    reject("6") 
             }
             else
-                reject("Username Already Exists") 
+                reject("6") 
         })
         })
     },
@@ -54,10 +54,10 @@ var methods = {
                 if (results[0].id === id)
                     resolve("Email Success")
                 else
-                    reject("Email Already Exists")
+                    reject("7")
             }
             else
-                reject("Email Already Exists")
+                reject("7")
         })
         })
     },

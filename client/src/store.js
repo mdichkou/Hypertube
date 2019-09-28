@@ -6,12 +6,14 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     userData: {
+      id: '',
       first_name: '',
       last_name: '',
       username: '',
       email: '',
       password: '',
       avatar: '',
+      lang: '',
     }
   },
   mutations: {

@@ -19,9 +19,12 @@
             <v-toolbar-title class="white--text">{{ $t('Login.login') }}</v-toolbar-title>
             </v-toolbar>
             <v-form v-model="valid" ref="form" lazy-validation class="mx-3 mt-4">
-                <v-text-field outlined class="purple-input" v-model="username" :counter="20" :rules="nameRules" label="Username" required />
+                <v-text-field outlined class="purple-input" v-model="username" :counter="20" :rules="nameRules" label="Username" required v-if="cardLang == 'en'"/>
                 <v-text-field outlined v-model="password" :rules="passwordRules" label="Password" :type="show1 ? 'text' : 'password'"
-                    @click:append="show1 = !show1" :append-icon="show1 ? 'visibility' : 'visibility_off'" :counter="20" required/>
+                    @click:append="show1 = !show1" :append-icon="show1 ? 'visibility' : 'visibility_off'" :counter="20" required v-if="cardLang == 'en'"/>
+                <v-text-field outlined class="purple-input" v-model="username" :counter="20" :rules="nameRules" label="Nom d'utilisateur" required v-if="cardLang == 'fr'"/>
+                <v-text-field outlined v-model="password" :rules="passwordRules" label="Mot de passe" :type="show1 ? 'text' : 'password'"
+                    @click:append="show1 = !show1" :append-icon="show1 ? 'visibility' : 'visibility_off'" :counter="20" required v-if="cardLang == 'fr'"/>
                 <v-btn block :disabled="!valid || !isEmpty" @click="LoginUser" class="ma-1 font-weight-light"  color="blue lighteb-2">
                     <span class="white--text"> {{ $t('Login.login') }} </span>
                 </v-btn>
@@ -50,7 +53,7 @@
     </v-layout>
     <v-snackbar v-model="snackbar" :timeout="5000" color="error" right top class="mt-4">
         <v-icon color="white">error</v-icon>
-        <span>{{ text }}</span>
+        <span> {{ $t(`LoginError.err_${text}`) }}</span>
     <v-btn color="white" text  @click="snackbar = false">
         Close
     </v-btn>
@@ -71,13 +74,12 @@ import i18n  from '../i18n'
 
 export default {
     mounted() {
-        console.log(this.$route.params.provider)
         if (this.$route.params.status == 'success')
         {
             this.snackbar2 = true;
             this.text = this.$route.params.text;
         }
-        if (this.$route.params.provider == 'github' || this.$route.params.provider == 'google')
+        if ((this.$route.params.provider == 'github' || this.$route.params.provider == 'google') && !window.localStorage.token)
         {
             this.provider = this.$route.params.provider;
             this.dialog = true;
@@ -137,7 +139,7 @@ export default {
             snackbar2: false,
             snackbar: false,
             timeout: 5000,
-            text: '',  
+            text: '1',  
             username: '',
             nameRules: [
                 v => !!v || 'Username is required',
@@ -224,6 +226,10 @@ export default {
         },
         title() {
             return this.$store.state.title
+        },
+        cardLang()
+        {
+            return (i18n.locale)
         }
     }
 }

@@ -1,11 +1,11 @@
 <template>
     <div v-if="!loader">
     <v-toolbar short>
-      <v-toolbar-title>
-          <v-icon class="mb-1">local_movies</v-icon>
-          <span class="grey--text">HYPER</span>
+        <v-btn text to="/home">
+            <v-icon class="mb-1">local_movies</v-icon>
+            <span class="grey--text">HYPER</span>
             <span>TUBE</span>
-      </v-toolbar-title>
+        </v-btn>
 
       <div class="flex-grow-1"></div>
 
@@ -46,6 +46,11 @@
                 <v-list-item>
                     <v-btn to="/profile" text >
                         <span class="body-2">Profile</span>
+                    </v-btn> 
+                </v-list-item>
+                <v-list-item>
+                    <v-btn to="/home" text >
+                        <span class="body-2">home</span>
                     </v-btn> 
                 </v-list-item>
                 <v-list-item>
@@ -90,6 +95,7 @@ export default {
             {
                 this.userData = res.data
                 this.$store.dispatch('userData', res.data)
+                i18n.locale = res.data.lang
             }   
             console.log(res)
         })
@@ -117,28 +123,24 @@ export default {
         }
     },
     methods: {
-        // ToProfile() {
-        //     this.$router.push({path: `/${i18n.locale}/profile`})
-        // },
-        // ToSettings() {
-        //     this.$router.push({path: `/${i18n.locale}/settings`})
-        // },
         logoutUser()
         {
-            this.$router.push({name: 'login'})
             window.localStorage.removeItem('token');
+            this.$router.push({path: `/${i18n.locale}/login`})
         },
         goToProfile(id)
         {
             this.$router.push({path: `/profile/${id}`})
             location.reload()
-            console.log(id)
         },
         SearchChange()
         {
+            const token = window.localStorage.getItem('token')
+            if (token) Axios.defaults.headers.common['x-auth-token'] = token
+            else delete Axios.defaults.headers.common['x-auth-token']
+
             if (this.Searched != '' && this.Searched.length > 0)
             {
-                console.log(this.Searched)
                 Axios.post("http://localhost:3001/profile/searchUser", {search: this.Searched})
                 .then(res => {
                     if (res.data.status == "success")
@@ -153,7 +155,6 @@ export default {
                     }
                     else
                         this.Empty = "No users Found"
-                    console.log(res)
                 })
                 .catch(error => {
                     console.log(res)
