@@ -49,7 +49,6 @@ router.get('/:hash', function (req, res) {
 
 		var hash = req.params.hash;
 		var engine = torrentStream('magnet:?xt=urn:btih:' + hash + '', opts);
-
 		engine.on('ready', function () {
 			engine.files.forEach(function (file, idx) {
 				const ext = path.extname(file.name).slice(1);
@@ -62,6 +61,23 @@ router.get('/:hash', function (req, res) {
 	});
 	res.setHeader('Accept-Ranges', 'bytes');
 	getTorrentFile.then(function (file) {
+		var array = file.path.split('/')
+		const query = "SELECT * FROM movies where hash = ?";
+		const query2 = "INSERT INTO movies (hash,path,watched_at) values (?, ?, ?)"
+		const query3 = "UPDATE movies SET watched_at = ?"
+		db.query(query, [req.params.hash], (err, result) => {
+			if (err) console.log(err);
+			if (result.length > 0) {
+				db.query(query3, [new Date()], (err, result) => {
+					if (err) console.log(err);
+				});
+			}
+			else {
+				db.query(query2, [req.params.hash, array[0], new Date()], (err, result) => {
+					if (err) console.log(err);
+				});
+			}
+		});
 		res.setHeader('Content-Length', file.length);
 		res.setHeader('Content-Type', `video/${file.ext}`);
 		if (req.headers.range) {
