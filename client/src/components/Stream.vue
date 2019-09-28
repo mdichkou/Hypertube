@@ -1,6 +1,17 @@
 <template>
-  <div class="containers fill-height fluid grid-list-xl">
-    <div class="embed-responsive embed-responsive-21by9">
+    <div class="containers fill-height fluid grid-list-xl">
+    <v-layout v-if="loader == true">
+ <div id="coord_loading">
+
+	<div class="pulse"></div>
+	<div class="pulse-center">
+		<img src="https://i.ibb.co/smCT9w9/19723588.jpg" alt="loader_back">
+	</div>
+</div>
+</v-layout >
+<v-layout justify-space-around wrap v-else>
+
+ <div class="embed-responsive embed-responsive-21by9">
       <video width="320" height="240" autoplay controls intrinsicsize controlslist="nodownload">
         <source :src="'http://localhost:3001/video/'+this.hash" type="video/mp4" />
         <track
@@ -43,63 +54,99 @@
         </li>
       </ul>
     </div>
-  </div>
+      
+</v-layout >
+   </div>
+
 </template>
 
 <script>
 import axios from "axios";
+import { truncate } from 'fs';
 export default {
   name: "Streaming",
   mounted() {
     this.id = this.$route.params.id;
     this.hash = this.$route.params.hash;
+    const token = window.localStorage.getItem("token");
+    if (token) axios.defaults.headers.common["x-auth-token"] = token;
+    else delete axios.defaults.headers.common["x-auth-token"];
 
-    axios
-      .get("http://localhost:3001/video/" + this.hash)
+  ///////////////
+
+    delete axios.defaults.headers.common["x-auth-token"];
+    axios.get("https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" + this.id)
+    .then(resp => {
+        this.listHashes = JSON.stringify(resp.data.data.movies[0].torrents);
+        axios.defaults.headers.common["x-auth-token"] = token;
+        axios.post("http://localhost:3001/video/extraApi", {imdb_id: this.id})
+        .then(res => { 
+          this.listHashes += JSON.stringify(res.data.slice(0, 5));
+          if ((this.hash.length == 40) && (this.listHashes.includes(this.hash + '",') || this.listHashes.includes(this.hash + '&dn')))
+            this.loader = false;
+          else
+            this.$router.push({name: 'home'});
+        })
+        .catch(err => {
+          this.$router.push({path: `${i18n.locale}/login`});
+        })
+    })
+    .catch(err => {
+      this.$router.push({path: `${i18n.locale}/login`});
+    });
+
+
+  //////////////
+
+
+
+  axios.get("http://localhost:3001/video/checkHash/" + this.hash)
       .then(res => {
-        if (res.data == "ERROR") this.$router.push({ name: "home" });
+        if (res.data == 'ERROR')
+          this.$router.push({name: 'home'});
       })
       .catch(err => {
-        this.$router.push({ name: "home" });
+        this.$router.push({path: `${i18n.locale}/login`});
       });
-    axios
-      .get(
-        "https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" +
-          this.id
-      )
-      .then(res => {
-        const token = window.localStorage.getItem("token");
-        if (token) axios.defaults.headers.common["x-auth-token"] = token;
-        else delete axios.defaults.headers.common["x-auth-token"];
+      delete axios.defaults.headers.common["x-auth-token"];
+       axios.get(
+          "https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" +
+            this.id
+        )
+        .then(res => {
+          const token = window.localStorage.getItem("token");
+          if (token) axios.defaults.headers.common["x-auth-token"] = token;
+          else delete axios.defaults.headers.common["x-auth-token"];
 
-        axios
-          .post("http://localhost:3001/video/getComments", { imdb_id: this.id })
+          axios.post("http://localhost:3001/video/getComments", { imdb_id: this.id })
           .then(resp => {
             this.Comments = resp.data;
           });
-        axios.post("http://localhost:3001/video/saveHistory", {
-          imdb_id: this.id
-        });
-
-        axios
-          .post("http://localhost:3001/video/getSubt", { imdb_id: this.id })
+          axios.post("http://localhost:3001/video/saveHistory", { imdb_id: this.id });
+          
+          axios.post("http://localhost:3001/video/getSubt", {imdb_id: this.id})
           .then(resp => {
             if (resp) this.SubTitles = resp.data;
           })
           .catch(err => {
-            this.$router.push({ name: "home" });
+            this.$router.push({name: 'home'});
           });
-      })
-      .catch(err => {
-        this.$router.push({ name: "home" });
-      });
+        })
+        .catch(err => {
+          this.$router.push({ name: "home" });
+        });
+
+    
+    
   },
   data: () => ({
     id: "",
     hash: "",
     SubTitles: null,
     Comments: [],
-    comment: ""
+    comment: "",
+    listHashes: [],
+    loader: true,
   }),
   methods: {
     AddComment: function() {
@@ -128,7 +175,7 @@ a {
   text-decoration: none;
 }
 
-.comments-list {
+.comments-list{
   list-style-type: none;
   height: 400px;
   overflow: auto;
@@ -415,13 +462,74 @@ a {
     overflow: hidden;
   }
 }
-.containers {
-  background-image: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.6) 0%,
-      rgba(0, 0, 0, 0.6) 100%
-    ),
-    url("../../public/886533.jpg");
+.containers{
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url('../../public/886533.jpg');
   background-position: top !important;
 }
+
+
+
+
+
+#coord_loading {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: white;
+  display: block;
+  z-index: 200;
+}
+
+.pulse {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background: transparent;
+  border: 2px solid #d61f26;
+  border-radius: 50%;
+  animation: pulse 1s ease-out 1s infinite;
+}
+
+.pulse-center {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  background: orange;
+  width: 100px;
+  height: 100px;
+  background: #2F3233;
+  border-radius: 50%;
+}
+
+.pulse-center img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+@keyframes pulse {
+  0% {
+    width: 100px;
+    height: 100px;
+    background: #d61f26;
+    border: 2px solid #d61f26;
+  }
+  50% {
+    width: 180px;
+    height: 180px;
+    background: lighten( #d61f26, 40%);
+    border: 2px solid #d61f26;
+  }
+  100% {
+    width: 200px;
+    height: 200px;
+    background: transparent;
+    border: 2px solid transparent;
+  }
+}
+
 </style>

@@ -46,10 +46,31 @@ const opts = {
 }
 
 
-router.get('/:hash', function (req, res) {
+router.get('/checkHash/:hash', function(req, res) {
 	const getTorrentFile = new Promise(function (resolve, reject) {
 		var hash = req.params.hash;
 		try {
+			var engine = torrentStream('magnet:?xt=urn:btih:' + hash + '', opts);
+			resolve('Done');
+		}
+		catch
+		{
+			throw 'Invalid Hash';
+		}
+	});
+	getTorrentFile.then(function(file) {
+		res.send('Done');
+	})
+	.catch(function (e) {
+		res.send('ERROR');
+	});
+});
+
+///////////////
+
+router.get('/:hash', function (req, res) {
+	const getTorrentFile = new Promise(function (resolve, reject) {
+		var hash = req.params.hash;
 			var engine = torrentStream('magnet:?xt=urn:btih:' + hash + '', opts);
 			engine.on('ready', function () {
 				engine.files.forEach(function (file, idx) {
@@ -60,11 +81,6 @@ router.get('/:hash', function (req, res) {
 					}
 				});
 			});
-		}
-		catch
-		{
-			throw 'Invalid Hash';
-		}
 	});
 
 
@@ -91,6 +107,7 @@ router.get('/:hash', function (req, res) {
 		res.setHeader('Content-Type', `video/${file.ext}`);
 		if (req.headers.range) {
 			const ranges = parseRange(file.length, req.headers.range, { combine: true });
+			console.log(ranges);
 			if (ranges === -1) {
 				// 416 Requested Range Not Satisfiable
 				res.statusCode = 416;
@@ -116,6 +133,8 @@ router.get('/:hash', function (req, res) {
 		res.send('ERROR');
 	});
 });
+
+//////////////
 
 
 router.post('/search/getimg', auth, function (req, res) {
