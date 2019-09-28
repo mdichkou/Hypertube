@@ -69,11 +69,7 @@ export default {
             this.id
         )
         .then(res => {
-        })
-        .catch(err => {
-          this.$router.push({ name: "home" });
-        });
-    const token = window.localStorage.getItem("token");
+           const token = window.localStorage.getItem("token");
           if (token) axios.defaults.headers.common["x-auth-token"] = token;
           else delete axios.defaults.headers.common["x-auth-token"];
 
@@ -90,6 +86,10 @@ export default {
           .catch(err => {
             this.$router.push({name: 'home'});
           });
+        })
+        .catch(err => {
+          this.$router.push({ name: "home" });
+        });
 
     
     
