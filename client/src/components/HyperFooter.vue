@@ -72,9 +72,8 @@ export default {
 </script>
 <style>
 .v-footer{
-  margin-bottom: -30px;
     padding: 6px;
-      position: absolute;
+    /* position: un; */
     bottom: 0;
     width: 100%;
 }

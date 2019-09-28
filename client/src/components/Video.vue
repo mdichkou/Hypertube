@@ -1,9 +1,6 @@
 <template>
-  <div
-    v-if="data"
-    :style="{ backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url(${bgImg})` }"
-    class="body-content fill-height fluid grid-list-xl"
-  >
+   <div class="containers fill-height fluid grid-list-xl">
+  <div   class="body-content">
     <v-layout v-if="loader == true">
       <div id="coord_loading" class="content">
         <div class="pulse"></div>
@@ -14,8 +11,8 @@
     </v-layout>
 
     <v-layout v-else>
-      <div class="cont">
-        <div class="wrapper">
+        <div  class="container">
+        <div class="wrapper"  v-if="data"  :style="{ backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url(${bgImg})` }">
           <div class="row bg animated fadeInDown">
             <div class="medium-5 column">
               <h1 class="titl">{{data.name}}</h1>
@@ -65,7 +62,7 @@
             <div class="row">
               <div class="medium-7 column text-right col-lg-6 col-md-6 col-sm-12 col-12">
                 <h3 class="text-center">
-                  YTS
+                  Yts
                   <a
                     @click="listHashes = listHashes ? null : listHashes2;"
                     class="btn btn-success"
@@ -96,6 +93,7 @@
       </div>
     </v-layout>
   </div>
+   </div>
 </template>
 
 <script>
@@ -196,15 +194,7 @@ export default {
   background-size: cover;
 }
 .wrapper {
-  background-repeat: no-repeat;
-  background-size: 350%;
-  height: 100%;
-  background: linear-gradient(
-    to left,
-    rgba(42, 159, 255, 0.2) 0%,
-    #212120 97%,
-    #212120 100%
-  );
+   background-size: cover;
 }
 .bg {
   position: relative;
@@ -216,7 +206,7 @@ export default {
   height: auto;
   padding: 2.5em;
   filter: saturate(1) blur(0.35px);
-  z-index: 5;
+  /* z-index: 5; */
   transition: all 500ms ease-in-out;
 }
 .titl {
@@ -408,5 +398,13 @@ p,
     background: transparent;
     border: 2px solid transparent;
   }
+}
+.containers{
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url('../../public/886533.jpg');
+  background-size: cover;
+}
+.btn-wrap{
+  word-wrap: break-word;
+  width: 100%;
 }
 </style>
