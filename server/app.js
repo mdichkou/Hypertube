@@ -14,6 +14,7 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const passport = require('passport')
 const jwt = require('jsonwebtoken');
+var rimraf = require("rimraf");
 const app = express()
 const port = process.env.PORT || 3001
 
@@ -30,31 +31,31 @@ passport.use(new GitHubStrategy({
 	clientID: "27a9974ecf7cb9a53415",
 	clientSecret: "bbcb8d88ad81aaf0b4a70b7c03a32c9f8c89f1f2",
 	callbackURL: "http://localhost:8080/login/github",
-  	scope: [ 'user:email' ]
-	}, (accessToken, refreshToken, profile, done) => {
+	scope: ['user:email']
+}, (accessToken, refreshToken, profile, done) => {
+	return done(null, profile);
+}
+));
+
+passport.use(new FacebookStrategy({
+	clientID: "443712349578194",
+	clientSecret: "c6aa51289642f56b18885ac5c8c1331d",
+	callbackURL: "http://localhost:8080/login/facebook"
+},
+	function (accessToken, refreshToken, profile, done) {
 		return done(null, profile);
 	}
 ));
 
-passport.use(new FacebookStrategy({
-    clientID: "443712349578194",
-    clientSecret: "c6aa51289642f56b18885ac5c8c1331d",
-    callbackURL: "http://localhost:8080/login/facebook"
-  },
-  function(accessToken, refreshToken, profile, done) {
-		return done(null, profile);
-  }
-));
-
 passport.use(new GoogleStrategy({
-    clientID: "720391957482-1jhj256krm792l7l8qb3at7jf5qv5ep4.apps.googleusercontent.com",
-    clientSecret: "VHUrIDb6zlyv7zM-En2Y5D4E",
+	clientID: "720391957482-1jhj256krm792l7l8qb3at7jf5qv5ep4.apps.googleusercontent.com",
+	clientSecret: "VHUrIDb6zlyv7zM-En2Y5D4E",
 	callbackURL: "http://localhost:8080/login/google",
 	scope: ['profile', 'email']
-  },
-  function(accessToken, refreshToken, profile, done) {
-	return done(null, profile);
-  }
+},
+	function (accessToken, refreshToken, profile, done) {
+		return done(null, profile);
+	}
 ));
 
 const db = mysql.createConnection(config.get('Database'))
@@ -67,18 +68,37 @@ db.connect((err) => {
 });
 global.db = db;
 
-var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, x-auth-token, Credentials-Header');
-    // intercept OPTIONS method
-    if ('OPTIONS' == req.method) {
-    res.sendStatus(200);
-	} 
+var allowCrossDomain = function (req, res, next) {
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+	res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, x-auth-token, Credentials-Header');
+	// intercept OPTIONS method
+	if ('OPTIONS' == req.method) {
+		res.sendStatus(200);
+	}
 	else {
-	next();
+		next();
 	}
 };
+
+// supprimé un film n’est pas visionné pendant un mois
+var dayInMilliseconds = 1000 * 60 * 60 * 24;
+var month = 1000 * 60 * 60 * 24 * 30;
+const query = "SELECT * FROM movies";
+const query2 = "DELETE FROM `movies` WHERE hash = ?";
+setInterval(function () {
+	db.query(query, (err, result) => {
+		var date = new Date();
+		result.forEach(element => {
+			if (date - element.watched_at > month) {
+				var dist = './public/' + element.path;
+				rimraf.sync(dist);
+				db.query(query2, [element.hash]);
+			}
+		});
+	})
+}, dayInMilliseconds);
+// supprimé un film n’est pas visionné pendant un mois
 app.use(allowCrossDomain);
 
 let smtpTransport = nodeMailer.createTransport(config.get("Mail"));
@@ -102,6 +122,6 @@ app.get('*', (req, res) => {
 	res.render('404.html')
 })
 
-app.listen(port, function() {
+app.listen(port, function () {
 	console.log('Example app listening on port ' + port);
 })

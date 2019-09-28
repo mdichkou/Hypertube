@@ -1,41 +1,49 @@
 <template>
-  <v-row>
-      <v-card v-for="(movie,index) in data.slice(pStart, pEnd)" :key="index"  :loading="loading" class="card-content  card card-right col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
-           <v-img  class="card-img-top" v-if="movie.large_cover_image"  :src="movie.large_cover_image"></v-img>
-        <v-img   class="card-img-top" v-else  :src="defImage"></v-img>
-         <div class="card-content-overlay"></div>
-       
+  <v-row v-if="listWatched">
+    <v-card
+      v-for="(movie,index) in data.slice(pStart, pEnd)"
+      :key="index"
+      :loading="loading"
+      class="card-content card card-right col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12"
+    >
+      <div class="image">
+        <v-img class="card-img-top" v-if="movie.large_cover_image" :src="movie.large_cover_image"></v-img>
+        <v-img class="card-img-top" v-else :src="defImage"></v-img>
+        <div class="card-content-overlay"></div>
+      </div>
 
-        <v-card-title >{{movie.title}}</v-card-title>
-        <!-- <v-card-title v-if="movie.media_type === 'tv'">{{movie.name}}</v-card-title> -->
-        <v-card-text class="card-body">
-          <v-row align="center">
-            <v-rating
-              :value="movie.rating / 2"
-              color="amber"
-              half-increments
-              dense
-              class="pl-3"
-              size="14"
-              readonly
-            ></v-rating>
+      <v-card-title>{{movie.title}}</v-card-title>
+      <!-- <v-card-title v-if="movie.media_type === 'tv'">{{movie.name}}</v-card-title> -->
+      <v-card-text class="card-body">
+        <v-row align="center">
+          <v-rating
+            :value="movie.rating / 2"
+            color="amber"
+            half-increments
+            dense
+            class="pl-3"
+            size="14"
+            readonly
+          ></v-rating>
 
-            <div class="grey--text pl-2">{{movie.rating}}</div>
-          </v-row>
-          <div class="content-details fadeIn-bottom">
+          <div class="grey--text pl-2">{{movie.rating}}</div>
+          <v-icon class="grey--text pl-2" v-if="checkMovie(movie.imdb_code)">mdi-eye-check</v-icon>
+        </v-row>
+        <div class="content-details fadeIn-bottom">
           <div class="description">{{ movie.description_full.substring(0, 370) }}</div>
-               <div class="my-4 subtitle-1  description">{{movie.year}}</div>
-                 <v-card-actions v-if="actions">
-                   <v-btn class="watch" @click="dataShare(movie)" outlined><span class="fa fa-play"></span>Watch</v-btn>
-               </v-card-actions>
-          </div>
-        </v-card-text>
-      </v-card>
+          <div class="my-4 subtitle-1 description">{{movie.year}}</div>
+          <v-card-actions v-if="actions">
+            <v-btn class="watch" @click="dataShare(movie)" outlined>
+              <span class="fa fa-play"></span>Watch
+            </v-btn>
+          </v-card-actions>
+        </div>
+      </v-card-text>
+    </v-card>
   </v-row>
 </template>
 <script>
-
-
+import axios from "axios";
 export default {
   name: "ResultSearch",
   props: {
@@ -47,11 +55,19 @@ export default {
     return {
       loading: false,
       actions: true,
-      defImage: "https://www.tellerreport.com/images/no-image.png"
+      defImage: "https://www.tellerreport.com/images/no-image.png",
+      listWatched: null,
+      watched: 0
     };
   },
   mounted() {
+    const token = window.localStorage.getItem("token");
+    if (token) axios.defaults.headers.common["x-auth-token"] = token;
+    else delete axios.defaults.headers.common["x-auth-token"];
     this.reserve();
+    axios.post("http://localhost:3001/video/getListWatched").then(res => {
+      this.listWatched = res.data;
+    });
   },
   methods: {
     reserve() {
@@ -59,18 +75,27 @@ export default {
 
       setTimeout(() => (this.loading = false), 1000);
     },
-    dataShare(movie)
-    {
+    dataShare(movie) {
       //:href="'/video/' + movie.imdb_code"
-      this.$router.push({path: `/video/${movie.imdb_code}`, params: {hash: 'test'}})
+      this.$router.push({
+        path: `/video/${movie.imdb_code}`,
+        params: { hash: "test" }
+      });
       // this.$store.dispatch("dataShare", movie)
+    },
+    checkMovie(movieId) {
+      let found = false;
+      this.listWatched.forEach(element => {
+        if (element.movie_id === movieId) found = true;
+      });
+      return found;
     }
   }
 };
 </script>
 <style>
 @import url("https://fonts.googleapis.com/css?family=Orbitron");
-.card-right{
+.card-right {
   width: 300px;
   float: left;
 }
@@ -78,15 +103,15 @@ export default {
   .card {
     width: 100% !important;
   }
-  .div-left{
-    padding-left: 0
+  .div-left {
+    padding-left: 0;
   }
 }
-.name{
-  font-family: 'Orbitron'
+.name {
+  font-family: "Orbitron";
 }
 .card-content .card-content-overlay {
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   position: absolute;
   height: 99%;
   width: 100%;
@@ -99,7 +124,7 @@ export default {
   -moz-transition: all 0.4s ease-in-out 0s;
   transition: all 0.4s ease-in-out 0s;
 }
-.card-content:hover .card-content-overlay{
+.card-content:hover .card-content-overlay {
   opacity: 1;
 }
 .content-details {
@@ -118,38 +143,37 @@ export default {
   -moz-transition: all 0.3s ease-in-out 0s;
   transition: all 0.3s ease-in-out 0s;
 }
-.card-content:hover .content-details{
+.card-content:hover .content-details {
   top: 50%;
   left: 50%;
   opacity: 1;
 }
 
-.fadeIn-bottom{
+.fadeIn-bottom {
   top: 80%;
 }
 
-.fadeIn-top{
+.fadeIn-top {
   top: 20%;
 }
 
-.fadeIn-left{
+.fadeIn-left {
   left: 20%;
 }
 
-.fadeIn-right{
+.fadeIn-right {
   left: 80%;
 }
-.description{
+.description {
   color: white;
   text-align: justify;
   text-justify: inter-word;
 }
-.image{
+.image {
   position: relative;
 }
-.watch{
-  color: #fff !important; 
+.watch {
+  color: #fff !important;
   margin: 0 auto;
-
 }
 </style>
