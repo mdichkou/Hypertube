@@ -89,7 +89,7 @@ export default {
   name: "Video",
   created() 
   {
-     this.loader = true;
+    //this.loader = true;
     this.id = this.$route.params.id;
 
     const token = window.localStorage.getItem("token");
@@ -114,15 +114,15 @@ export default {
         this.$router.push({name: 'login'});
       });
     //// add
-    axios.defaults.headers.common["x-auth-token"] = token
-    axios.post("http://localhost:3001/video/extraApi", {imdb_id: this.id})
-      .then(resp => { 
-        this.otherHashes2 = resp.data.slice(0, 5);
-        this.loader = false;
-      })
-      .catch(err => {
-        this.$router.push({name: 'login'});
-      });;
+    // axios.defaults.headers.common["x-auth-token"] = token
+    // axios.post("http://localhost:3001/video/extraApi", {imdb_id: this.id})
+    //   .then(resp => { 
+    //     this.otherHashes2 = resp.data.slice(0, 5);
+    //     this.loader = false;
+    //   })
+    //   .catch(err => {
+    //     this.$router.push({name: 'login'});
+    //   });
   },
 
   data: () => ({
