@@ -74,11 +74,11 @@ router.get('/:hash', function (req, res) {
 		var array = file.path.split('/')
 		const query = "SELECT * FROM movies where hash = ?";
 		const query2 = "INSERT INTO movies (hash,path,watched_at) values (?, ?, ?)"
-		const query3 = "UPDATE movies SET watched_at = ?"
+		const query3 = "UPDATE movies SET watched_at = ? WHERE hash = ?"
 		db.query(query, [req.params.hash], (err, result) => {
 			if (err) console.log(err);
 			if (result.length > 0) {
-				db.query(query3, [new Date()], (err, result) => {
+				db.query(query3, [new Date(), req.params.hash], (err, result) => {
 					if (err) console.log(err);
 				});
 			}
@@ -169,10 +169,23 @@ router.post('/saveComment', auth, async (req, res) => {
 });
 
 router.post('/saveHistory', auth, async (req, res) => {
-	const query = "INSERT INTO history (user_id,movie_id) values (?, ?)"
-	db.query(query, [req.id, req.body.imdb_id], (err, result) => {
+	const query = "SELECT * FROM history where movie_id = ?";
+	const query2 = "INSERT INTO history (user_id,movie_id) values (?, ?)"
+	const query3 = "UPDATE history SET watched_at = ? WHERE movie_id = ?"
+	db.query(query, [req.body.imdb_id], (err, result) => {
 		if (err) console.log(err);
-		res.send('saved')
+		if (result.length > 0) {
+			db.query(query3, [new Date(), req.body.imdb_id], (err, result) => {
+				if (err) console.log(err);
+				res.send('saved')
+			});
+		}
+		else {
+			db.query(query2, [req.id, req.body.imdb_id], (err, result) => {
+				if (err) console.log(err);
+				res.send('saved')
+			});
+		}
 	});
 });
 
