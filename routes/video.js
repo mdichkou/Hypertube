@@ -9,6 +9,8 @@ const imdb = require('imdb-api');
 const OS = require('opensubtitles-api');
 const auth = require('../middleware/auth');
 
+
+
 const OpenSubtitles = new OS({
 	useragent: 'TemporaryUserAgent',
 	username: 'mdichkou',
@@ -46,21 +48,30 @@ const opts = {
 
 router.get('/:hash', function (req, res) {
 	const getTorrentFile = new Promise(function (resolve, reject) {
-
 		var hash = req.params.hash;
-		var engine = torrentStream('magnet:?xt=urn:btih:' + hash + '', opts);
-		engine.on('ready', function () {
-			engine.files.forEach(function (file, idx) {
-				const ext = path.extname(file.name).slice(1);
-				if (ext === 'mkv' || ext === 'mp4') {
+		try
+		{
+			var engine = torrentStream('magnet:?xt=urn:btih:' + hash + '', opts);
+			engine.on('ready', function () {
+				engine.files.forEach(function (file, idx) {
+					const ext = path.extname(file.name).slice(1);
+					if (ext === 'mkv' || ext === 'mp4') {
 					file.ext = ext;
 					resolve(file);
-				}
-			});
-		});
-	});
+					}
+				});
+				});
+		}
+		catch
+		{
+      		throw 'Invalid Hash';
+		}
+  	});
+
+
 	res.setHeader('Accept-Ranges', 'bytes');
 	getTorrentFile.then(function (file) {
+		console.log('dd');
 		var array = file.path.split('/')
 		const query = "SELECT * FROM movies where hash = ?";
 		const query2 = "INSERT INTO movies (hash,path,watched_at) values (?, ?, ?)"
@@ -104,10 +115,9 @@ router.get('/:hash', function (req, res) {
 		else {
 			var stream = file.createReadStream();
 		}
-	}).catch(function (e) {
-		console.error(e);
-		res.end(e);
-	});
+		}).catch(function (e) {
+			res.send('ERROR');
+		});
 });
 
 
@@ -180,5 +190,26 @@ router.post('/getListWatched', auth, async (req, res) => {
 		res.send(result)
 	});
 });
+
+
+////// extraApi
+const PirateBay = require('thepiratebay');
+
+router.post('/extraApi', auth, function (req, res) {
+  PirateBay.search(req.body.imdb_id, {
+    category: 'video',
+    orderBy: 'seeds',
+	sortBy: 'desc',
+  })
+  .then(results => {
+	console.log(results);
+    res.send(results);
+  })
+  .catch(err => console.log(err))
+});
+
+/////////////
+
+
 
 module.exports = router

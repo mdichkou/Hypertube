@@ -38,6 +38,7 @@
     "path": "^0.12.7",
     "ranger-parser": "^1.0.2",
     "rimraf": "^3.0.0",
+    "thepiratebay": "^1.4.7",
     "torrent-stream": "^1.1.0"
   }
 }

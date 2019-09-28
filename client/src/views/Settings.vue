@@ -91,7 +91,7 @@ export default {
             if (this.userData.password === '1')
                 this.outsource = true;
         }, 700);
-        console.log(this.userData)
+        //console.log(this.userData)
     },
     data() {
         return {
@@ -163,7 +163,7 @@ export default {
                     this.snackbar = true;
                     this.text = this.file + ' is invalid'
                 }
-                console.log(res);
+                //console.log(res);
             })
             .catch(err => {
                 console.log(err);

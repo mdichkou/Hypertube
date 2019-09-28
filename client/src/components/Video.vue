@@ -1,5 +1,17 @@
 <template>
   <div v-if="data" :style="{ backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url(${bgImg})` }"   class="body-content fill-height fluid grid-list-xl">
+
+<v-layout v-if="loader == true">
+ <div id="coord_loading" class="content">
+
+	<div class="pulse"></div>
+	<div class="pulse-center">
+		<img src="https://i.ibb.co/smCT9w9/19723588.jpg" alt="loader_back">
+	</div>
+</div>
+</v-layout >
+
+<v-layout v-else>
     <div  class="cont">
       <div class="wrapper">
         <div class="row bg animated fadeInDown">
@@ -43,61 +55,94 @@
               {{data.plot}}
             </p>
           </div>
-          <div class="medium-7 column text-right">
-            <div class="button" v-for="(Hash,index) in listHashes" :key="index">
-              <span class="fa fa-play"></span>
-              <a @click="streamVideo(Hash)"> Watch - {{ Hash.type }} - {{ Hash.quality }} </a>
+          <!-- Change this part -->
+         <div class="row">
+            <div class="medium-7 column text-right col-lg-6 col-md-6 col-sm-12 col-12">
+              <h3 class="text-center">YTS <a @click="listHashes = listHashes ? null : listHashes2;" class="btn btn-success">Show</a></h3>
+              <div class="button text-center" v-for="(Hash,index) in listHashes" :key="index">
+                <span class="fa fa-play"></span>
+                <a @click="streamVideo(Hash)"> Watch - {{ Hash.type }} - {{ Hash.quality }} </a>
+              </div>
             </div>
-          </div>
+            <div class="medium-7 column text-right col-lg-6 col-md-12 col-sm-12 col-12">
+              <h3 class="text-center">Extra Torrents <a @click="otherHashes = otherHashes ? null : otherHashes2;" class="btn btn-success">Show</a> </h3>
+              <div class="button text-center" v-for="(Hash,index) in otherHashes" :key="index">
+                <span class="fa fa-play"></span>
+                <a @click="streamVideo_extraT(Hash)">{{ Hash.name }} - {{ Hash.size }}</a>
+              </div>
+            </div>
+         </div>
+         <!-- ////// END /////// -->
         </div>
       </div>
     </div>
-  </div>
+ 
+</v-layout >
+   </div>
 </template>
 
 <script>
 import axios from "axios";
-export default {
-  mounted() {
 
-  },
+export default {
+  mounted() {},
   name: "Video",
   created() 
   {
-
+     this.loader = true;
     this.id = this.$route.params.id;
-    delete axios.defaults.headers.common['x-auth-token']
 
-    const token = window.localStorage.getItem('token')
-    const options = {
-        headers: {'x-auth-token': token}
-    };
+    const token = window.localStorage.getItem("token");
+    if (token) axios.defaults.headers.common["x-auth-token"] = token;
+    else delete axios.defaults.headers.common["x-auth-token"];
 
-    axios.post("http://localhost:3001/video/search/getimg", {imdb_id: this.id}, options)
+    axios.post("http://localhost:3001/video/search/getimg", {imdb_id: this.id})
     .then(resp => {
         this.data = resp.data;
+        delete axios.defaults.headers.common['x-auth-token'];
         axios.get('https://api.themoviedb.org/3/find/' + this.id + '?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&language=en-US&external_source=imdb_id')
         .then(resp2 => {
           this.bgImg = 'http://image.tmdb.org/t/p/w1280' + resp2.data.movie_results[0].poster_path;
         })
     });
-
+   delete axios.defaults.headers.common['x-auth-token'];
     axios.get("https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" + this.id)
       .then(resp => {
-        this.listHashes = resp.data.data.movies[0].torrents;
-    });
+        this.listHashes2 = resp.data.data.movies[0].torrents;
+      })
+      .catch(err => {
+        this.$router.push({name: 'login'});
+      });
+    //// add
+    axios.defaults.headers.common["x-auth-token"] = token
+    axios.post("http://localhost:3001/video/extraApi", {imdb_id: this.id})
+      .then(resp => { 
+        this.otherHashes2 = resp.data.slice(0, 5);
+        this.loader = false;
+      })
+      .catch(err => {
+        this.$router.push({name: 'login'});
+      });;
   },
 
   data: () => ({
     id: "",
     data: null,
     bgImg: "",
-    listHashes: []
+    listHashes: null,
+    listHashes2: null,
+    otherHashes: null,
+    otherHashes2: null,
+    loader: false,
   }),
   
   methods : {
     streamVideo(Hash) {
       this.$router.push({path: `/stream/${this.id}/${Hash.hash}`, params: {hash: 'test'}})
+    },
+    streamVideo_extraT(Hash) {
+      var hash_link =  Hash.magnetLink.slice(20, 60);
+      this.$router.push({path: `/stream/${this.id}/${hash_link}`, params: {hash: 'test'}})
     },
   }
 };
@@ -105,6 +150,7 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css?family=Maven+Pro");
 @import url("https://fonts.googleapis.com/css?family=Orbitron");
+
 .body-content {
     background-position: center;
     background-repeat: repeat;
@@ -242,12 +288,6 @@ p,
   }
 }
 
-/* @media only screen and (min-width: 40.063em) {
-  button,
-  .button {
-    display: inline-block;
-  }
-} */
 @media only screen and (min-width: 40.063em) {
   .column,
   .columns {
@@ -264,4 +304,67 @@ p,
 .text-right {
   text-align: right !important;
 }
+
+
+#coord_loading {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: white;
+  display: block;
+  z-index: 200;
+}
+
+.pulse {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background: transparent;
+  border: 2px solid #d61f26;
+  border-radius: 50%;
+  animation: pulse 1s ease-out 1s infinite;
+}
+
+.pulse-center {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  background: orange;
+  width: 100px;
+  height: 100px;
+  background: #2F3233;
+  border-radius: 50%;
+}
+
+.pulse-center img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+@keyframes pulse {
+  0% {
+    width: 100px;
+    height: 100px;
+    background: #d61f26;
+    border: 2px solid #d61f26;
+  }
+  50% {
+    width: 180px;
+    height: 180px;
+    background: lighten( #d61f26, 40%);
+    border: 2px solid #d61f26;
+  }
+  100% {
+    width: 200px;
+    height: 200px;
+    background: transparent;
+    border: 2px solid transparent;
+  }
+}
+
 </style>

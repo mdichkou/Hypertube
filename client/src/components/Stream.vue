@@ -55,27 +55,41 @@ export default {
     this.id = this.$route.params.id;
     this.hash = this.$route.params.hash;
 
+  axios.get("http://localhost:3001/video/" + this.hash)
+      .then(res => {
+        console.log(res.data);
+        if (res.data == 'ERROR')
+          this.$router.push({name: 'home'});
+      })
+      .catch(err => {
+        this.$router.push({name: 'home'});
+      });
     const token = window.localStorage.getItem("token");
-    if (token) axios.defaults.headers.common["x-auth-token"] = token;
-    else delete axios.defaults.headers.common["x-auth-token"];
+          if (token) axios.defaults.headers.common["x-auth-token"] = token;
+          else delete axios.defaults.headers.common["x-auth-token"];
 
-    axios
-      .post("http://localhost:3001/video/getSubt", { imdb_id: this.id })
-      .then(resp => {
-        if (resp) this.SubTitles = resp.data;
-      });
-    axios
-      .post("http://localhost:3001/video/getComments", { imdb_id: this.id })
-      .then(resp => {
-        this.Comments = resp.data;
-      });
-    axios.post("http://localhost:3001/video/saveHistory", { imdb_id: this.id });
+          axios.post("http://localhost:3001/video/getComments", { imdb_id: this.id })
+          .then(resp => {
+            this.Comments = resp.data;
+          });
+          axios.post("http://localhost:3001/video/saveHistory", { imdb_id: this.id });
+          
+          axios.post("http://localhost:3001/video/getSubt", {imdb_id: this.id})
+          .then(resp => {
+            if (resp) this.SubTitles = resp.data;
+          })
+          .catch(err => {
+            this.$router.push({name: 'home'});
+          });
+
+    
+    
   },
   data: () => ({
     id: "",
     hash: "",
     SubTitles: null,
-    Comments: null,
+    Comments: [],
     comment: ""
   }),
   methods: {

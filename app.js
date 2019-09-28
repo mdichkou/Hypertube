@@ -118,9 +118,32 @@ app.use('/login', login);
 app.use('/forgot', forgot);
 app.use('/settings', settings);
 app.use('/profile', profile);
-app.get('*', (req, res) => {
-	res.render('404.html')
-})
+
+
+const PirateBay = require('thepiratebay');
+
+app.get('/extraApi', function (req, res) {
+  PirateBay.search('tt1825683', {
+    category: 'video',
+    orderBy: 'seeds',
+	sortBy: 'desc',
+  })
+  .then(results => {
+	console.log(results);
+    res.send(results);
+  })
+  .catch(err => console.log(err))
+});
+
+// app.use(function (err, req, res, next) {
+// 	res.status(err.status || 500);
+// 	res.send('<h1 style="color:red;">Fiiin ghadii !!! Error with status 500</h1>');
+// });
+
+// app.get('*', (req, res) => {
+// 	res.render('404.html');
+// })
+
 
 app.listen(port, function () {
 	console.log('Example app listening on port ' + port);

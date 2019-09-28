@@ -5,7 +5,6 @@ import store from './store'
 import vuetify from './plugins/vuetify';
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import axios from 'axios'
-import VueI18n from 'vue-i18n'
 import i18n from './i18n'
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -13,6 +12,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import BootstrapVue from 'bootstrap-vue'
 
 Vue.use(BootstrapVue);
+Vue.use(require('vue-moment'));
 
 Vue.config.productionTip = false
 

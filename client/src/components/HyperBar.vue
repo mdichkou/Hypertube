@@ -97,7 +97,6 @@ export default {
                 this.$store.dispatch('userData', res.data)
                 i18n.locale = res.data.lang
             }   
-            console.log(res)
         })
         .catch(err => {
             if (err.response.status == 401)
@@ -157,7 +156,7 @@ export default {
                         this.Empty = "No users Found"
                 })
                 .catch(error => {
-                    console.log(res)
+                    console.log(error);
                 })
             }
             else

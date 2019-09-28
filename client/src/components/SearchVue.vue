@@ -98,15 +98,16 @@
           </div>
           <div class="div-right col-lg-9 col-md-8  col-sm-12 col-12">
           <ResultSearch :data="dataMovie" :page="1" :pStart="p_start" :pEnd="p_end" />
-           <div  class="text-center">
+           
+           </div>
+      </v-row>
+      <div  class="text-center">
             <v-pagination
               v-model="page_tmp"
               :length="nbr_p_movies"
               @input="affich_page"
             ></v-pagination>
-          </div>
-           </div>
-      </v-row>
+      </div>
     </v-container>
   </div>
 </template>
