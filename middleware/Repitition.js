@@ -65,7 +65,6 @@ var methods = {
     OutsideLogin: function(username, first_name, last_name, email, avatar, password)
     {
         return new Promise((resolve, reject) => {
-            console.log(username, first_name, last_name, email, avatar, password)
             const query = "SELECT * from users WHERE password = ?"
             db.query(query, [password], (error, results) => {
                 if (results.length == 0)
@@ -105,7 +104,6 @@ module.exports = methods
 //     let options = {
 //         headers: {'Authorization': 'Bearer ' + req.body.token}
 //     };
-//     console.log(req.body.token)
 //     axios.get("https://api.intra.42.fr/v2/me", options)
 //     .then(Response => {
 //         let user = Response.data;

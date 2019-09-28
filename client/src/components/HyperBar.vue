@@ -104,7 +104,7 @@ export default {
         .catch(err => {
             if (err.response.status == 401)
                 this.$router.push({name: 'login'});
-            console.log(err)
+            this.$router.push({ name: "home" });
         })
     },
     data() {
@@ -159,7 +159,7 @@ export default {
                         this.Empty = "No users Found"
                 })
                 .catch(error => {
-                    console.log(error);
+                    this.$router.push({ name: "home" });
                 })
             }
             else

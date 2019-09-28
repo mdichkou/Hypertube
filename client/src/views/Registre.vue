@@ -227,7 +227,6 @@ export default {
             document.getElementById('profile-upload').click();
         },
         onFileLoad(e) {
-            console.log(e);
         },
         registerUser() {
             if (this.imgData == '')
@@ -254,7 +253,7 @@ export default {
                 } 
             })
             .catch(err => {
-                console.log(err)
+                this.$router.push({ name: "home" });
             })
         },
         getImageSize(size)

@@ -86,7 +86,6 @@ router.post('/42', (req, res) => {
 
 router.get('/github', passport.authenticate('github', {session: false}), function(req, res) {
     let user = JSON.parse(req.user._raw)
-    console.log(user)
     let email = ""
     if (user.email != null)
         email = user.email

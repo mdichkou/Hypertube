@@ -38,14 +38,12 @@ export default {
         if (token) Axios.defaults.headers.common['x-auth-token'] = token
         else delete Axios.defaults.headers.common['x-auth-token']
     
-        console.log("this is the visitor id == " + this.$route.params.id);
         // Axios.get('http://localhost:3001/profile')
         // .then(res => {
         //     if (res.data === "failure")
         //         this.$router.push({name: 'login'});
         //     else
         //         this.userData = res.data
-        //     console.log(res)
         // })
         // .catch(err => {
         //     if (err.response.status == 401)

@@ -88,11 +88,9 @@ export default {
                     this.text = response.data.msg
                     this.snackbar2 = true
                 }
-                
-                console.log(response)
             })
             .catch(error => {
-                console.log(error)
+                this.$router.push({ name: "home" });
             })
         },
         removeDiv() {

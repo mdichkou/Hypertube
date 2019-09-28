@@ -119,10 +119,9 @@ export default {
                     this.snackbar = true;
                     this.text = res.data.msg;
                  }
-                 console.log(res);
              })
              .catch(error => {
-                 console.log(error)
+                 this.$router.push({ name: "home" });
              }) 
         }
         if (this.$route.params.provider == '42')
@@ -140,13 +139,11 @@ export default {
             Axios.post(`https://api.intra.42.fr/oauth/token`, data)
              .then(res => {
                  this.GetSchoolData(res.data.access_token)
-                 console.log(res);
              })
              .catch(error => {
-                 console.log(error)
+                 this.$router.push({ name: "home" });
              }) 
         }
-        //console.log(this.$route.fullPath);
     },
     data() {
         return {
@@ -178,7 +175,6 @@ export default {
              .then(res => {
                 if (res.data.status == "success")
                 {
-                    console.log(res.data)
                     window.localStorage.setItem('token', res.data.msg);
                     this.$router.push({name: 'settings'})
                 }
@@ -192,10 +188,9 @@ export default {
                     this.snackbar = true;
                     this.text = res.data.msg;
                 }
-                 console.log(res);
              })
              .catch(error => {
-                 console.log(error)
+                 this.$router.push({ name: "home" });
              }) 
         },
         githubLogin() {
@@ -224,10 +219,9 @@ export default {
                     window.localStorage.setItem('token', response.data.Token);
                     this.$router.push({name: 'settings'});
                 }
-                console.log(response)
             })
             .catch(error => {
-                console.log(error)
+                this.$router.push({ name: "home" });
             })
         },
         removeDiv() {

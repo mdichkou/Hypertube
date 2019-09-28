@@ -42,10 +42,9 @@ export default {
               i18n.locale = 'en'
               this.$store.state.userData.lang = 'fr'
               //location.reload()
-              console.log(res)
             })
             .catch(err => {
-              console.log(err)
+              this.$router.push({ name: "home" });
             })
           }
         },
@@ -61,10 +60,9 @@ export default {
               i18n.locale = 'fr'
               this.$store.state.userData.lang = 'fr'
               //location.reload()
-              console.log(res)
             })
             .catch(err => {
-              console.log(err)
+              this.$router.push({ name: "home" });
             })
             
           }

@@ -129,10 +129,11 @@ app.get('/extraApi', function (req, res) {
 	sortBy: 'desc',
   })
   .then(results => {
-	console.log(results);
     res.send(results);
   })
-  .catch(err => console.log(err))
+  .catch(err => {
+	this.$router.push({ name: "home" });
+  })
 });
 
 // app.use(function (err, req, res, next) {

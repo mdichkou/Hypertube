@@ -57,7 +57,6 @@ export default {
     axios
       .get("http://localhost:3001/video/" + this.hash)
       .then(res => {
-        console.log(res.data);
         if (res.data == "ERROR") this.$router.push({ name: "home" });
       })
       .catch(err => {

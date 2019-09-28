@@ -48,7 +48,6 @@ function UploadImage(req, res)
         {
             if (err)
             {
-                console.log(err)
                 reject(err);
             }
             else

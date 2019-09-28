@@ -100,13 +100,11 @@ export default {
             this.text = res.data.msg;
           } else {
             this.userData = res.data.msg;
-            console.log("data changed");
           }
-          console.log(res);
         })
         .catch(err => {
           if (err.response.status == 401) this.$router.push({ name: "login" });
-          console.log(err);
+          this.$router.push({ name: "home" });
         });
     }
     jQuery(document).ready(function($) {
@@ -193,7 +191,7 @@ export default {
         })
         .catch(err => {
           if (err.response.status == 401) this.$router.push({ name: "login" });
-          console.log(err);
+          this.$router.push({ name: "home" });
         });
     },
     ImgSource(image) {
@@ -202,13 +200,10 @@ export default {
       else return image;
     },
     onResize() {
-      console.log(window.innerWidth);
       if (window.innerWidth > 700) {
         this.swiperOption.slidesPerView = 3;
       } else {
-        console.log(this.swiperOption.slidesPerView);
         this.swiperOption.slidesPerView = 1;
-        console.log(this.swiperOption.slidesPerView);
       }
     }
   },

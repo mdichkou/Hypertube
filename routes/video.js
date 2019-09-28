@@ -70,7 +70,6 @@ router.get('/:hash', function (req, res) {
 
 	res.setHeader('Accept-Ranges', 'bytes');
 	getTorrentFile.then(function (file) {
-		console.log('dd');
 		var array = file.path.split('/')
 		const query = "SELECT * FROM movies where hash = ?";
 		const query2 = "INSERT INTO movies (hash,path,watched_at) values (?, ?, ?)"
@@ -92,7 +91,6 @@ router.get('/:hash', function (req, res) {
 		res.setHeader('Content-Type', `video/${file.ext}`);
 		if (req.headers.range) {
 			const ranges = parseRange(file.length, req.headers.range, { combine: true });
-			console.log(ranges);
 			if (ranges === -1) {
 				// 416 Requested Range Not Satisfiable
 				res.statusCode = 416;
