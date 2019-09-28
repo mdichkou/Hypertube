@@ -49,24 +49,23 @@ const opts = {
 router.get('/:hash', function (req, res) {
 	const getTorrentFile = new Promise(function (resolve, reject) {
 		var hash = req.params.hash;
-		try
-		{
+		try {
 			var engine = torrentStream('magnet:?xt=urn:btih:' + hash + '', opts);
 			engine.on('ready', function () {
 				engine.files.forEach(function (file, idx) {
 					const ext = path.extname(file.name).slice(1);
 					if (ext === 'mkv' || ext === 'mp4') {
-					file.ext = ext;
-					resolve(file);
+						file.ext = ext;
+						resolve(file);
 					}
 				});
-				});
+			});
 		}
 		catch
 		{
-      		throw 'Invalid Hash';
+			throw 'Invalid Hash';
 		}
-  	});
+	});
 
 
 	res.setHeader('Accept-Ranges', 'bytes');
@@ -115,9 +114,9 @@ router.get('/:hash', function (req, res) {
 		else {
 			var stream = file.createReadStream();
 		}
-		}).catch(function (e) {
-			res.send('ERROR');
-		});
+	}).catch(function (e) {
+		res.send('ERROR');
+	});
 });
 
 
@@ -125,7 +124,9 @@ router.post('/search/getimg', auth, function (req, res) {
 	imdb.get({ id: req.body.imdb_id }, { apiKey: '88736563', timeout: 30000 })
 		.then(respo => {
 			res.send(respo);
-		}).catch(console.log);
+		}).catch(function () {
+			res.send('ERROR');
+		});
 });
 
 
@@ -196,16 +197,16 @@ router.post('/getListWatched', auth, async (req, res) => {
 const PirateBay = require('thepiratebay');
 
 router.post('/extraApi', auth, function (req, res) {
-  PirateBay.search(req.body.imdb_id, {
-    category: 'video',
-    orderBy: 'seeds',
-	sortBy: 'desc',
-  })
-  .then(results => {
-	console.log(results);
-    res.send(results);
-  })
-  .catch(err => console.log(err))
+	PirateBay.search(req.body.imdb_id, {
+		category: 'video',
+		orderBy: 'seeds',
+		sortBy: 'desc',
+	})
+		.then(results => {
+			console.log(results);
+			res.send(results);
+		})
+		.catch(err => console.log(err))
 });
 
 /////////////
