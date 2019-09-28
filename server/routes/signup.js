@@ -10,7 +10,7 @@ const   saltRounds = 10;
 
 const   storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        let path = 'images';
+        let path = './client/public/images';
         fs.mkdirsSync(path);
         callback(null, path);
     },

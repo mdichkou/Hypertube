@@ -39,7 +39,7 @@ router.get('/', auth, (req, res) => {
 
 const   storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        let path = 'images';
+        let path = './client/public/images';
         fs.mkdirsSync(path);
         callback(null, path);
     },
@@ -110,7 +110,7 @@ router.post('/updateImg', auth, (req, res) => {
         {
             UploadImage(req, res)
             .then(image => {
-                fs.unlink(results[0].avatar)
+                fs.unlink("./client/public/" + results[0].avatar)
                 updateAvatar(image, req.id)
             })
             .then(finish => res.send({status: "success", msg: "Image was uploaded successfully"}))
