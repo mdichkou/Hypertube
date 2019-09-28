@@ -68,7 +68,7 @@
                     class="btn btn-success"
                   >Show</a>
                 </h3>
-                <div class="button text-center" v-for="(Hash,index) in listHashes" :key="index">
+                <div class="button  btn-wrap text-center" v-for="(Hash,index) in listHashes" :key="index">
                   <span class="fa fa-play"></span>
                   <a @click="streamVideo(Hash)">Watch - {{ Hash.type }} - {{ Hash.quality }}</a>
                 </div>
@@ -81,7 +81,7 @@
                     class="btn btn-success"
                   >Show</a>
                 </h3>
-                <div class="button text-center" v-for="(Hash,index) in otherHashes" :key="index">
+                <div class="button btn-wrap text-center" v-for="(Hash,index) in otherHashes" :key="index">
                   <span class="fa fa-play"></span>
                   <a @click="streamVideo_extraT(Hash)">{{ Hash.name }} - {{ Hash.size }}</a>
                 </div>
@@ -248,7 +248,7 @@ export default {
   text-transform: uppercase;
   border-radius: 3px;
   transition: all 300ms ease-in-out;
-  padding: 7px 32px 5px 28px;
+  padding: 10px 12px 15px 0px !important;
   top: 10em;
   color: #ffffff;
   margin: 0 0 1.25rem;
@@ -406,5 +406,6 @@ p,
 .btn-wrap{
   word-wrap: break-word;
   width: 100%;
+  overflow: hidden;
 }
 </style>

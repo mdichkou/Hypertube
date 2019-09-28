@@ -188,7 +188,7 @@ router.post('/saveHistory', auth, async (req, res) => {
 });
 
 router.post('/getHistory', auth, async (req, res) => {
-	const query = "SELECT * FROM history where user_id = ?";
+	const query = "SELECT * FROM history where user_id = ? LIMIT 6";
 	db.query(query, [req.body.id], (err, result) => {
 		res.send(result);
 	});
