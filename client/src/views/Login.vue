@@ -34,17 +34,17 @@
                 <span>{{ $t('Login.with') }}</span>
                 <v-btn @click="githubLogin" icon fab>
                     <v-avatar size="30">
-                        <v-img src="../../public/github_white.png"></v-img>
+                        <v-img src="/github_white.png"></v-img>
                     </v-avatar>
                 </v-btn>
                 <v-btn @click="schoolLogin" icon fab>
                     <v-avatar size="30">
-                        <v-img src="../../public/42_white.png"></v-img>
+                        <v-img src="/42_white.png"></v-img>
                     </v-avatar>
                 </v-btn>
                 <v-btn @click="googleLogin" icon fab>
                     <v-avatar size="30">
-                        <v-img src="../../public/google_white.png"></v-img>
+                        <v-img src="/google_white.png"></v-img>
                     </v-avatar>
                 </v-btn>
                 <v-btn class="ma-1 white--text" to="forgot" color="white" absolute bottom left text>

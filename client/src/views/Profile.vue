@@ -1,242 +1,235 @@
 <template>
-
   <div class="containers fill-height fluid grid-list-xl">
-     <v-layout v-if="loader == true">
-            <v-progress-circular class="mx-auto my-3" :size="60" :width="7"
-                color="blue lighten-2"
-                v-show="loader"
-                indeterminate>
-            </v-progress-circular>
-        </v-layout >
-           <v-layout justify-space-around wrap v-else>
-                <div class="wrapper_card">
-  <div class="profile-card js-profile-card">
-    <div class="profile-card__img">
-      <img :src="ImgSource(userData.avatar)" alt="profile card">
-    </div>
+    <v-layout v-if="loader == true">
+      <v-progress-circular
+        class="mx-auto my-3"
+        :size="60"
+        :width="7"
+        color="blue lighten-2"
+        v-show="loader"
+        indeterminate
+      ></v-progress-circular>
+    </v-layout>
+    <v-layout justify-space-around wrap v-else>
+      <div class="wrapper_card">
+        <div class="profile-card js-profile-card">
+          <div class="profile-card__img">
+            <img :src="ImgSource(userData.avatar)" alt="profile card" />
+          </div>
 
-    <div class="profile-card__cnt js-profile-cnt">
-      <div class="profile-card__name">{{userData.username}}</div>
-      <div class="profile-card__txt">{{userData.first_name}} {{userData.last_name}}</div>
+          <div class="profile-card__cnt js-profile-cnt">
+            <div class="profile-card__name">{{userData.username}}</div>
+            <div class="profile-card__txt">{{userData.first_name}} {{userData.last_name}}</div>
 
-
-      <div class="profile-card-ctr">
-            <div class="profile-card__button button--blue js-message-btn">
-             <a href="/settings">Setting</a> 
+            <div class="profile-card-ctr">
+              <div class="profile-card__button button--blue js-message-btn">
+                <a href="/settings">Setting</a>
               </div>
-        <div   v-on:click="seen = !seen" class="profile-card__button button--blue js-message-btn">Watched movies</div>
+              <div
+                v-on:click="seen = !seen"
+                class="profile-card__button button--blue js-message-btn"
+              >Watched movies</div>
+            </div>
+          </div>
+          <div v-if="seen" class="movies">
+            <md-card>
+              <md-card-media>
+                <!-- swiper -->
+                <swiper v-if="swiperChange == 3" :options="swiperOption">
+                  <swiper-slide v-for="(poster,index) in posterList" :key="index">
+                    <img :src="poster" alt />
+                  </swiper-slide>
+                  <div class="swiper-pagination" slot="pagination"></div>
+                </swiper>
+                <swiper v-else :options="swiperOption1">
+                  <swiper-slide v-for="(poster,index) in posterList" :key="index">
+                    <img :src="poster" alt />
+                  </swiper-slide>
+                  <div class="swiper-pagination" slot="pagination"></div>
+                </swiper>
+              </md-card-media>
+            </md-card>
+          </div>
+        </div>
       </div>
-    </div>
-     <div v-if="seen" class="movies">
-     <md-card>
-    <md-card-media>
-      <!-- swiper -->
-      <swiper  v-if="swiperChange == 3" :options="swiperOption">
-         <swiper-slide>
-           <img src="https://yts.unblocked4u.net/assets/images/movies/avengers_infinity_war_2018/large-cover.jpg" alt="">
-         </swiper-slide>
-           <swiper-slide>
-           <img src="https://yts.unblocked4u.net/assets/images/movies/avengers_infinity_war_2018/large-cover.jpg" alt="">
-         </swiper-slide>
-           <swiper-slide>
-           <img src="https://yts.unblocked4u.net/assets/images/movies/avengers_infinity_war_2018/large-cover.jpg" alt="">
-         </swiper-slide>
-           <swiper-slide>
-           <img src="https://yts.unblocked4u.net/assets/images/movies/avengers_infinity_war_2018/large-cover.jpg" alt="">
-         </swiper-slide>
-           <swiper-slide>
-           <img src="https://yts.unblocked4u.net/assets/images/movies/avengers_infinity_war_2018/large-cover.jpg" alt="">
-         </swiper-slide>
-           <swiper-slide>
-           <img src="https://yts.unblocked4u.net/assets/images/movies/avengers_infinity_war_2018/large-cover.jpg" alt="">
-         </swiper-slide>
-        <div class="swiper-pagination" slot="pagination"></div>
-      </swiper>
-      <swiper  v-else :options="swiperOption1">
-         <swiper-slide>
-           <img src="https://yts.unblocked4u.net/assets/images/movies/avengers_infinity_war_2018/large-cover.jpg" alt="">
-         </swiper-slide>
-           <swiper-slide>
-           <img src="https://yts.unblocked4u.net/assets/images/movies/avengers_infinity_war_2018/large-cover.jpg" alt="">
-         </swiper-slide>
-           <swiper-slide>
-           <img src="https://yts.unblocked4u.net/assets/images/movies/avengers_infinity_war_2018/large-cover.jpg" alt="">
-         </swiper-slide>
-           <swiper-slide>
-           <img src="https://yts.unblocked4u.net/assets/images/movies/avengers_infinity_war_2018/large-cover.jpg" alt="">
-         </swiper-slide>
-           <swiper-slide>
-           <img src="https://yts.unblocked4u.net/assets/images/movies/avengers_infinity_war_2018/large-cover.jpg" alt="">
-         </swiper-slide>
-           <swiper-slide>
-           <img src="https://yts.unblocked4u.net/assets/images/movies/avengers_infinity_war_2018/large-cover.jpg" alt="">
-         </swiper-slide>
-        <div class="swiper-pagination" slot="pagination"></div>
-      </swiper>
-    </md-card-media>
-  </md-card>
-     </div>
+
+      <svg hidden="hidden">
+        <defs />
+      </svg>
+    </v-layout>
   </div>
-
-</div>
-
-<svg hidden="hidden">
-  <defs>
-  </defs>
-</svg>
-           </v-layout>
-
- </div>
-        
-    
 </template>
 
 <script>
-import Axios from 'axios'
+import Axios from "axios";
 
 export default {
-    mounted() {
-        this.loader = true
-        setTimeout(()=> {
-            if (this.$route.params.id == undefined || !isNumeric(this.$route.params.id))
-            {
-                this.userData.username = this.$store.state.userData.username;
-                this.userData.first_name = this.$store.state.userData.first_name;
-                this.userData.last_name = this.$store.state.userData.last_name;
-                this.userData.avatar = this.$store.state.userData.avatar;
-            }
-            this.loader = false
-        }, 700);
-        const token = window.localStorage.getItem('token')
-        if (token) Axios.defaults.headers.common['x-auth-token'] = token
-        else delete Axios.defaults.headers.common['x-auth-token']
-    
-        function isNumeric(value) {
-            return /^\d+$/.test(value);
+  mounted() {
+    this.loader = true;
+    setTimeout(() => {
+      if (
+        this.$route.params.id == undefined ||
+        !isNumeric(this.$route.params.id)
+      ) {
+        this.getPosters(this.$store.state.userData.id);
+        this.userData.username = this.$store.state.userData.username;
+        this.userData.first_name = this.$store.state.userData.first_name;
+        this.userData.last_name = this.$store.state.userData.last_name;
+        this.userData.avatar = this.$store.state.userData.avatar;
+      } else {
+        this.getPosters(this.$route.params.id);
+      }
+      this.loader = false;
+    }, 700);
+    const token = window.localStorage.getItem("token");
+    if (token) Axios.defaults.headers.common["x-auth-token"] = token;
+    else delete Axios.defaults.headers.common["x-auth-token"];
+    function isNumeric(value) {
+      return /^\d+$/.test(value);
+    }
+    if (
+      this.$route.params.id != undefined &&
+      isNumeric(this.$route.params.id)
+    ) {
+      Axios.post("http://localhost:3001/profile/visit", {
+        id: this.$route.params.id
+      })
+        .then(res => {
+          if (res.data.status === "failure") {
+            this.snackbar = true;
+            this.text = res.data.msg;
+          } else {
+            this.userData = res.data.msg;
+            console.log("data changed");
+          }
+          console.log(res);
+        })
+        .catch(err => {
+          if (err.response.status == 401) this.$router.push({ name: "login" });
+          console.log(err);
+        });
+    }
+    jQuery(document).ready(function($) {
+      "use strict";
+      //  TESTIMONIALS CAROUSEL HOOK
+      $("#customers-testimonials").owlCarousel({
+        loop: true,
+        center: true,
+        items: 3,
+        navigation: true,
+        margin: 0,
+        autoplay: true,
+        dots: true,
+        autoplayTimeout: 8500,
+        smartSpeed: 450,
+        responsive: {
+          0: {
+            items: 1
+          },
+          768: {
+            items: 2
+          },
+          1170: {
+            items: 3
+          }
         }
-        if (this.$route.params.id != undefined && isNumeric(this.$route.params.id))
-        {
-            console.log("salam")
-            Axios.post('http://localhost:3001/profile/visit', {id: this.$route.params.id})
-            .then(res => {
-                if (res.data.status === "failure")
-                {
-                    this.snackbar = true
-                    this.text = res.data.msg
-                }
-                else
-                {
-                    this.userData = res.data.msg
-                    console.log("data changed")
-                }
-                console.log(res)
-            })
-            .catch(err => {
-                if (err.response.status == 401)
-                    this.$router.push({name: 'login'});
-                console.log(err)
-            })
+      });
+    });
+  },
+  data() {
+    return {
+      loader: false,
+      seen: false,
+      snackbar: "",
+      text: "",
+      watchedList: null,
+      posterList: [],
+      userData: {
+        username: "",
+        first_name: "",
+        last_name: "",
+        avatar: ""
+      },
+      window: {
+        width: 0,
+        height: 0
+      },
+      swiperOption: {
+        slidesPerView: 3,
+        spaceBetween: 30,
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true
         }
-         jQuery(document).ready(function($) {
-        		"use strict";
-        		//  TESTIMONIALS CAROUSEL HOOK
-		        $('#customers-testimonials').owlCarousel({
-		            loop: true,
-		            center: true,
-		            items: 3,
-                navigation: true,
-		            margin: 0,
-		            autoplay: true,
-		            dots:true,
-		            autoplayTimeout: 8500,
-		            smartSpeed: 450,
-		            responsive: {
-		              0: {
-		                items: 1
-		              },
-		              768: {
-		                items: 2
-		              },
-		              1170: {
-		                items: 3
-		              }
-		            }
-		        });
+      },
+      swiperOption1: {
+        slidesPerView: 1,
+        spaceBetween: 30,
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true
+        }
+      }
+    };
+  },
+  methods: {
+    getPosters(id) {
+      Axios.post("http://localhost:3001/video/getHistory", {
+        id: id
+      })
+        .then(res => {
+          this.watchedList = res.data;
+          this.watchedList.forEach(element => {
+            Axios.post("http://localhost:3001/video/search/getimg", {
+              imdb_id: element.movie_id
+            })
+              .then(resp => {
+                this.posterList.push(resp.data.poster);
+              })
+              .catch(err => {
+                this.$router.push({ name: "home" });
+              });
+          });
+        })
+        .catch(err => {
+          if (err.response.status == 401) this.$router.push({ name: "login" });
+          console.log(err);
         });
     },
-    data() {
-        return {
-            loader: false,
-            seen: false,
-            snackbar: '',
-            text: '',
-            userData: {
-                username: '',
-                first_name: '',
-                last_name: '',
-                avatar: '',
-            },
-            window: {
-              width: 0,
-              height: 0
-            },
-             swiperOption: {
-               slidesPerView: 3,
-                spaceBetween: 30,
-                pagination: {
-                  el: '.swiper-pagination',
-                  clickable: true
-              }
-             },
-              swiperOption1: {
-               slidesPerView: 1,
-                spaceBetween: 30,
-                pagination: {
-                  el: '.swiper-pagination',
-                  clickable: true
-              }
-              }
-        }
-        },
-    methods: {
-        ImgSource(image)
-        {
-            if (image.includes("images/") == true)
-                  return require("../../public" + image)
-            else
-                 return image
-        },
-        onResize() {
-            console.log(window.innerWidth)
-        if (window.innerWidth > 700) {
-            this.swiperOption.slidesPerView = 3
-        } else {
-            console.log(this.swiperOption.slidesPerView)
-            this.swiperOption.slidesPerView = 1
-             console.log(this.swiperOption.slidesPerView)
-        }
+    ImgSource(image) {
+      if (image.includes("images/") == true)
+        return require("../../public" + image);
+      else return image;
+    },
+    onResize() {
+      console.log(window.innerWidth);
+      if (window.innerWidth > 700) {
+        this.swiperOption.slidesPerView = 3;
+      } else {
+        console.log(this.swiperOption.slidesPerView);
+        this.swiperOption.slidesPerView = 1;
+        console.log(this.swiperOption.slidesPerView);
+      }
     }
-    },
-    computed: {
-        swiperChange()
-        {
-            return this.swiperOption.slidesPerView
-        }
-    },
-    created() {
-  window.addEventListener('resize', this.onResize)
-},
+  },
+  computed: {
+    swiperChange() {
+      return this.swiperOption.slidesPerView;
+    }
+  },
+  created() {
+    window.addEventListener("resize", this.onResize);
+  },
 
-beforeDestroy() {
-  window.removeEventListener('resize', this.onResize)
-},
-
-}
+  beforeDestroy() {
+    window.removeEventListener("resize", this.onResize);
+  }
+};
 </script>
   <style>
-     @import url('https://fonts.googleapis.com/css?family=Quicksand:400,500,700&subset=latin-ext');
+@import url("https://fonts.googleapis.com/css?family=Quicksand:400,500,700&subset=latin-ext");
 
-.profile-card__button  a {
+.profile-card__button a {
   text-decoration: none !important;
   color: white !important;
 }
@@ -249,7 +242,7 @@ beforeDestroy() {
   fill: currentColor;
 }
 .wrapper_card {
-    margin-top: 140px;
+  margin-top: 140px;
   width: 100%;
   height: auto;
   /* min-height: 100vh; */
@@ -264,7 +257,7 @@ beforeDestroy() {
   }
 }
 .profile-card {
-    margin-top: 140px;
+  margin-top: 140px;
   width: 100%;
   /* min-height: 800px; */
   padding-left: 10px;
@@ -280,7 +273,8 @@ beforeDestroy() {
 .profile-card.active .profile-card__cnt {
   filter: blur(6px);
 }
-.profile-card.active .profile-card-message, .profile-card.active .profile-card__overlay {
+.profile-card.active .profile-card-message,
+.profile-card.active .profile-card__overlay {
   opacity: 1;
   pointer-events: auto;
   transition-delay: 0.1s;
@@ -325,7 +319,7 @@ beforeDestroy() {
   color: white !important;
   font-weight: 700;
   font-size: 24px;
- margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 .profile-card__txt {
   font-size: 18px;
@@ -418,7 +412,15 @@ beforeDestroy() {
   box-shadow: 0px 4px 30px rgba(19, 127, 212, 0.7);
 }
 .profile-card-social__item.instagram {
-  background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+  background: linear-gradient(
+    45deg,
+    #405de6,
+    #5851db,
+    #833ab4,
+    #c13584,
+    #e1306c,
+    #fd1d1d
+  );
   box-shadow: 0px 4px 30px rgba(120, 64, 190, 0.6);
 }
 .profile-card-social__item.behance {
@@ -454,7 +456,7 @@ beforeDestroy() {
 .profile-card__button {
   background: none;
   border: none;
-  font-family: 'Quicksand', sans-serif;
+  font-family: "Quicksand", sans-serif;
   font-weight: 700;
   font-size: 19px;
   margin: 15px 35px;
@@ -574,7 +576,7 @@ beforeDestroy() {
   padding: 15px 20px;
   color: #324e63;
   font-weight: 500;
-  font-family: 'Quicksand', sans-serif;
+  font-family: "Quicksand", sans-serif;
   outline: none;
   transition: all 0.3s;
 }
@@ -594,57 +596,62 @@ beforeDestroy() {
   border-radius: 12px;
   transition: all 0.3s;
 }
-.swiper-container{
+.swiper-container {
   width: 100%;
   height: 400px;
 }
-.swiper-wrapper{
-    transition-duration: 0ms;
-    transform: translate3d(0px, 0px, 0px);
+.swiper-wrapper {
+  transition-duration: 0ms;
+  transform: translate3d(0px, 0px, 0px);
 }
-.swiper-slide{
-      width: 213.333px;
-      margin-right: 30px;
-      text-align: center;
-    font-size: 38px;
-    font-weight: 700;
-    /* background-color: #eee; */
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    text-align: center;
-    -webkit-flex-shrink: 0;
-    -ms-flex-negative: 0;
-    flex-shrink: 0;
-    height: 100%;
-    position: relative;
-    -webkit-transition-property: -webkit-transform;
-    transition-property: -webkit-transform;
-    -o-transition-property: transform;
-    transition-property: transform;
-    transition-property: transform, -webkit-transform;
-    cursor: pointer;
+.swiper-slide {
+  width: 213.333px;
+  margin-right: 30px;
+  text-align: center;
+  font-size: 38px;
+  font-weight: 700;
+  /* background-color: #eee; */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  text-align: center;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  height: 100%;
+  position: relative;
+  -webkit-transition-property: -webkit-transform;
+  transition-property: -webkit-transform;
+  -o-transition-property: transform;
+  transition-property: transform;
+  transition-property: transform, -webkit-transform;
+  cursor: pointer;
 }
 /* @media screen and (max-width: 698px) {
   .swiper-slide {
     width: 100% !important;
   }
 } */
-.swiper-pagination-bullet{
-    background: #fff !important
+.swiper-pagination-bullet {
+  background: #fff !important;
 }
-.swiper-pagination-bullet-active{
-  background: #007aff !important
+.swiper-pagination-bullet-active {
+  background: #007aff !important;
 }
 
-.containers{
-  background-image: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url('../../public/886533.jpg');
+.containers {
+  background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.6) 0%,
+      rgba(0, 0, 0, 0.6) 100%
+    ),
+    url("../../public/886533.jpg");
   background-size: cover;
 }
 </style>

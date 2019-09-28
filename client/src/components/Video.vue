@@ -1,84 +1,101 @@
 <template>
-  <div v-if="data" :style="{ backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url(${bgImg})` }"   class="body-content fill-height fluid grid-list-xl">
-
-<v-layout v-if="loader == true">
- <div id="coord_loading" class="content">
-
-	<div class="pulse"></div>
-	<div class="pulse-center">
-		<img src="https://i.ibb.co/smCT9w9/19723588.jpg" alt="loader_back">
-	</div>
-</div>
-</v-layout >
-
-<v-layout v-else>
-    <div  class="cont">
-      <div class="wrapper">
-        <div class="row bg animated fadeInDown">
-          <div class="medium-5 column">
-            <h1 class="titl">{{data.name}}</h1>
-            <span class="sub-left">
-              {{data.genres}}
-              <v-rating
-                color="amber"
-                :value="data.rating / 2"
-                half-increments
-                dense
-                style="display:inline-block"
-                class="pl-0"
-                size="14"
-                readonly
-              ></v-rating>
-               {{data.rating}}
-            </span>
-            <span class="sub-left">
-              <b>Production year:</b> {{data.year}}
-            </span>
-            <span class="sub-left">
-              <b>Duration:</b> : {{data.runtime}}
-            </span>
-             <span v-if="data.production != 'N/A'" class="sub-left">
-              <b>Production:</b> {{data.production}}
-            </span>
-            <span class="sub-left">
-              <b>Director:</b> {{data.director}}
-            </span>
-            <span class="sub-left">
-              <b>Writers:</b>{{data.writer}}
-            </span>
-            <span class="sub-left">
-              <b>Stars:</b> {{data.actors}}
-            </span>
-            <div class="break"></div>
-
-            <p class="content">
-              {{data.plot}}
-            </p>
-          </div>
-          <!-- Change this part -->
-         <div class="row">
-            <div class="medium-7 column text-right col-lg-6 col-md-6 col-sm-12 col-12">
-              <h3 class="text-center">YTS <a @click="listHashes = listHashes ? null : listHashes2;" class="btn btn-success">Show</a></h3>
-              <div class="button text-center" v-for="(Hash,index) in listHashes" :key="index">
-                <span class="fa fa-play"></span>
-                <a @click="streamVideo(Hash)"> Watch - {{ Hash.type }} - {{ Hash.quality }} </a>
-              </div>
-            </div>
-            <div class="medium-7 column text-right col-lg-6 col-md-12 col-sm-12 col-12">
-              <h3 class="text-center">Extra Torrents <a @click="otherHashes = otherHashes ? null : otherHashes2;" class="btn btn-success">Show</a> </h3>
-              <div class="button text-center" v-for="(Hash,index) in otherHashes" :key="index">
-                <span class="fa fa-play"></span>
-                <a @click="streamVideo_extraT(Hash)">{{ Hash.name }} - {{ Hash.size }}</a>
-              </div>
-            </div>
-         </div>
-         <!-- ////// END /////// -->
+  <div
+    v-if="data"
+    :style="{ backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url(${bgImg})` }"
+    class="body-content fill-height fluid grid-list-xl"
+  >
+    <v-layout v-if="loader == true">
+      <div id="coord_loading" class="content">
+        <div class="pulse"></div>
+        <div class="pulse-center">
+          <img src="https://i.ibb.co/smCT9w9/19723588.jpg" alt="loader_back" />
         </div>
       </div>
-    </div>
- 
-</v-layout >
-   </div>
+    </v-layout>
+
+    <v-layout v-else>
+      <div class="cont">
+        <div class="wrapper">
+          <div class="row bg animated fadeInDown">
+            <div class="medium-5 column">
+              <h1 class="titl">{{data.name}}</h1>
+              <span class="sub-left">
+                {{data.genres}}
+                <v-rating
+                  color="amber"
+                  :value="data.rating / 2"
+                  half-increments
+                  dense
+                  style="display:inline-block"
+                  class="pl-0"
+                  size="14"
+                  readonly
+                ></v-rating>
+                {{data.rating}}
+              </span>
+              <span class="sub-left">
+                <b>Production year:</b>
+                {{data.year}}
+              </span>
+              <span class="sub-left">
+                <b>Duration:</b>
+                : {{data.runtime}}
+              </span>
+              <span v-if="data.production != 'N/A'" class="sub-left">
+                <b>Production:</b>
+                {{data.production}}
+              </span>
+              <span class="sub-left">
+                <b>Director:</b>
+                {{data.director}}
+              </span>
+              <span class="sub-left">
+                <b>Writers:</b>
+                {{data.writer}}
+              </span>
+              <span class="sub-left">
+                <b>Stars:</b>
+                {{data.actors}}
+              </span>
+              <div class="break"></div>
+
+              <p class="content">{{data.plot}}</p>
+            </div>
+            <!-- Change this part -->
+            <div class="row">
+              <div class="medium-7 column text-right col-lg-6 col-md-6 col-sm-12 col-12">
+                <h3 class="text-center">
+                  YTS
+                  <a
+                    @click="listHashes = listHashes ? null : listHashes2;"
+                    class="btn btn-success"
+                  >Show</a>
+                </h3>
+                <div class="button text-center" v-for="(Hash,index) in listHashes" :key="index">
+                  <span class="fa fa-play"></span>
+                  <a @click="streamVideo(Hash)">Watch - {{ Hash.type }} - {{ Hash.quality }}</a>
+                </div>
+              </div>
+              <div class="medium-7 column text-right col-lg-6 col-md-12 col-sm-12 col-12">
+                <h3 class="text-center">
+                  Extra Torrents
+                  <a
+                    @click="otherHashes = otherHashes ? null : otherHashes2;"
+                    class="btn btn-success"
+                  >Show</a>
+                </h3>
+                <div class="button text-center" v-for="(Hash,index) in otherHashes" :key="index">
+                  <span class="fa fa-play"></span>
+                  <a @click="streamVideo_extraT(Hash)">{{ Hash.name }} - {{ Hash.size }}</a>
+                </div>
+              </div>
+            </div>
+            <!-- ////// END /////// -->
+          </div>
+        </div>
+      </div>
+    </v-layout>
+  </div>
 </template>
 
 <script>
@@ -87,45 +104,58 @@ import axios from "axios";
 export default {
   mounted() {},
   name: "Video",
-  created() 
-  {
-    //this.loader = true;
+  created() {
+    this.loader = true;
     this.id = this.$route.params.id;
 
     const token = window.localStorage.getItem("token");
     if (token) axios.defaults.headers.common["x-auth-token"] = token;
     else delete axios.defaults.headers.common["x-auth-token"];
 
-    axios.post("http://localhost:3001/video/search/getimg", {imdb_id: this.id})
-    .then(resp => {
+    axios
+      .post("http://localhost:3001/video/search/getimg", { imdb_id: this.id })
+      .then(resp => {
         this.data = resp.data;
         if (resp.data == "ERROR") this.$router.push({ name: "home" });
-        delete axios.defaults.headers.common['x-auth-token'];
-        axios.get('https://api.themoviedb.org/3/find/' + this.id + '?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&language=en-US&external_source=imdb_id')
-        .then(resp2 => {
-          this.bgImg = 'http://image.tmdb.org/t/p/w1280' + resp2.data.movie_results[0].poster_path;
-        })
-    }).catch(err => {
+        delete axios.defaults.headers.common["x-auth-token"];
+        axios
+          .get(
+            "https://api.themoviedb.org/3/find/" +
+              this.id +
+              "?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&language=en-US&external_source=imdb_id"
+          )
+          .then(resp2 => {
+            this.bgImg =
+              "http://image.tmdb.org/t/p/w1280" +
+              resp2.data.movie_results[0].poster_path;
+          });
+      })
+      .catch(err => {
         this.$router.push({ name: "home" });
-      });;
-   delete axios.defaults.headers.common['x-auth-token'];
-    axios.get("https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" + this.id)
+      });
+    delete axios.defaults.headers.common["x-auth-token"];
+    axios
+      .get(
+        "https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" +
+          this.id
+      )
       .then(resp => {
         this.listHashes2 = resp.data.data.movies[0].torrents;
       })
       .catch(err => {
-        this.$router.push({name: 'login'});
+        this.$router.push({ name: "login" });
       });
-    //// add
-    // axios.defaults.headers.common["x-auth-token"] = token
-    // axios.post("http://localhost:3001/video/extraApi", {imdb_id: this.id})
-    //   .then(resp => { 
-    //     this.otherHashes2 = resp.data.slice(0, 5);
-    //     this.loader = false;
-    //   })
-    //   .catch(err => {
-    //     this.$router.push({name: 'login'});
-    //   });
+    // add
+    axios.defaults.headers.common["x-auth-token"] = token;
+    axios
+      .post("http://localhost:3001/video/extraApi", { imdb_id: this.id })
+      .then(resp => {
+        this.otherHashes2 = resp.data.slice(0, 5);
+        this.loader = false;
+      })
+      .catch(err => {
+        this.$router.push({ name: "login" });
+      });
   },
 
   data: () => ({
@@ -136,17 +166,23 @@ export default {
     listHashes2: null,
     otherHashes: null,
     otherHashes2: null,
-    loader: false,
+    loader: false
   }),
-  
-  methods : {
+
+  methods: {
     streamVideo(Hash) {
-      this.$router.push({path: `/stream/${this.id}/${Hash.hash}`, params: {hash: 'test'}})
+      this.$router.push({
+        path: `/stream/${this.id}/${Hash.hash}`,
+        params: { hash: "test" }
+      });
     },
     streamVideo_extraT(Hash) {
-      var hash_link =  Hash.magnetLink.slice(20, 60);
-      this.$router.push({path: `/stream/${this.id}/${hash_link}`, params: {hash: 'test'}})
-    },
+      var hash_link = Hash.magnetLink.slice(20, 60);
+      this.$router.push({
+        path: `/stream/${this.id}/${hash_link}`,
+        params: { hash: "test" }
+      });
+    }
   }
 };
 </script>
@@ -155,15 +191,20 @@ export default {
 @import url("https://fonts.googleapis.com/css?family=Orbitron");
 
 .body-content {
-    background-position: center;
-    background-repeat: repeat;
-    background-size: cover;
+  background-position: center;
+  background-repeat: repeat;
+  background-size: cover;
 }
 .wrapper {
   background-repeat: no-repeat;
   background-size: 350%;
   height: 100%;
-  background: linear-gradient(to left, rgba(42, 159, 255, 0.2) 0%, #212120 97%, #212120 100%);
+  background: linear-gradient(
+    to left,
+    rgba(42, 159, 255, 0.2) 0%,
+    #212120 97%,
+    #212120 100%
+  );
 }
 .bg {
   position: relative;
@@ -308,7 +349,6 @@ p,
   text-align: right !important;
 }
 
-
 #coord_loading {
   position: absolute;
   width: 100%;
@@ -339,7 +379,7 @@ p,
   background: orange;
   width: 100px;
   height: 100px;
-  background: #2F3233;
+  background: #2f3233;
   border-radius: 50%;
 }
 
@@ -359,7 +399,7 @@ p,
   50% {
     width: 180px;
     height: 180px;
-    background: lighten( #d61f26, 40%);
+    background: lighten(#d61f26, 40%);
     border: 2px solid #d61f26;
   }
   100% {
@@ -369,5 +409,4 @@ p,
     border: 2px solid transparent;
   }
 }
-
 </style>

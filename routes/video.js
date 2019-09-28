@@ -189,6 +189,13 @@ router.post('/saveHistory', auth, async (req, res) => {
 	});
 });
 
+router.post('/getHistory', auth, async (req, res) => {
+	const query = "SELECT * FROM history where user_id = ?";
+	db.query(query, [req.body.id], (err, result) => {
+		res.send(result);
+	});
+});
+
 router.post('/getComments', auth, async (req, res) => {
 	const query = "SELECT comments.comment,comments.created_at,comments.user_id , users.username ,users.avatar FROM comments , users where comments.movie_id = ? AND comments.user_id = users.id ORDER BY created_at DESC"
 	db.query(query, [req.body.imdb_id], (err, result) => {
@@ -216,7 +223,6 @@ router.post('/extraApi', auth, function (req, res) {
 		sortBy: 'desc',
 	})
 		.then(results => {
-			console.log(results);
 			res.send(results);
 		})
 		.catch(err => console.log(err))
