@@ -7,6 +7,8 @@ const   multiparty = require('multiparty');
 const   fs      = require('fs-extra')
 const   Repitition = require('../middleware/Repitition')
 const   saltRounds = 10;
+const sizeOf = require('image-size');
+var name = null;
 
 const   storage = multer.diskStorage({
     destination: (req, file, callback) => {
@@ -16,6 +18,7 @@ const   storage = multer.diskStorage({
     },
     filename: (req, file, callback) => {
         fileName = Date.now() + path.extname(file.originalname)
+        name = fileName
         callback(null, fileName)
     }
 })
@@ -32,17 +35,15 @@ function    checkFileType(file, cb){
     const   filetypes = /jpeg|jpg|png/
     const   extname   = filetypes.test(path.extname(file.originalname).toLowerCase())
     const   mimetype  = filetypes.test(file.mimetype)
-
+    
     if (mimetype && extname)
         return cb(null, true);
     else
-        return("8")
-        // return cb(file.originalname + " isn't an image");
+        return ("8")
 }
 
 function UploadImage(req, res)
 {
-    
     return new Promise((resolve, reject) => {
         upload(req, res, async (err) => 
         {
@@ -55,7 +56,9 @@ function UploadImage(req, res)
                 if (req.file == undefined)
                     reject("9");
                 else
+                {
                     resolve('images/'+fileName)
+                }
             }
         })
     })
@@ -63,14 +66,27 @@ function UploadImage(req, res)
 
 function InsertData(image, vkey, first_name, last_name, username, password, email)
 {
+    
     return new Promise((resolve, reject) => {
-        const query = "INSERT INTO users (username, avatar, first_name, last_name, password, email, verification_code) values (?, ?, ?, ?, ?, ?, ?)"
-        db.query(query, [username, image, first_name, last_name, password, email, vkey], (error, results) => {
-            if (error)
-                reject("10")
-            else
-                resolve("data inserted")
-        })
+        try
+        {
+            var     dimensions = sizeOf('./client/public/images/'+name);
+
+            if (dimensions.width && dimensions.height)
+            {
+                const query = "INSERT INTO users (username, avatar, first_name, last_name, password, email, verification_code) values (?, ?, ?, ?, ?, ?, ?)"
+                db.query(query, [username, image, first_name, last_name, password, email, vkey], (error, results) => {
+                    if (error)
+                        reject("10")
+                    else
+                        resolve("data inserted")
+                })
+            }
+        }
+        catch
+        {
+            reject("8")
+        }  
     })
 }
 
