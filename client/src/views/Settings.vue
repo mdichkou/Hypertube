@@ -109,7 +109,7 @@
     </v-layout>
     <v-snackbar v-model="snackbar" :timeout="5000" color="error" right top class="mt-4">
       <v-icon color="white">error</v-icon>
-      <span>{{ $t(`RegistreError.err_${text}`) }}</span>
+      <span>{{ $t(`RegistreError.err_${text2}`) }}</span>
       <v-btn color="white" text @click="snackbar = false">Close</v-btn>
     </v-snackbar>
     <v-snackbar v-model="snackbar2" :timeout="5000" color="success" right top class="mt-4">
@@ -117,19 +117,6 @@
       <span>{{ $t(`Settings.success_${this.text}`) }}</span>
       <v-btn color="white" text @click="snackbar2 = false">Close</v-btn>
     </v-snackbar>
-
-    <v-dialog max-width="400px" scrollable v-model="dialog">
-      <v-btn block v-slot:activator="{ on }" style="display: none" color="pink" dark></v-btn>
-      <v-card color="grey lighten-5" height="400px">
-        <v-img height="90px" :src="this.image"></v-img>
-
-        <v-btn
-          color="blue lighten-2"
-          class="white--text"
-          @click="setPicture"
-        >{{ $t('Settings.cheeze')}}</v-btn>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
@@ -148,6 +135,7 @@ export default {
   },
   data() {
     return {
+      text2: "8",
       loader: false,
       dialog: false,
       show: false,
@@ -165,10 +153,6 @@ export default {
         avatar: ""
       },
       Imgswitch: false,
-      imgData: "",
-      file: "",
-      image: "",
-      image2: "",
       firstNameRules: [
         v => !!v || i18n.locale == "fr" || "First name is required",
         v => !!v || "Le prénom est requis",
@@ -219,27 +203,6 @@ export default {
     };
   },
   methods: {
-    setPicture() {
-      this.dialog = false;
-      const formData = new FormData();
-      this.image2 = this.image;
-      this.Imgswitch = true;
-
-      formData.append("myImage", this.imgData);
-      Axios.post("http://localhost:3001/settings/updateImg", formData)
-        .then(res => {
-          if (res.data.status == "success") {
-            this.snackbar2 = true;
-            this.text = "1";
-          } else {
-            this.snackbar = true;
-            this.text = this.file + " is invalid";
-          }
-        })
-        .catch(err => {
-          this.$router.push({ name: "home" });
-        });
-    },
     onFileChange(e) {
       const files = e.target.files[0];
       if (files != undefined) this.addImg(files);
@@ -248,16 +211,28 @@ export default {
       if (!file.type.match("image/jpeg|image/jpg|image/png")) {
         this.snackbar = true;
         this.isDragging = "error";
-        this.text = `${file.name} is not an image`;
+        this.text2 = `8`;
         return;
       } else {
-        this.dialog = true;
-        this.imgData = file;
-        this.file = file.name;
-        const reader = new FileReader();
-        reader.onload = i => (this.image = i.target.result);
-        reader.readAsDataURL(file);
+
+        const formData = new FormData();
+        formData.append("myImage", file);
+        Axios.post("http://localhost:3001/settings/updateImg", formData)
+        .then(res => {
+          console.log(res)
+          if (res.data.status == "success") {
+            this.snackbar2 = true;
+            this.text = "1";
+          } else {
+            this.snackbar = true;
+            this.text2 = "8";
+          }
+        })
+        .catch(err => {
+          this.$router.push({ name: "home" });
+        });
       }
+
     },
     imageLoad() {
       document.getElementById("profile-upload").click();
@@ -270,17 +245,15 @@ export default {
             this.text = "2";
           } else {
             this.snackbar = true;
-            this.text = res.data.msg;
+            this.text2 = res.data.msg;
           }
         })
         .catch(err => {
-          if (err.response.status == 422) {
-            this.snackbar = true;
-            this.text = err.response.data;
-          } else this.$router.push({ name: "home" });
+           this.$router.push({ name: "home" });
         });
     },
     ImgSource(image) {
+      
       if (image.includes("images/") == true)
         return require("../../public/" + image);
       else return image;

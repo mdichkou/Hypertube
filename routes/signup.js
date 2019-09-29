@@ -66,7 +66,6 @@ function UploadImage(req, res)
 
 function InsertData(image, vkey, first_name, last_name, username, password, email)
 {
-    
     return new Promise((resolve, reject) => {
         try
         {

@@ -104,6 +104,7 @@ export default {
             let path = this.$route.fullPath;
             Axios.get(`http://localhost:3001${path}`)
              .then(res => {
+                 console.log(res.data)
                  if (res.data.status == "success")
                  {
                      window.localStorage.setItem('token', res.data.msg);
@@ -111,11 +112,11 @@ export default {
                  }
                  else
                  {
-                    this.$router.push({path: `${i18n.locale}/login`})
+                    this.$router.push({path: `/${i18n.locale}/login`})
                     this.snackbar = true;
                     this.text = res.data.msg;
                  }
-                 console.log(res.data)
+                 
              })
              .catch(error => {
                  this.$router.push({ name: "login" });

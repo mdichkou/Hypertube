@@ -6,7 +6,9 @@ const multer    = require('multer');
 const bcrypt = require('bcrypt');
 const auth      = require('../middleware/auth')
 const Repitition = require('../middleware/Repitition')
+const sizeOf = require('image-size');
 const saltRounds = 10;
+let name = null;
 
 function isNumeric(value) {
     return /^\d+$/.test(value);
@@ -45,6 +47,7 @@ const   storage = multer.diskStorage({
     },
     filename: (req, file, callback) => {
         fileName = Date.now() + path.extname(file.originalname)
+        name = fileName;
         callback(null, fileName)
     }
 })
@@ -92,13 +95,25 @@ function UploadImage(req, res)
 function    updateAvatar(image, id)
 {
     return new Promise((resolve, reject) => {
-        const query = "UPDATE users SET avatar = ? WHERE id = ?"
-        db.query(query, [image, id], (error, results) => {
-            if (results)
-                resolve("image updated")
-            else
-                reject("updateQuery didn't deliver")
-        })
+        try
+        {
+            var     dimensions = sizeOf('./client/public/images/'+name);
+
+            if (dimensions.width && dimensions.height)
+            {
+                const query = "UPDATE users SET avatar = ? WHERE id = ?"
+                db.query(query, [image, id], (error, results) => {
+                    if (error)
+                        reject("8")
+                    else
+                        resolve("image updated")
+                })
+            }
+        }
+        catch
+        {
+            reject("8")
+        }  
     })
 }
 
@@ -109,11 +124,11 @@ router.post('/updateImg', auth, (req, res) => {
         {
             UploadImage(req, res)
             .then(image => {
-                fs.unlink("./client/public/" + results[0].avatar)
                 updateAvatar(image, req.id)
+                .then(finish => res.send({status: "success", msg: "Image was uploaded successfully"}))
+                .catch(err => res.send({status: "failure", msg: err}))
             })
-            .then(finish => res.send({status: "success", msg: "Image was uploaded successfully"}))
-            .catch(error => res.send({status: "failure", msg: error}))
+            
         }
         else
             res.send({status: "failure", msg: error})

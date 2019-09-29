@@ -7,10 +7,6 @@
             <v-flex xs12>
                 <v-card max-width="600px" class="ma-auto" dark style="background:rgba(0, 0, 0, 0.7);">
                     <v-toolbar height="50px"  dark style="background:rgba(0, 0, 0, 0.5);">
-                    <v-icon v-if="isDragging != 'success'" color="white" class="mx-1">person_add</v-icon>
-                    <v-avatar v-else >
-                        <v-img :src="this.image"></v-img>
-                    </v-avatar>
                     <v-toolbar-title class="ml-2 white--text">{{ $t('Signup.signup') }}</v-toolbar-title>
                     </v-toolbar>
                     <v-form v-model="valid" ref="form" lazy-validation class="mx-3 mt-3">
