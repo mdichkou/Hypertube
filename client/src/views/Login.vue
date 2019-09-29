@@ -89,6 +89,7 @@
 <script>
 import Axios from 'axios'
 import i18n  from '../i18n'
+import { setInterval } from 'timers';
 
 export default {
     mounted() {
@@ -110,14 +111,11 @@ export default {
                  }
                  else
                  {
-                     if (res.data.msg == "Email or Username Already Exists")
-                    {
-                        this.dialog = false;
-                        this.$router.push({name: 'login'})
-                    }
+                    this.$router.push({path: `${i18n.locale}/login`})
                     this.snackbar = true;
                     this.text = res.data.msg;
                  }
+                 console.log(res.data)
              })
              .catch(error => {
                  this.$router.push({ name: "login" });
@@ -140,7 +138,7 @@ export default {
                  this.GetSchoolData(res.data.access_token)
              })
              .catch(error => {
-                 this.$router.push({ name: "login" });
+                 this.$router.push({path: `/${i18n.locale}/login`})
              }) 
         }
     },
@@ -179,17 +177,15 @@ export default {
                 }
                 else
                 {
-                    if (res.data.msg == "Email or Username Already Exists")
-                    {
-                        this.dialog = false;
-                        this.$router.push({name: 'login'})
-                    }
                     this.snackbar = true;
                     this.text = res.data.msg;
+                    setTimeout(() => {
+                        this.$router.push({path: `/${i18n.locale}/login`})
+                    }, 2000);   
                 }
              })
              .catch(error => {
-                 this.$router.push({ name: "login" });
+                 this.$router.push({path: `/${i18n.locale}/login`})
              }) 
         },
         githubLogin() {
@@ -220,7 +216,7 @@ export default {
                 }
             })
             .catch(error => {
-                this.$router.push({ name: "login" });
+                this.$router.push({path: `/${i18n.locale}/login`})
             })
         },
         removeDiv() {

@@ -101,8 +101,8 @@ export default {
           }
         })
         .catch(err => {
-          if (err.response.status == 401) this.$router.push({ name: "login" });
-          this.$router.push({ name: "home" });
+          if (err.response.status == 401)
+            this.$router.push({ name: "home" });
         });
     }
     jQuery(document).ready(function($) {

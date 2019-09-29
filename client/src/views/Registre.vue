@@ -257,7 +257,7 @@ export default {
                 } 
             })
             .catch(err => {
-                console.log(err)
+                this.$router.push({path: `/${i18n.locale}/login`})
             })
         },
         getImageSize(size)

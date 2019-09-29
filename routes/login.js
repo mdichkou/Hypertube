@@ -66,19 +66,19 @@ router.post('/42', (req, res) => {
                             if (results)
                                 res.send({status: "success", msg: jwt.sign({id: results.insertId}, 'jwtPrivateKey')})
                             else
-                                res.send({status: "failure", msg: "insertQuery didn't deliver"})
+                                res.send({status: "failure", msg: "6"})
                         })
                     }
                     else if (results.length > 0)
-                        res.send({status: "failure", msg: "Email or Username Already Exists"})
+                        res.send({status: "failure", msg: "4"})
                     else
-                        res.send({status: "failure", msg: "Autorisation failed"})
+                        res.send({status: "failure", msg: "5"})
                     })
                 }
                 else if (results.length == 1)
                     res.send({status: "success", msg: jwt.sign({ id: results[0].id}, 'jwtPrivateKey')})
                 else
-                    res.send({status: "failure", msg: "Autorisation failed"})
+                    res.send({status: "failure", msg: "5"})
             })
     })
     .catch(error => res.send({status: "failure", msg: error.message}))

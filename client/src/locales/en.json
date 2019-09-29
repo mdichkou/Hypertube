@@ -29,7 +29,10 @@
   "LoginError": {
     "err_1": "Wrong username",
     "err_2": "Wrong password",
-    "err_3": "Mail is not verified"
+    "err_3": "Mail is not verified",
+    "err_4": "Email or Username Already Exists",
+    "err_5": "Autorisation failed",
+    "err_6": "Minor difficulty Repeat the same action please"
   },
   "RegistreError": {
     "err_1": "First name must have between 3 and 20 and only Alphabetic",

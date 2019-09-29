@@ -78,52 +78,22 @@ var methods = {
                             if (results)
                                 resolve(jwt.sign({id: results.insertId}, 'jwtPrivateKey'))
                             else
-                                reject("insertQuery didn't deliver")
+                                reject("6")
                         })
                     }
                     else if (results.length > 0)
-                        reject("Email or Username Already Exists")
+                        reject("4")
                     else
-                        reject("Autorisation failed")
+                        reject("5")
                     })
                 }
                 else if (results.length == 1)
                     resolve(jwt.sign({ id: results[0].id}, 'jwtPrivateKey'))
                 else
-                    reject("Autorisation failed")
+                    reject("5")
             })
         })
     }
 }
 
 module.exports = methods
-
-// user.login, user.avatar_url, user.login, user.login, user.id, req.emails[0].value, 0, 1
-
-// router.post('/42', (req, res) => {
-//     let options = {
-//         headers: {'Authorization': 'Bearer ' + req.body.token}
-//     };
-//     axios.get("https://api.intra.42.fr/v2/me", options)
-//     .then(Response => {
-//         let user = Response.data;
-//         Repitition.OutsideLogin(user.login, user.first_name, user.last_name, user.email, user.image_url, user.id)
-//     })
-//     .then(finish => res.send({status: "success", msg: finish}))
-//     .catch(error => res.send({status: "failure", msg: error.message}))
-// })
-
-// router.get('/github', passport.authenticate('github', {session: false}), function(req, res) {
-//     let user = JSON.parse(req.user._raw)
-//     Repitition.OutsideLogin(user.login, user.login, user.login, req.emails[0].value, user.avatar_url, user.id)
-//     .then(finish => res.send({status: "success", msg: finish}))
-//     .catch(error => res.send({status: "failure", msg: error.message}))
-// });
-
-// router.get('/google', passport.authenticate('google', {session: false}),
-//   function(req, res) {
-//     let user = req.user
-//     Repitition.OutsideLogin(user._json.given_name, user._json.given_name, user._json.family_name, user._json.email, user._json.picture, user.id)
-//     .then(finish => res.send({status: "success", msg: finish}))
-//     .catch(error => res.send({status: "failure", msg: error.message}))
-// });

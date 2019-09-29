@@ -26,7 +26,10 @@
     "LoginError": {
         "err_1": "Mauvais nom d'utilisateur",
         "err_2": "Mauvais mot de passe",
-        "err_3": "Courrier n'est pas vérifié"
+        "err_3": "Courrier n'est pas vérifié",
+        "err_4": "Email or Username Already Exists",
+        "err_5": "Autorisation failed",
+        "err_6": "Minor difficulty Repeat the same action please"
     },
     "RegistreError": {
         "err_1": "Le prénom doit avoir entre 3 et 20 et seulement alphabétique",
