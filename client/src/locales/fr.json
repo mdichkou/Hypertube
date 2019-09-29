@@ -1,5 +1,4 @@
 {
-    "message": "bonjour i18n !!",
     "Login": {
         "login": "S'identifier",
         "forgot": "MOT DE PASSE OUBLIé ?",
@@ -58,7 +57,7 @@
         "direct": "Réalisateur :",
         "write": "Écrivains :",
         "stars": "Acteurs :",
-        "comment": "commentaires",
+        "comment": "commentaires"
     },
     "Forgot": {
         "success": "Veuillez vérifier votre courriel pour ressaisir votre mot de passe",
@@ -70,5 +69,5 @@
         "err_5": "Le mot de passe nécessite 1 lettre minuscule minuscule et 1 chiffre et entre 5 et 20",
         "err_6": "La valeur de la clé est invalide",
         "err_7": "Courrier n'est pas vérifié"
-      },
+      }
 }

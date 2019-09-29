@@ -1,5 +1,4 @@
 {
-  "message": "hello i18n !!",
   "Login": {
     "login": "Login",
     "forgot": "FORGOT PASSWORD ?",
@@ -62,7 +61,7 @@
     "direct": "Director :",
     "write": "Writers :",
     "stars": "Stars :",
-    "comment": "Comments",
+    "comment": "Comments"
   },
   "Forgot": {
     "success": "Please Check your Email to Resset your password",
