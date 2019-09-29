@@ -120,7 +120,7 @@ router.beforeEach((to, from, next) => {
     else if (window.localStorage.token)
         next()
     else
-        next('en/login')
+        next(`${i18n.locale}/login`)
 })
 
 export default router;
