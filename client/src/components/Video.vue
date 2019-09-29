@@ -1,13 +1,15 @@
 <template>
    <div class="containers fill-height fluid grid-list-xl">
   <div   class="body-content">
-    <v-layout v-if="loader == true">
-      <div id="coord_loading" class="content">
-        <div class="pulse"></div>
-        <div class="pulse-center">
-          <img src="https://i.ibb.co/smCT9w9/19723588.jpg" alt="loader_back" />
-        </div>
-      </div>
+  <v-layout v-if="loader == true">
+      <v-progress-circular
+        class="mx-auto my-3"
+        :size="60"
+        :width="7"
+        color="blue lighten-2"
+        v-show="loader"
+        indeterminate
+      ></v-progress-circular>
     </v-layout>
 
     <v-layout v-else>
@@ -336,66 +338,7 @@ p,
   text-align: right !important;
 }
 
-#coord_loading {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: white;
-  display: block;
-  z-index: 200;
-}
 
-.pulse {
-  position: absolute;
-  left: 50%;
-  top: 45%;
-  transform: translate(-50%, -50%);
-  width: 100px;
-  height: 100px;
-  background: transparent;
-  border: 2px solid #d61f26;
-  border-radius: 50%;
-  animation: pulse 1s ease-out 1s infinite;
-}
-
-.pulse-center {
-  position: absolute;
-  left: 50%;
-  top: 45%;
-  transform: translate(-50%, -50%);
-  background: orange;
-  width: 100px;
-  height: 100px;
-  background: #2f3233;
-  border-radius: 50%;
-}
-
-.pulse-center img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 50%;
-}
-@keyframes pulse {
-  0% {
-    width: 100px;
-    height: 100px;
-    background: #d61f26;
-    border: 2px solid #d61f26;
-  }
-  50% {
-    width: 180px;
-    height: 180px;
-    background: lighten(#d61f26, 40%);
-    border: 2px solid #d61f26;
-  }
-  100% {
-    width: 200px;
-    height: 200px;
-    background: transparent;
-    border: 2px solid transparent;
-  }
-}
 .containers{
   background-image: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url('../../public/886533.jpg');
   background-size: cover;

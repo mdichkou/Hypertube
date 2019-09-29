@@ -320,7 +320,9 @@ export default {
     background-size: cover;
     background-position: center center;
 }
+
 .rgba-container {
   background: -webkit-linear-gradient(45deg, rgba(42, 27, 161, 0.7), rgba(29, 210, 177, 0.7) 100%);
+  height: 100%;
 }
 </style>

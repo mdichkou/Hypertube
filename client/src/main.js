@@ -11,6 +11,8 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'vue-material/dist/vue-material.min.css'
 import 'swiper/dist/css/swiper.css'
+import 'bootstrap-css-only/css/bootstrap.min.css'; 
+import 'mdbvue/build/css/mdb.css';
 import BootstrapVue from 'bootstrap-vue'
 import VueMaterial from 'vue-material'
 import VueAwesomeSwiper from 'vue-awesome-swiper'

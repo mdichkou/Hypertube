@@ -1,8 +1,4 @@
 module.exports = {
-  // proxy API requests to Valet during development
-  // devServer: {
-  //   proxy: 'http://localhost:8000'
-  // },
   chainWebpack: config => {
     // your config
     config.module

@@ -106,7 +106,9 @@ h6 {
 
 .rgba-container {
   background: -webkit-linear-gradient(45deg, rgba(42, 27, 161, 0.7), rgba(29, 210, 177, 0.7) 100%);
+  height: 100%;
 }
+
 .view{
   background-image: url('../../public/iron-man-3-wallpapers-29651-2000185.jpg'); background-repeat: no-repeat; background-size: cover; background-position: center center;
 }
