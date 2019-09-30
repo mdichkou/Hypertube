@@ -76,5 +76,12 @@
     "err_5": "Password requires 1 lower 1 upper case letter and 1 digit and between 5 and 20",
     "err_6": "Key Value is invalid",
     "err_7": "Mail is not verified"
+  },
+  "bar": {
+    "settings": "Settings",
+    "profile": "Profile",
+    "list": "List",
+    "logout": "Logout",
+    "home": "Home"
   }
 }

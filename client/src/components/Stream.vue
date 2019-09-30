@@ -39,7 +39,8 @@
           <div class="comment-main-level">
             <!-- Avatar -->
             <div class="comment-avatar">
-              <img :src="comment.avatar" alt />
+              <img :src="comment.avatar" alt v-if="comment.avatar.match(/https?:\/\/[^\s]+/g)"/>
+              <img :src="'/' + comment.avatar" alt v-else/>
             </div>
             <!-- Contenedor del Comentario -->
             <div class="comment-box mr-2">

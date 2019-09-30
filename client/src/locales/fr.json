@@ -72,5 +72,12 @@
         "err_5": "Le mot de passe nécessite 1 lettre minuscule minuscule et 1 chiffre et entre 5 et 20",
         "err_6": "La valeur de la clé est invalide",
         "err_7": "Courrier n'est pas vérifié"
+    },
+    "bar": {
+        "settings": "Paramètres",
+        "profile": "Profil",
+        "list": "Liste",
+        "logout": "Se déconnecter",
+        "home": "Accueil"
       }
 }

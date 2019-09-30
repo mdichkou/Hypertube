@@ -48,22 +48,27 @@
             <v-list>
                 <v-list-item>
                     <v-btn to="/profile" text >
-                        <span class="body-2">Profile</span>
+                        <span class="body-2"> {{ $t('bar.profile') }}</span>
                     </v-btn> 
                 </v-list-item>
                  <v-list-item>
                     <v-btn to="/home" text >
-                        <span class="body-2">Home</span>
+                        <span class="body-2">{{ $t('bar.home') }}</span>
+                    </v-btn> 
+                </v-list-item>
+                <v-list-item>
+                    <v-btn to="/list" text >
+                        <span class="body-2">{{ $t('bar.list') }}</span>
                     </v-btn> 
                 </v-list-item>
                 <v-list-item>
                     <v-btn to="/settings" text >
-                        <span class="body-2">Settings</span>
+                        <span class="body-2">{{ $t('bar.settings') }}</span>
                     </v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn @click="logoutUser" text >
-                        <span class="body-2">Logout</span>
+                        <span class="body-2">{{ $t('bar.logout') }}</span>
                     </v-btn>
                 </v-list-item>
             </v-list>

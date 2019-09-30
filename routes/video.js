@@ -68,6 +68,28 @@ router.get('/checkHash/:hash', auth, function(req, res) {
 
 ///////////////
 
+router.post('/addMovie', auth, (req, res) => {
+	const addquery = "INSERT INTO list (movie_id, user_id) values (?, ?)";
+	db.query(addquery, [req.body.movie_id, req.id], (error, results) => {
+		if (results)
+			res.send({status: "success", msg: "movie added"})
+		else
+			res.send({status: "failure", msg: error})
+	})
+})
+
+router.post('/removeMovie', auth, (req, res) => {
+	const addquery = "DELETE FROM list WHERE movie_id = ?";
+	db.query(addquery, [req.body.movie_id], (error, results) => {
+		if (results)
+			res.send({status: "success", msg: "movie removed"})
+		else
+			res.send({status: "failure", msg: error})
+	})
+})
+
+///////////////
+
 router.get('/:hash', function (req, res) {
 	const getTorrentFile = new Promise(function (resolve, reject) {
 		var hash = req.params.hash;
@@ -226,6 +248,17 @@ router.post('/getListWatched', auth, async (req, res) => {
 	db.query(query, [req.id], (err, result) => {
 		if (err) console.log(err);
 		res.send(result)
+	});
+});
+
+router.post('/getMyList', auth, async (req, res) => {
+	console.log(req.id)
+	const query = "SELECT movie_id FROM list where user_id = ?"
+	db.query(query, [req.id], (err, result) => {
+		if (result)
+			res.send({status: "success", msg: result})
+		if (err)
+			res.send({status: "failuree", msg: err})
 	});
 });
 

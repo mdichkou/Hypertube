@@ -11,6 +11,7 @@ import SearchVue from './components/SearchVue'
 import Streaming from './components/Stream'
 import NOT from './components/404'
 import Resset from './views/PassResset.vue'
+import List from './views/Mylist.vue'
 import i18n from './i18n'
 
 Vue.use(Router)
@@ -23,6 +24,11 @@ const router = new Router({
           name: 'home',
           path: '/home',
           component: SearchVue
+        },
+        {
+          name: 'list',
+          path: '/list',
+          component: List
         },
         {
             name: 'stream',

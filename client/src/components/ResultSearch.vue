@@ -32,7 +32,13 @@
           <div class="my-4 subtitle-1 description">{{movie.year}}</div>
           <v-card-actions v-if="actions">
             <v-btn class="watch" @click="dataShare(movie)" outlined>
+              <v-icon>play_arrow</v-icon>
               <span class="fa fa-play"></span>Watch
+            </v-btn>
+            <v-btn class="watch" @click="addMovie(movie.imdb_code)" outlined>
+              <v-icon v-if="checkList(movie.imdb_code)">remove</v-icon>
+              <v-icon v-else>add</v-icon>
+              <span class="fa fa-play"></span>List
             </v-btn>
           </v-card-actions>
         </div>
@@ -40,6 +46,7 @@
     </v-card>
   </v-row>
 </template>
+
 <script>
 import axios from "axios";
 export default {
@@ -55,6 +62,7 @@ export default {
       actions: true,
       defImage: "https://www.tellerreport.com/images/no-image.png",
       listWatched: null,
+      list: null,
       watched: 0
     };
   },
@@ -63,11 +71,49 @@ export default {
     if (token) axios.defaults.headers.common["x-auth-token"] = token;
     else delete axios.defaults.headers.common["x-auth-token"];
     this.reserve();
+    axios.post("http://localhost:3001/video/getMyList")
+    .then(res => {
+      console.log(res)
+      this.list = res.data.msg;
+    })
+    .catch(err => {
+      console.log(err)
+    })
     axios.post("http://localhost:3001/video/getListWatched").then(res => {
       this.listWatched = res.data;
     });
+    
   },
   methods: {
+    addMovie(movie_id)
+    {
+      const token = window.localStorage.getItem("token");
+      if (token) axios.defaults.headers.common["x-auth-token"] = token;
+      else delete axios.defaults.headers.common["x-auth-token"];
+
+      if (this.checkList(movie_id))
+      {
+        this.list = this.list.filter(el => el.movie_id != movie_id)
+         axios.post("http://localhost:3001/video/removeMovie", {movie_id: movie_id})
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      }
+      else
+      {
+        this.list.push({movie_id: movie_id})
+        axios.post("http://localhost:3001/video/addMovie", {movie_id: movie_id})
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      }
+    },
     reserve() {
       this.loading = true;
 
@@ -80,6 +126,13 @@ export default {
         params: { hash: "test" }
       });
       // this.$store.dispatch("dataShare", movie)
+    },
+    checkList(movieId) {
+      let found = false;
+      this.list.forEach(element => {
+        if (element.movie_id === movieId) found = true;
+      });
+      return found;
     },
     checkMovie(movieId) {
       let found = false;

@@ -13,9 +13,9 @@
     <v-layout justify-space-around wrap v-else>
       <v-card
         max-width="650px"
-        class="mx-auto mb-auto mt-2"
+        class="mx-auto mb-auto"
         dark
-        style="background:rgba(0, 0, 0, 0.7);"
+        style="background:rgba(0, 0, 0, 0.7);margin-top: 150px"
         elevation="15"
       >
         <v-form class="ma-auto" ref="form" v-model="valid" lazy-validation>

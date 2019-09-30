@@ -85,7 +85,7 @@
                 </h3>
                 <div class="button btn-wrap text-center" v-for="(Hash,index) in otherHashes" :key="index">
                   <span class="fa fa-play"></span>
-                  <a @click="streamVideo_extraT(Hash)">{{ Hash.name }} - {{ Hash.size }}</a>
+                  <a @click="streamVideo_extraT(Hash)">{{ Hash.name.substring(0,  26) }} - {{ Hash.size }}</a>
                 </div>
               </div>
             </div>
