@@ -252,7 +252,6 @@ router.post('/getListWatched', auth, async (req, res) => {
 });
 
 router.post('/getMyList', auth, async (req, res) => {
-	console.log(req.id)
 	const query = "SELECT movie_id FROM list where user_id = ?"
 	db.query(query, [req.id], (err, result) => {
 		if (result)

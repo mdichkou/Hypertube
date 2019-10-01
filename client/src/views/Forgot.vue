@@ -10,7 +10,7 @@
                 <v-icon color="white" class="mx-1">autorenew</v-icon>
                 <v-toolbar-title>{{ $t('Login.resset') }}</v-toolbar-title>
                 </v-toolbar>
-                <v-form v-model="valid" ref="form" lazy-validation class="mx-3 mt-3">
+                <v-form onSubmit="return false;" v-model="valid" ref="form" lazy-validation class="mx-3 mt-3">
                     <v-text-field  class="purple-input" v-model="email" :rules="emailRules" label="Email Address" required v-if="cardLang == 'en'"/>
                     <v-text-field  class="purple-input" v-model="email" :rules="frEmailRules" label="Adresse Email" required v-else/>
 
