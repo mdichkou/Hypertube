@@ -101,13 +101,6 @@
            
            </div>
       </v-row>
-      <div  class="text-center">
-            <v-pagination
-              v-model="page_tmp"
-              :length="nbr_p_movies"
-              @input="affich_page"
-            ></v-pagination>
-      </div>
     </v-container>
   </div>
 </template>
@@ -232,7 +225,7 @@ export default {
     },
     getPopulerMovie() {
       delete axios.defaults.headers.common['x-auth-token']
-      axios.get("https://yts.unblocked4u.net/api/v2/list_movies.json?sort_by=download_count&order_by=desc&limit=15")
+      axios.get("https://yts.unblocked4u.net/api/v2/list_movies.json?sort_by=download_count&order_by=desc&limit=30")
       .then(res => {
         this.popularMovies = res.data.data.movies;
         this.signalChange();

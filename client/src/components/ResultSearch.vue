@@ -1,7 +1,7 @@
 <template>
   <v-row v-if="listWatched">
     <v-card
-      v-for="(movie,index) in data.slice(pStart, pEnd)"
+      v-for="(movie,index) in items"
       :key="index"
       :loading="loading"
       class="card-content card card-right col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12"
@@ -44,6 +44,9 @@
         </div>
       </v-card-text>
     </v-card>
+    <footer>
+      <div class="circle-loader" v-if="loadingScroll"></div>
+    </footer>
   </v-row>
 </template>
 
@@ -63,7 +66,12 @@ export default {
       defImage: "https://www.tellerreport.com/images/no-image.png",
       listWatched: null,
       list: null,
-      watched: 0
+      watched: 0,
+      total:0,
+      offset:0,
+      loadingScroll:false,
+      items: [],
+      nextItem: 0
     };
   },
   mounted() {
@@ -71,6 +79,7 @@ export default {
     if (token) axios.defaults.headers.common["x-auth-token"] = token;
     else delete axios.defaults.headers.common["x-auth-token"];
     this.reserve();
+    this.loadMore();
     axios.post("http://localhost:3001/video/getMyList")
     .then(res => {
       console.log(res)
@@ -82,7 +91,12 @@ export default {
     axios.post("http://localhost:3001/video/getListWatched").then(res => {
       this.listWatched = res.data;
     });
-    
+    this.offset = this.data.length;
+    this.loadingscroll = false;
+    window.addEventListener('scroll', (e) => {
+        if(window.innerHeight + window.pageYOffset >= document.body.offsetHeight)
+        this.loadMore();
+    })
   },
   methods: {
     addMovie(movie_id)
@@ -96,7 +110,6 @@ export default {
         this.list = this.list.filter(el => el.movie_id != movie_id)
          axios.post("http://localhost:3001/video/removeMovie", {movie_id: movie_id})
         .then(res => {
-          console.log(res)
         })
         .catch(err => {
           console.log(err)
@@ -104,10 +117,10 @@ export default {
       }
       else
       {
+        console.log('added')
         this.list.push({movie_id: movie_id})
         axios.post("http://localhost:3001/video/addMovie", {movie_id: movie_id})
         .then(res => {
-          console.log(res)
         })
         .catch(err => {
           console.log(err)
@@ -118,6 +131,17 @@ export default {
       this.loading = true;
 
       setTimeout(() => (this.loading = false), 1000);
+    },
+     loadMore () {
+       if (this.nextItem < this.data.length)
+       this.loadingScroll = true;
+      setTimeout(e => {
+        for (var i = 0; i < 8 && this.nextItem < this.data.length; i++) {
+          this.items.push(this.data[this.nextItem++]);
+        }
+        this.loadingScroll = false;
+      }, 1000);
+      
     },
     dataShare(movie) {
       //:href="'/video/' + movie.imdb_code"
@@ -214,7 +238,26 @@ export default {
   left: 50%;
   opacity: 1;
 }
-
+.circle-loader{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 5px solid rgba(255, 255, 255, 0.2);
+  border-top: 5px solid #fff;
+  animation: animate 1.5s infinite linear;
+}
+@keyframes animate {
+  0%{
+    transform: translate(-50%,-50%) rotate(0deg);
+  }
+  100%{
+    transform: translate(-50%,-50%) rotate(360deg);
+  }
+}
 .fadeIn-bottom {
   top: 80%;
 }
