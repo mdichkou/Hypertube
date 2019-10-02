@@ -1,14 +1,14 @@
 <template>
-  <v-row v-if="listWatched">
+  <v-row>
     <v-card
-      v-for="(movie,index) in items"
+      v-for="(movie,index) in data"
       :key="index"
       :loading="loading"
       class="card-content card card-right col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12"
     >
-        <v-img class="card-img-top" v-if="movie.large_cover_image" :src="movie.large_cover_image"></v-img>
-        <v-img class="card-img-top" v-else :src="defImage"></v-img>
-        <div class="card-content-overlay"></div>
+      <v-img class="card-img-top" v-if="movie.large_cover_image" :src="movie.large_cover_image"></v-img>
+      <v-img class="card-img-top" v-else :src="defImage"></v-img>
+      <div class="card-content-overlay"></div>
 
       <v-card-title>{{movie.title}}</v-card-title>
       <!-- <v-card-title v-if="movie.media_type === 'tv'">{{movie.name}}</v-card-title> -->
@@ -44,9 +44,6 @@
         </div>
       </v-card-text>
     </v-card>
-    <footer>
-      <div class="circle-loader" v-if="loadingScroll"></div>
-    </footer>
   </v-row>
 </template>
 
@@ -64,12 +61,11 @@ export default {
       loading: false,
       actions: true,
       defImage: "https://www.tellerreport.com/images/no-image.png",
-      listWatched: null,
-      list: null,
+      listWatched: [],
+      list: [],
       watched: 0,
-      total:0,
-      offset:0,
-      loadingScroll:false,
+      total: 0,
+      offset: 0,
       items: [],
       nextItem: 0
     };
@@ -79,69 +75,51 @@ export default {
     if (token) axios.defaults.headers.common["x-auth-token"] = token;
     else delete axios.defaults.headers.common["x-auth-token"];
     this.reserve();
-    this.loadMore();
-    axios.post("http://localhost:3001/video/getMyList")
-    .then(res => {
-      console.log(res)
-      this.list = res.data.msg;
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    console.log(this.data);
+    axios
+      .post("http://localhost:3001/video/getMyList")
+      .then(res => {
+        console.log(res);
+        this.list = res.data.msg;
+      })
+      .catch(err => {
+        console.log(err);
+      });
     axios.post("http://localhost:3001/video/getListWatched").then(res => {
       this.listWatched = res.data;
     });
-    this.offset = this.data.length;
-    this.loadingscroll = false;
-    window.addEventListener('scroll', (e) => {
-        if(window.innerHeight + window.pageYOffset >= document.body.offsetHeight)
-        this.loadMore();
-    })
   },
   methods: {
-    addMovie(movie_id)
-    {
+    addMovie(movie_id) {
       const token = window.localStorage.getItem("token");
       if (token) axios.defaults.headers.common["x-auth-token"] = token;
       else delete axios.defaults.headers.common["x-auth-token"];
 
-      if (this.checkList(movie_id))
-      {
-        this.list = this.list.filter(el => el.movie_id != movie_id)
-         axios.post("http://localhost:3001/video/removeMovie", {movie_id: movie_id})
-        .then(res => {
-        })
-        .catch(err => {
-          console.log(err)
-        })
-      }
-      else
-      {
-        console.log('added')
-        this.list.push({movie_id: movie_id})
-        axios.post("http://localhost:3001/video/addMovie", {movie_id: movie_id})
-        .then(res => {
-        })
-        .catch(err => {
-          console.log(err)
-        })
+      if (this.checkList(movie_id)) {
+        this.list = this.list.filter(el => el.movie_id != movie_id);
+        axios
+          .post("http://localhost:3001/video/removeMovie", {
+            movie_id: movie_id
+          })
+          .then(res => {})
+          .catch(err => {
+            console.log(err);
+          });
+      } else {
+        console.log("added");
+        this.list.push({ movie_id: movie_id });
+        axios
+          .post("http://localhost:3001/video/addMovie", { movie_id: movie_id })
+          .then(res => {})
+          .catch(err => {
+            console.log(err);
+          });
       }
     },
     reserve() {
       this.loading = true;
 
       setTimeout(() => (this.loading = false), 1000);
-    },
-     loadMore () {
-       if (this.nextItem < this.data.length)
-       this.loadingScroll = true;
-      setTimeout(e => {
-        for (var i = 0; i < 8 && this.nextItem < this.data.length; i++) {
-          this.items.push(this.data[this.nextItem++]);
-        }
-        this.loadingScroll = false;
-      }, 1000);
-      
     },
     dataShare(movie) {
       //:href="'/video/' + movie.imdb_code"
@@ -182,22 +160,25 @@ export default {
     padding-left: 0;
   }
 }
+.rela {
+  position: relative;
+}
 .name {
   font-family: "Orbitron";
 }
 
-.v-list{
- background: rgba(0, 0, 0, 0.7) !important;
-}
-
-.card{
- border: none !important;
-}
-.card-content{
+.v-list {
   background: rgba(0, 0, 0, 0.7) !important;
 }
-.v-card__title{
- color: #fff !important;
+
+.card {
+  border: none !important;
+}
+.card-content {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+.v-card__title {
+  color: #fff !important;
 }
 
 .card-content .card-content-overlay {
@@ -238,26 +219,6 @@ export default {
   left: 50%;
   opacity: 1;
 }
-.circle-loader{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: 5px solid rgba(255, 255, 255, 0.2);
-  border-top: 5px solid #fff;
-  animation: animate 1.5s infinite linear;
-}
-@keyframes animate {
-  0%{
-    transform: translate(-50%,-50%) rotate(0deg);
-  }
-  100%{
-    transform: translate(-50%,-50%) rotate(360deg);
-  }
-}
 .fadeIn-bottom {
   top: 80%;
 }
@@ -285,7 +246,7 @@ export default {
   color: #fff !important;
   margin: 0 auto;
 }
-.card-content{
+.card-content {
   overflow: hidden;
 }
 </style>

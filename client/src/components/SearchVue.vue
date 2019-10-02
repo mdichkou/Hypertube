@@ -4,14 +4,16 @@
       <section class="col-sm-12 pt-3 px-0">
         <b-form inline class="d-flex justify-content-center">
           <div class="col-md-6 col-8 pl-0">
-            <b-input v-if="cardLang == 'fr'"
+            <b-input
+              v-if="cardLang == 'fr'"
               class="w-100 mr-sm-2"
               type="text"
               :placeholder="this.fr"
               v-model="inputData"
               @input="signalChange"
             />
-            <b-input v-else
+            <b-input
+              v-else
               class="w-100 mr-sm-2"
               type="text"
               :placeholder="this.en"
@@ -22,8 +24,8 @@
         </b-form>
       </section>
       <v-row no-gutters v-if="dataMovie">
-          <div class="div-left col-lg-3 col-md-4  col-sm-12 col-12">
-          <v-card class="card" >
+        <div class="div-left col-lg-3 col-md-4 col-sm-12 col-12">
+          <v-card class="card">
             <v-list rounded>
               <v-subheader>Filtre</v-subheader>
               <v-card-text>
@@ -32,7 +34,7 @@
                     <p style="color:black">{{ $t("Home.rating") }}</p>
                     <v-slider
                       v-model="slider"
-                      @input="load_data"
+                      @input="signalChange"
                       class="align-center"
                       :max="10"
                       :min="0"
@@ -54,7 +56,7 @@
                 </v-row>
                 <v-row>
                   <v-col class="pr-4 pt-0">
-                    <p style="color:black"> {{ $t("Home.year") }} </p>
+                    <p style="color:black">{{ $t("Home.year") }}</p>
                     <v-slider
                       v-model="slider2"
                       @input="load_data"
@@ -83,10 +85,10 @@
                     <v-col class="d-flex" cols="12">
                       <v-select
                         v-model="selected_val"
-                        @change="load_data"
+                        @change="signalChange"
                         :items="genre_list"
-                        label="Standard"
                         :item-text="cardLang"
+                        label="Standard"
                         item-value="value"
                       ></v-select>
                     </v-col>
@@ -95,11 +97,18 @@
               </v-card-text>
             </v-list>
           </v-card>
-          </div>
-          <div class="div-right col-lg-9 col-md-8  col-sm-12 col-12">
-          <ResultSearch :data="dataMovie" :page="1" :pStart="p_start" :pEnd="p_end" />
-           
-           </div>
+        </div>
+        <div class="div-right col-lg-9 col-md-8 col-sm-12 col-12">
+          <ResultSearch
+            :data="dataMovie"
+            :page="1"
+            :pStart="p_start"
+            :pEnd="p_end"
+            class="Content"
+            id="result"
+          />
+        </div>
+        <div class="circle-loader" v-if="loadingScroll"></div>
       </v-row>
     </v-container>
   </div>
@@ -108,7 +117,7 @@
 <script>
 import axios from "axios";
 import ResultSearch from "./ResultSearch";
-import i18n from '../i18n'
+import i18n from "../i18n";
 
 const sortJsonArray = require("sort-json-array");
 
@@ -119,15 +128,15 @@ export default {
   },
   data() {
     return {
-      en: 'Enter Movie Name',
-      fr: 'Entrez le nom du film',
+      en: "Enter Movie Name",
+      fr: "Entrez le nom du film",
       item: 0,
       selection: 1,
       items: [{ text: "Movies", count: 0 }, { text: "Tv Show", count: 0 }],
       inputData: "",
       dataMovie_all: null,
       popularMovies: null,
-      dataMovie: null,
+      dataMovie: [],
       dataTv: null,
       baseUrl: "",
       imageSize: "",
@@ -135,142 +144,198 @@ export default {
       nbr_p_movies: 0,
       nbr_p_tv: 0,
       page_tmp: 1,
+      loadingScroll: false,
       p_start: 0,
       p_end: 8,
+      page: 1,
       get_year: new Date().getFullYear() + 1,
       slider: 0,
       slider2: 0,
       genre_list: [
-        {value: "Standard", en: "Standard", fr: "Standard"},
-        {value: "Action",   en: "Action", fr: "Action"},
-        {value: "Adventure", en: "Adventure", fr:  "Aventure"},
-        {value: "Animation", en: "Animation", fr: "Animation"},
-        {value: "Biography", en: "Biography", fr: "Biographie"},
-        {value: "Comedy", en: "Comedy", fr: "Comédie"},
-        {value: "Crime", en: "Crime", fr: "Criminalité"},
-        {value: "Documentary", en: "Documentary", fr: "Criminalité"},
-        {value: "Drama", en: "Drama", fr: "Drame"},
-        {value: "Family", en: "Family", fr: "Famille"},
-        {value: "Fantasy", en: "Fantasy", fr: "Fantaisie"},
-        {value: "Film Noir", en: "Dark movie", fr: "Film Noir"},
-        {value: "History", en: "History", fr: "Histoire"},
-        {value: "Horror", en: "Horror", fr: "Horreur"},
-        {value: "Music", en: "Music", fr: "Musique"},
-        {value: "Mystery", en: "Mystery", fr: "Mystére"},
-        {value: "Musical", en: "Musical", fr: "Musicale"},
-        {value: "Romance", en: "Romance", fr:  "Romance"},
-        {value: "Sci-Fi", en: "Sci-Fi", fr: "Science-fiction"},
-        {value: "Short Film", en: "Short Film", fr: "Court métrage"},
-        {value: "Sport", en: "Sport", fr: "Sport"},
-        {value: "Superhero", en: "Superhero", fr: "Super héros"},
-        {value: "Thriller", en: "Thriller", fr: "Thriller"},
-        {value: "War", en: "War", fr: "Guerre"},
-        {value: "Western", en: "Western", fr: "Occidentale"}
+        { value: "Standard", en: "Standard", fr: "Standard" },
+        { value: "Action", en: "Action", fr: "Action" },
+        { value: "Adventure", en: "Adventure", fr: "Aventure" },
+        { value: "Animation", en: "Animation", fr: "Animation" },
+        { value: "Biography", en: "Biography", fr: "Biographie" },
+        { value: "Comedy", en: "Comedy", fr: "Comédie" },
+        { value: "Crime", en: "Crime", fr: "Criminalité" },
+        { value: "Documentary", en: "Documentary", fr: "Criminalité" },
+        { value: "Drama", en: "Drama", fr: "Drame" },
+        { value: "Family", en: "Family", fr: "Famille" },
+        { value: "Fantasy", en: "Fantasy", fr: "Fantaisie" },
+        { value: "Film Noir", en: "Dark movie", fr: "Film Noir" },
+        { value: "History", en: "History", fr: "Histoire" },
+        { value: "Horror", en: "Horror", fr: "Horreur" },
+        { value: "Music", en: "Music", fr: "Musique" },
+        { value: "Mystery", en: "Mystery", fr: "Mystére" },
+        { value: "Musical", en: "Musical", fr: "Musicale" },
+        { value: "Romance", en: "Romance", fr: "Romance" },
+        { value: "Sci-Fi", en: "Sci-Fi", fr: "Science-fiction" },
+        { value: "Short Film", en: "Short Film", fr: "Court métrage" },
+        { value: "Sport", en: "Sport", fr: "Sport" },
+        { value: "Superhero", en: "Superhero", fr: "Super héros" },
+        { value: "Thriller", en: "Thriller", fr: "Thriller" },
+        { value: "War", en: "War", fr: "Guerre" },
+        { value: "Western", en: "Western", fr: "Occidentale" }
       ],
-      selected_val: null
+      selected_val: ""
     };
   },
   mounted() {
     this.getPopulerMovie();
+    this.loadingscroll = false;
+    const el = document.getElementById("result");
+    el.addEventListener("scroll", e => {
+      if (el.scrollHeight - el.scrollTop === el.clientHeight) {
+        this.loadingScroll = true;
+        setTimeout(e => {
+          this.page++;
+          if (this.inputData.trim() != "") {
+            this.searchData();
+          } else {
+            this.getPopulerMovie();
+          }
+          this.loadingScroll = false;
+        }, 2000);
+      }
+    });
   },
   methods: {
-    affich_page() {
-      this.p_start = (this.page_tmp - 1) * 8;
-      this.p_end = this.p_start + 8;
-      window.scrollTo(0, 0);
+    searchData() {
+      delete axios.defaults.headers.common["x-auth-token"];
+      axios
+        .get(
+          "https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" +
+            this.inputData +
+            "&page=" +
+            this.page +
+            "&minimum_rating=" +
+            this.slider +
+            "&genre=" +
+            this.selected_val
+        )
+        .then(res => {
+          if (res.data.data.movie_count > 0) {
+            sortJsonArray(res.data.data.movies, "title").forEach(element => {
+              this.dataMovie.push(element);
+            });
+
+            this.dataMovie_all = this.dataMovie;
+            this.items[0].count = this.dataMovie.length;
+            this.nbr_p_movies = Math.ceil(this.dataMovie.length / 8);
+          } else {
+            this.dataMovie = [];
+            this.items[0].count = 0;
+            this.nbr_p_movies = 0;
+          }
+        });
     },
     signalChange: function() {
-      if (this.inputData.trim() != "") 
-      {
-        delete axios.defaults.headers.common['x-auth-token']
-        axios.get("https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" + this.inputData)
-          .then(res => {
-            if (res.data.data.movie_count > 0) {
-              this.dataMovie = sortJsonArray(res.data.data.movies, "title");
-              this.dataMovie_all = this.dataMovie;
-              this.items[0].count = this.dataMovie.length;
-              this.nbr_p_movies = Math.ceil(this.dataMovie.length / 8);
-            } else {
-              this.dataMovie = null;
-              this.items[0].count = 0;
-              this.nbr_p_movies = 0;
-            }
-          });
-      }
-      else
-      {
-        this.dataMovie = sortJsonArray(this.popularMovies, "title");
-        this.dataMovie_all = this.dataMovie;
-        this.items[0].count = this.dataMovie.length;
-        this.nbr_p_movies = Math.ceil(this.dataMovie.length / 8);
+      this.page = 1;
+      this.dataMovie = [];
+      if (this.selected_val === "Standard") this.selected_val = "";
+      if (this.inputData.trim() != "") {
+        this.searchData();
+      } else {
+        this.getPopulerMovie();
       }
     },
-    load_data: function() 
-    {
-      if (this.selected_val == "Standard") this.selected_val = null;
-        var Movie_tmp = this.dataMovie_all;
-        if (Movie_tmp) {
-          Movie_tmp = Movie_tmp.filter(word => {
-            if (word.rating >= this.slider && word.year >= this.slider2) {
-              if (this.selected_val != null) {
-                if (word.genres.includes(this.selected_val)) return true;
-                else return false;
-              } else return true;
-            } else return false;
-          });
-          this.dataMovie = sortJsonArray(Movie_tmp, "title");
-          this.items[0].count = this.dataMovie.length;
-          this.nbr_p_movies = Math.ceil(this.dataMovie.length / 8);
-        }
+    load_data: function() {
+      var Movie_tmp = [];
+      this.dataMovie_all.forEach(element => {
+        Movie_tmp.push(element);
+      });
+      if (Movie_tmp) {
+        Movie_tmp = Movie_tmp.filter(word => {
+          if (word.year >= this.slider2) {
+            return true;
+          } else return false;
+        });
+        this.dataMovie = [];
+        sortJsonArray(Movie_tmp, "title").forEach(element => {
+          this.dataMovie.push(element);
+        });
+      }
     },
     getPopulerMovie() {
-      delete axios.defaults.headers.common['x-auth-token']
-      axios.get("https://yts.unblocked4u.net/api/v2/list_movies.json?sort_by=download_count&order_by=desc&limit=30")
-      .then(res => {
-        this.popularMovies = res.data.data.movies;
-        this.signalChange();
-      });
+      delete axios.defaults.headers.common["x-auth-token"];
+      axios
+        .get(
+          "https://yts.unblocked4u.net/api/v2/list_movies.json?sort_by=download_count&order_by=desc&page=" +
+            this.page +
+            "&minimum_rating=" +
+            this.slider +
+            "&genre=" +
+            this.selected_val
+        )
+        .then(res => {
+          this.popularMovies = res.data.data.movies;
+          sortJsonArray(this.popularMovies, "title").forEach(element => {
+            this.dataMovie.push(element);
+          });
+          this.dataMovie_all = this.dataMovie;
+        });
     }
   },
   computed: {
-      cardLang()
-      {
-          return (i18n.locale)
-      }
+    cardLang() {
+      return i18n.locale;
+    }
   }
 };
 </script>
 <style>
-.container{
-  
+.container {
   max-width: 1700px !important;
- 
 }
-.card{
-   /* margin-right: 5px; */
-   margin-top: 20px;
+.card {
+  /* margin-right: 5px; */
+  margin-top: 20px;
   transform: perspective(800px);
   transform-style: preserve-3d;
   cursor: pointer;
-  background: rgba(0, 0, 0, 0.7) !important
+  background: rgba(0, 0, 0, 0.7) !important;
 }
-.card *{
-  color: white !important
+.circle-loader {
+  position: absolute;
+  top: 93%;
+  left: 63%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 5px solid rgba(255, 255, 255, 0.2);
+  border-top: 5px solid rgb(255, 255, 255);
+  animation: animate 1.5s infinite linear;
+}
+@keyframes animate {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+.card * {
+  color: white !important;
+}
+.Content {
+  height: 1200px;
+  overflow: auto;
+}
+.v-menu__content * {
+  color: white !important;
 }
 
-.v-menu__content *{
-  color: white !important
+.div-left {
+  float: left;
+  padding-left: 10px;
 }
-
-.div-left{
-    float:left;
-    padding-left:10px;
+.div-right {
+  float: right;
+  padding-left: 40px !important;
 }
-.div-right{
-    float:right;
-    padding-left:40px !important;
-}
-.text-center{
+.text-center {
   margin-top: 8px;
 }
 /* @media (min-width: 601px){
