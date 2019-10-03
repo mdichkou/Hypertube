@@ -134,7 +134,7 @@ export default {
       selection: 1,
       items: [{ text: "Movies", count: 0 }, { text: "Tv Show", count: 0 }],
       inputData: "",
-      dataMovie_all: null,
+      dataMovie_all: [],
       popularMovies: null,
       dataMovie: [],
       dataTv: null,

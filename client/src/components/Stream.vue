@@ -1,6 +1,6 @@
 <template>
-    <div class="containers fill-height fluid grid-list-xl">
-  <v-layout v-if="loader == true">
+  <div class="containers fill-height fluid grid-list-xl">
+    <!-- <v-layout v-if="loader == true">
       <v-progress-circular
         class="mx-auto my-3"
         :size="60"
@@ -9,63 +9,93 @@
         v-show="loader"
         indeterminate
       ></v-progress-circular>
-    </v-layout>
-<v-layout justify-space-around wrap v-else>
-
- <div class="embed-responsive embed-responsive-21by9">
-      <video width="320" height="240" autoplay controls intrinsicsize controlslist="nodownload">
-        <source :src="'http://localhost:3001/video/'+this.hash" type="video/mp4" />
-        <track
-          v-for="(subtitle,index) in SubTitles"
-          :key="index"
-          :src="'/subtitles/' + id + '/' + subtitle.lang + '.vtt'"
-          kind="subtitles"
-          :srclang="subtitle.langcode"
-          :label="subtitle.lang"
-        />
-      </video>
-    </div>
-    <div class="comments-container">
-      <h1>{{ $t('Video.comment') }}</h1>
-      <v-text-field
-        label="Add Comment"
-        v-model="comment"
-        class="mt-5"
-        dark
-        v-on:keyup.enter="AddComment"
-      ></v-text-field>
-      <ul id="comments-list" class="comments-list">
-        <li v-for="(comment,index) in Comments" :key="index">
-          <div class="comment-main-level">
-            <!-- Avatar -->
-            <div class="comment-avatar">
-              <img :src="comment.avatar" alt v-if="comment.avatar.match(/https?:\/\/[^\s]+/g)"/>
-              <img :src="'/' + comment.avatar" alt v-else/>
-            </div>
-            <!-- Contenedor del Comentario -->
-            <div class="comment-box mr-2">
-              <div class="comment-head">
-                <h6 class="comment-name">
-                  <a :href="'/profile/' + comment.user_id">{{comment.username}}</a>
-                </h6>
-                <span>{{comment.created_at | moment("dddd, MMMM Do YYYY")}}</span>
+    </v-layout>-->
+    <v-layout justify-space-around wrap>
+      <div class="embed-responsive embed-responsive-21by9">
+        <video width="320" height="240" autoplay controls intrinsicsize controlslist="nodownload">
+          <source :src="'http://localhost:3001/video/'+this.hash" type="video/mp4" />
+          <track
+            v-for="(subtitle,index) in SubTitles"
+            :key="index"
+            :src="'/subtitles/' + id + '/' + subtitle.lang + '.vtt'"
+            kind="subtitles"
+            :srclang="subtitle.langcode"
+            :label="subtitle.lang"
+          />
+        </video>
+      </div>
+      <div class="comments-container">
+        <h1>{{ $t('Video.comment') }}</h1>
+        <v-text-field
+          label="Add Comment"
+          v-model="comment"
+          class="mt-5"
+          dark
+          v-on:keyup.enter="AddComment"
+        ></v-text-field>
+        <ul id="comments-list" class="comments-list">
+          <li v-for="(comment,index) in Comments" :key="index">
+            <div class="comment-main-level">
+              <div class="comment-avatar">
+                <img :src="comment.avatar" alt v-if="comment.avatar.match(/https?:\/\/[^\s]+/g)" />
+                <img :src="'/' + comment.avatar" alt v-else />
               </div>
-              <div class="comment-content">{{comment.comment}}</div>
+              <div class="comment-box mr-2">
+                <div class="comment-head">
+                  <h6 class="comment-name">
+                    <a :href="'/profile/' + comment.user_id">{{comment.username}}</a>
+                  </h6>
+                  <span>{{comment.created_at | moment("dddd, MMMM Do YYYY")}}</span>
+                  <v-btn
+                    text
+                    icon
+                    style="
+    float: right;"
+                    v-on:click="AddReply(index,comment.id)"
+                  >
+                    <v-icon>{{ svgPath }}</v-icon>
+                  </v-btn>
+                </div>
+                <div class="comment-content">{{comment.comment}}</div>
+              </div>
             </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-      
-</v-layout >
-   </div>
-
+            <ul class="comments-list reply-list" style="
+    height: auto;">
+              <v-text-field
+                v-if="seen"
+                v-model="reply"
+                label="Add Reply"
+                dark
+                v-on:keyup.enter="AddReply(index,comment.id)"
+              ></v-text-field>
+              <li v-for="(reply,index) in comment.replys" :key="index">
+                <div class="comment-avatar">
+                  <img :src="reply.avatar" alt v-if="reply.avatar.match(/https?:\/\/[^\s]+/g)" />
+                  <img :src="'/' + reply.avatar" alt v-else />
+                </div>
+                <div class="comment-box">
+                  <div class="comment-head">
+                    <h6 class="comment-name">
+                      <a href="http://creaticode.com/blog">{{reply.username}}</a>
+                    </h6>
+                    <span>{{reply.created_at | moment("dddd, MMMM Do YYYY")}}</span>
+                  </div>
+                  <div class="comment-content">{{reply.reply}}</div>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </v-layout>
+  </div>
 </template>
 
 <script>
 import axios from "axios";
-import i18n from '../i18n'
-import { truncate } from 'fs';
+import i18n from "../i18n";
+import { truncate } from "fs";
+import { mdiReply } from "@mdi/js";
 export default {
   name: "Streaming",
   mounted() {
@@ -75,99 +105,156 @@ export default {
     if (token) axios.defaults.headers.common["x-auth-token"] = token;
     else delete axios.defaults.headers.common["x-auth-token"];
 
-  ///////////////
+    ///////////////
 
     delete axios.defaults.headers.common["x-auth-token"];
-    axios.get("https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" + this.id)
-    .then(resp => {
+    axios
+      .get(
+        "https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" +
+          this.id
+      )
+      .then(resp => {
         this.listHashes = JSON.stringify(resp.data.data.movies[0].torrents);
         axios.defaults.headers.common["x-auth-token"] = token;
-        axios.post("http://localhost:3001/video/extraApi", {imdb_id: this.id})
-        .then(res => { 
-          this.listHashes += JSON.stringify(res.data.slice(0, 5));
-          if ((this.hash.length == 40) && (this.listHashes.includes(this.hash + '",') || this.listHashes.includes(this.hash + '&dn')))
-            this.loader = false;
-          else
-            this.$router.push({name: 'home'});
-        })
-        .catch(err => {
-          this.$router.push({path: `${i18n.locale}/login`});
-        })
-    })
-    .catch(err => {
-      this.$router.push({path: `${i18n.locale}/login`});
-    });
-
-
-  //////////////
-
-
-  axios.defaults.headers.common["x-auth-token"] = token;
-  axios.get("http://localhost:3001/video/checkHash/" + this.hash)
-      .then(res => {
-        if (res.data == 'ERROR')
-          this.$router.push({path: `${i18n.locale}/login`});
+        axios
+          .post("http://localhost:3001/video/extraApi", { imdb_id: this.id })
+          .then(res => {
+            this.listHashes += JSON.stringify(res.data.slice(0, 5));
+            if (
+              this.hash.length == 40 &&
+              (this.listHashes.includes(this.hash + '",') ||
+                this.listHashes.includes(this.hash + "&dn"))
+            )
+              this.loader = false;
+            else this.$router.push({ name: "home" });
+          })
+          .catch(err => {
+            this.$router.push({ path: `${i18n.locale}/login` });
+          });
       })
       .catch(err => {
-        this.$router.push({path: `${i18n.locale}/login`});
+        this.$router.push({ path: `${i18n.locale}/login` });
       });
-      delete axios.defaults.headers.common["x-auth-token"];
-       axios.get(
-          "https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" +
-            this.id
-        )
-        .then(res => {
-          const token = window.localStorage.getItem("token");
-          if (token) axios.defaults.headers.common["x-auth-token"] = token;
-          else delete axios.defaults.headers.common["x-auth-token"];
 
-          axios.post("http://localhost:3001/video/getComments", { imdb_id: this.id })
+    //////////////
+
+    axios.defaults.headers.common["x-auth-token"] = token;
+    axios
+      .get("http://localhost:3001/video/checkHash/" + this.hash)
+      .then(res => {
+        if (res.data == "ERROR")
+          this.$router.push({ path: `${i18n.locale}/login` });
+      })
+      .catch(err => {
+        this.$router.push({ path: `${i18n.locale}/login` });
+      });
+    delete axios.defaults.headers.common["x-auth-token"];
+    axios
+      .get(
+        "https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" +
+          this.id
+      )
+      .then(res => {
+        const token = window.localStorage.getItem("token");
+        if (token) axios.defaults.headers.common["x-auth-token"] = token;
+        else delete axios.defaults.headers.common["x-auth-token"];
+
+        axios
+          .post("http://localhost:3001/video/getComments", { imdb_id: this.id })
           .then(resp => {
-            this.Comments = resp.data;
+            resp.data.forEach(element => {
+              var obj = {
+                id: element.id,
+                comment: element.comment,
+                username: element.username,
+                avatar: element.avatar,
+                user_id: element.user_id,
+                created_at: element.created_at,
+                replys: []
+              };
+              axios
+                .post("http://localhost:3001/video/getReplys", {
+                  comment_id: element.id
+                })
+                .then(resp => {
+                  obj.replys = resp.data;
+                });
+              this.Comments.push(obj);
+            });
           });
-          axios.post("http://localhost:3001/video/saveHistory", { imdb_id: this.id });
-          
-          axios.post("http://localhost:3001/video/getSubt", {imdb_id: this.id})
+        axios.post("http://localhost:3001/video/saveHistory", {
+          imdb_id: this.id
+        });
+
+        axios
+          .post("http://localhost:3001/video/getSubt", { imdb_id: this.id })
           .then(resp => {
             if (resp) this.SubTitles = resp.data;
           })
           .catch(err => {
-            this.$router.push({path: `${i18n.locale}/login`});
+            this.$router.push({ path: `${i18n.locale}/login` });
           });
-        })
-        .catch(err => {
-          this.$router.push({path: `${i18n.locale}/login`});
-        });
-
-    
-    
+      })
+      .catch(err => {
+        this.$router.push({ path: `${i18n.locale}/login` });
+      });
   },
   data: () => ({
     id: "",
     hash: "",
+    seen: false,
     SubTitles: null,
     Comments: [],
+    Replys: [],
     comment: "",
+    reply: "",
     listHashes: [],
     loader: true,
+    svgPath: mdiReply
   }),
   methods: {
     AddComment: function() {
       if (this.comment.trim() !== "") {
-        axios.post("http://localhost:3001/video/saveComment", {
+        axios
+          .post("http://localhost:3001/video/saveComment", {
+            imdb_id: this.id,
+            comment: this.comment
+          })
+          .then(res => {
+            console.log(res);
+            var obj = {
+              id: res.data.insertId,
+              comment: this.comment,
+              username: this.$store.state.userData.username,
+              avatar: this.$store.state.userData.avatar,
+              user_id: this.$store.state.userData.id,
+              created_at: new Date(),
+              replys: []
+            };
+            this.Comments.unshift(obj);
+            this.comment = "";
+          });
+      } else this.comment = "";
+    },
+    AddReply: function(index, commentId) {
+      if (this.reply.trim() !== "") {
+        axios.post("http://localhost:3001/video/saveReply", {
+          comment_id: commentId,
           imdb_id: this.id,
-          comment: this.comment
+          reply: this.reply
         });
         var obj = {
-          comment: this.comment,
+          reply: this.reply,
           username: this.$store.state.userData.username,
           avatar: this.$store.state.userData.avatar,
           user_id: this.$store.state.userData.id,
           created_at: new Date()
         };
-        this.Comments.unshift(obj);
-        this.comment = "";
-      } else this.comment = "";
+        this.Comments[index].replys.unshift(obj);
+        this.Replys.unshift(obj);
+        this.reply = "";
+      } else this.reply = "";
+      this.seen = !this.seen;
     }
   }
 };
@@ -178,7 +265,7 @@ a {
   text-decoration: none;
 }
 
-.comments-list{
+.comments-list {
   list-style-type: none;
   height: 400px;
   overflow: auto;
@@ -266,7 +353,6 @@ a {
   content: "";
   width: 60px;
   height: 2px;
-  background: #c7cacb;
   position: absolute;
   top: 25px;
   left: -55px;
@@ -288,6 +374,7 @@ a {
 
 .reply-list {
   padding-left: 88px;
+  padding-right: 10px;
   clear: both;
   margin-top: 15px;
 }
@@ -361,7 +448,7 @@ a {
 }
 
 .reply-list .comment-box {
-  width: 610px;
+  width: 550px;
 }
 .comment-box .comment-head {
   background: #fcfcfc;
@@ -465,10 +552,13 @@ a {
     overflow: hidden;
   }
 }
-.containers{
-  background-image: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url('../../public/886533.jpg');
+.containers {
+  background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.6) 0%,
+      rgba(0, 0, 0, 0.6) 100%
+    ),
+    url("../../public/886533.jpg");
   background-position: top !important;
 }
-
-
 </style>
