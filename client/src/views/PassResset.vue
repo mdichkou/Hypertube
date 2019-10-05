@@ -66,7 +66,6 @@ export default {
     mounted() {
         if (this.$route.query.key == undefined)
             this.$router.push({path: `/${i18n.locale}/login`})
-        console.log(this.$route.query.key)
     },
     data() {
         return {
@@ -104,7 +103,7 @@ export default {
                         this.text = response.data.msg
                         this.snackbar = true
                     } else {
-                        this.snackbar2 = true
+                        snackbar2 = true
                     }
                 })
                 .catch(error => {

@@ -104,7 +104,6 @@ export default {
             let path = this.$route.fullPath;
             Axios.get(`http://localhost:3001${path}`)
              .then(res => {
-                 console.log(res.data)
                  if (res.data.status == "success")
                  {
                      window.localStorage.setItem('token', res.data.msg);

@@ -219,7 +219,6 @@ export default {
         formData.append("myImage", file);
         Axios.post("http://localhost:3001/settings/updateImg", formData)
         .then(res => {
-          console.log(res)
           if (res.data.status == "success") {
             this.snackbar2 = true;
             this.text = "1";

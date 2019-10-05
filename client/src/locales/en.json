@@ -75,7 +75,8 @@
     "err_4": "Password doesn't match",
     "err_5": "Password requires 1 lower 1 upper case letter and 1 digit and between 5 and 20",
     "err_6": "Key Value is invalid",
-    "err_7": "Mail is not verified"
+    "err_7": "Mail is not verified",
+    "err_8": "This is your actual password"
   },
   "bar": {
     "settings": "Settings",

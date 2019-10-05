@@ -127,7 +127,6 @@ router.post('/', (req, res) => {
     .then(rep => SendMail(vkey, email, username))
     .then(success => res.send({status: "success", msg: "Account was created successfully"}))
     .catch(error => res.send({status: 'failure', msg: error}))
-    .catch(error => {res.send({status: 'failure', msg: error})})
 })
 
 router.get('/verify', (req, res) => {

@@ -209,7 +209,7 @@ export default {
             {
                 this.snackbar = true;
                 this.isDragging = 'error';
-                this.text = `${file.name} is not an image`
+                this.text = `8`
                 return;
             }
             else
@@ -224,9 +224,6 @@ export default {
         },
         imageLoad() {
             document.getElementById('profile-upload').click();
-        },
-        onFileLoad(e) {
-            console.log(e);
         },
         registerUser() {
             if (this.imgData == '')

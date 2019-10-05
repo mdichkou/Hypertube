@@ -102,11 +102,8 @@ const router = new Router({
 
 const   openRoutes = ['ExtLogin', 'login', 'signup', 'forgot', 'home_page', 'resset']
 const   langRoutes = ['login', 'signup', 'forgot', 'home_page', 'resset']
-//const   allRoutes = ['ExtLogin', 'login', 'signup', 'forgot', 'profile', 'settings', 'home']
 
 router.beforeEach((to, from, next) => {
-  console.log(to)
-   
     if (langRoutes.includes(to.name))
     {
       let language = to.params.lang;
@@ -118,7 +115,7 @@ router.beforeEach((to, from, next) => {
         i18n.locale = language
     }
     if (to.path == '/')
-      next('en')
+      next('/en')
     else if (openRoutes.includes(to.name) && !window.localStorage.token)
         next()
     else if (openRoutes.includes(to.name) && window.localStorage.token)
@@ -126,7 +123,7 @@ router.beforeEach((to, from, next) => {
     else if (window.localStorage.token)
         next()
     else
-        next(`${i18n.locale}/login`)
+        next(`/${i18n.locale}/login`)
 })
 
 export default router;

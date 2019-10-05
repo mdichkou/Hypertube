@@ -129,11 +129,11 @@ export default {
             else this.$router.push({ name: "home" });
           })
           .catch(err => {
-            this.$router.push({ path: `${i18n.locale}/login` });
+            this.$router.push({ path: `/${i18n.locale}/login` });
           });
       })
       .catch(err => {
-        this.$router.push({ path: `${i18n.locale}/login` });
+        this.$router.push({ path: `/${i18n.locale}/login` });
       });
 
     //////////////
@@ -143,10 +143,10 @@ export default {
       .get("http://localhost:3001/video/checkHash/" + this.hash)
       .then(res => {
         if (res.data == "ERROR")
-          this.$router.push({ path: `${i18n.locale}/login` });
+          this.$router.push({ path: `/${i18n.locale}/login` });
       })
       .catch(err => {
-        this.$router.push({ path: `${i18n.locale}/login` });
+        this.$router.push({ path: `/${i18n.locale}/login` });
       });
     delete axios.defaults.headers.common["x-auth-token"];
     axios
@@ -192,11 +192,11 @@ export default {
             if (resp) this.SubTitles = resp.data;
           })
           .catch(err => {
-            this.$router.push({ path: `${i18n.locale}/login` });
+            this.$router.push({ path: `/${i18n.locale}/login` });
           });
       })
       .catch(err => {
-        this.$router.push({ path: `${i18n.locale}/login` });
+        this.$router.push({ path: `/${i18n.locale}/login` });
       });
   },
   data: () => ({
