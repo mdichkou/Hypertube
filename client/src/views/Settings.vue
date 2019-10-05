@@ -126,6 +126,10 @@ import i18n from "../i18n";
 
 export default {
   mounted() {
+    const token = window.localStorage.getItem("token");
+    if (token) Axios.defaults.headers.common["x-auth-token"] = token;
+    else delete Axios.defaults.headers.common["x-auth-token"];
+  
     this.loader = true;
     setTimeout(() => {
       this.loader = false;

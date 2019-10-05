@@ -94,8 +94,7 @@ router.get('/github', passport.authenticate('github', {session: false}), functio
     .catch(error => res.send({status: "failure", msg: error}))
 });
 
-router.get('/google', passport.authenticate('google', {session: false}),
-  function(req, res) {
+router.get('/google', passport.authenticate('google', {session: false}), function(req, res) {
     let user = req.user
     Repitition.OutsideLogin(user._json.given_name, user._json.given_name, user._json.family_name, user._json.email, user._json.picture, user.id)
     .then(finish => res.send({status: "success", msg: finish}))

@@ -75,11 +75,9 @@ export default {
     if (token) axios.defaults.headers.common["x-auth-token"] = token;
     else delete axios.defaults.headers.common["x-auth-token"];
     this.reserve();
-    console.log(this.data);
     axios
       .post("http://localhost:3001/video/getMyList")
       .then(res => {
-        console.log(res);
         this.list = res.data.msg;
       })
       .catch(err => {
@@ -106,7 +104,6 @@ export default {
             console.log(err);
           });
       } else {
-        console.log("added");
         this.list.push({ movie_id: movie_id });
         axios
           .post("http://localhost:3001/video/addMovie", { movie_id: movie_id })
