@@ -35,7 +35,7 @@
             <md-card>
               <md-card-media>
                 <!-- swiper -->
-                <swiper v-if="swiperChange == 3" :options="swiperOption">
+                <swiper v-if="onResize" :options="swiperOption">
                   <swiper-slide v-for="(poster,index) in posterList" :key="index">
                     <img :src="poster" alt />
                   </swiper-slide>
@@ -173,11 +173,15 @@ export default {
     },
     onResize() {
       if (window.innerWidth > 700) {
+        if (this.swiperOption.slidesPerView == 1)
+          this.seen = false;
         this.swiperOption.slidesPerView = 3;
       } else {
+        if (this.swiperOption.slidesPerView == 3)
+          this.seen = false;
         this.swiperOption.slidesPerView = 1;
       }
-    }
+    },
   },
   computed: {
     swiperChange() {

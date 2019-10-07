@@ -59,8 +59,7 @@
                 <div class="comment-content">{{comment.comment}}</div>
               </div>
             </div>
-            <ul class="comments-list reply-list" style="
-    height: auto;">
+            <ul class="comments-list reply-list" style="height: auto;">
               <v-text-field
                 v-if="seen"
                 v-model="reply"

@@ -165,7 +165,7 @@ export default {
 
 .card{
  border: none !important;
- max-height: 500px;
+ min-width: 250px !important;
 }
 .card-content{
   background: rgba(0, 0, 0, 0.7) !important;
