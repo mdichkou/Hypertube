@@ -37,16 +37,6 @@ passport.use(new GitHubStrategy({
 }
 ));
 
-passport.use(new FacebookStrategy({
-	clientID: "443712349578194",
-	clientSecret: "c6aa51289642f56b18885ac5c8c1331d",
-	callbackURL: "http://localhost:8080/login/facebook"
-},
-	function (accessToken, refreshToken, profile, done) {
-		return done(null, profile);
-	}
-));
-
 passport.use(new GoogleStrategy({
 	clientID: "720391957482-1jhj256krm792l7l8qb3at7jf5qv5ep4.apps.googleusercontent.com",
 	clientSecret: "VHUrIDb6zlyv7zM-En2Y5D4E",

@@ -98,7 +98,7 @@ export default {
         Axios.get('http://localhost:3001/settings')
         .then(res => {
             if (res.data == "failure")
-                this.$router.push({name: 'login'});
+                this.$router.push({path: `/${i18n.locale}/login`})
             else
             {
                 this.userData = res.data
@@ -108,8 +108,7 @@ export default {
         })
         .catch(err => {
             if (err.response.status == 401)
-                this.$router.push({name: 'login'});
-            this.$router.push({ name: "home" });
+                this.$router.push({path: `/${i18n.locale}/login`})
         })
     },
     data() {

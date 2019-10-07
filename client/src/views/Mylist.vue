@@ -71,9 +71,7 @@ export default {
                 imdb_id: element.movie_id
                 })
                 .then(resp => {
-                    
                     this.posterList.push(resp.data);
-                    console.log(this.posterList)
                 })
                 .catch(err => {
                     this.$router.push({ name: "home" });
