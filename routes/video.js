@@ -126,7 +126,6 @@ router.get("/:hash", function(req, res) {
         const ranges = parseRange(file.length, req.headers.range, {
           combine: true
         });
-        console.log(ranges);
         if (ranges === -1) {
           // 416 Requested Range Not Satisfiable
           res.statusCode = 416;

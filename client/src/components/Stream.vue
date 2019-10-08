@@ -220,7 +220,6 @@ export default {
             comment: this.comment
           })
           .then(res => {
-            console.log(res);
             var obj = {
               id: res.data.insertId,
               comment: this.comment,
@@ -529,11 +528,13 @@ a {
   .comments-container {
     width: 480px;
   }
-
   .comments-list .comment-box {
     width: 240px;
     float: left;
     left: 20px;
+  }
+  .reply-list .comment-box {
+    width: 150px;
   }
   .comments-list .comment-avatar {
     width: 40px;

@@ -219,7 +219,6 @@ export default {
             sortJsonArray(res.data.data.movies, "title").forEach(element => {
               this.dataMovie.push(element);
             });
-
             this.dataMovie_all = this.dataMovie;
             this.items[0].count = this.dataMovie.length;
             this.nbr_p_movies = Math.ceil(this.dataMovie.length / 8);
