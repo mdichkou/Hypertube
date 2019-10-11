@@ -57,30 +57,17 @@ import Axios from 'axios'
 
 export default {
     mounted() {
-        const token = window.localStorage.getItem("token");
-        if (token) Axios.defaults.headers.common["x-auth-token"] = token;
-        else delete Axios.defaults.headers.common["x-auth-token"];
-
-        Axios.post("http://localhost:3001/video/getMyList")
-        .then(res => {
-            
-            this.list = res.data.msg;
-            this.empty = this.list.length
-            this.list.forEach(element => {
-                Axios.post("http://localhost:3001/video/search/getimg", {
-                imdb_id: element.movie_id
-                })
-                .then(resp => {
-                    this.posterList.push(resp.data);
-                })
-                .catch(err => {
-                    this.$router.push({ name: "home" });
-                });
-            });
-        })
-        .catch(err => {
-            this.$router.push({ name: "home" });
-        });
+        if (this.$store.getters.status == 'auth')
+            this.init();
+        else
+        {
+            this.$store.watch(
+            (state, getters) => getters.status,
+            (newValue, oldValue) => {
+            if (newValue == 'auth')
+                this.init();
+            })
+        }
     },
     data() {
         return {
@@ -99,6 +86,33 @@ export default {
         }
     },
     methods: {
+        init()
+        {
+            const token = window.localStorage.getItem("token");
+            if (token) Axios.defaults.headers.common["x-auth-token"] = token;
+            else delete Axios.defaults.headers.common["x-auth-token"];
+
+            Axios.post("http://localhost:3001/video/getMyList")
+            .then(res => {
+                
+                this.list = res.data.msg;
+                this.empty = this.list.length
+                this.list.forEach(element => {
+                Axios.post("http://localhost:3001/video/search/getimg", {
+                imdb_id: element.movie_id
+                })
+                .then(resp => {
+                    this.posterList.push(resp.data);
+                })
+                .catch(err => {
+                    this.$router.push({ name: "home" });
+                });
+            });
+        })
+        .catch(err => {
+            this.$router.push({ name: "home" });
+        });
+        },
         addMovie(movie_id)
         {
             const token = window.localStorage.getItem("token");

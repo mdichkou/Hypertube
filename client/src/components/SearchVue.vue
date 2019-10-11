@@ -182,25 +182,39 @@ export default {
     };
   },
   mounted() {
-    this.getPopulerMovie();
-    this.loadingscroll = false;
-    const el = document.getElementById("result");
-    el.addEventListener("scroll", e => {
-      if (el.scrollHeight - el.scrollTop === el.clientHeight) {
-        this.loadingScroll = true;
-        setTimeout(e => {
-          this.page++;
-          if (this.inputData.trim() != "") {
-            this.searchData();
-          } else {
-            this.getPopulerMovie();
-          }
-          this.loadingScroll = false;
-        }, 2000);
+      if (this.$store.getters.status == 'auth')
+          this.init();
+      else
+      {
+          this.$store.watch(
+          (state, getters) => getters.status,
+          (newValue, oldValue) => {
+          if (newValue == 'auth')
+              this.init();
+          })
       }
-    });
   },
   methods: {
+    init()
+    {
+      this.getPopulerMovie();
+      this.loadingscroll = false;
+      const el = document.getElementById("result");
+      el.addEventListener("scroll", e => {
+        if (el.scrollHeight - el.scrollTop === el.clientHeight) {
+          this.loadingScroll = true;
+          setTimeout(e => {
+            this.page++;
+            if (this.inputData.trim() != "") {
+              this.searchData();
+            } else {
+              this.getPopulerMovie();
+            }
+            this.loadingScroll = false;
+          }, 2000);
+        }
+      });
+    },
     searchData() {
       delete axios.defaults.headers.common["x-auth-token"];
       axios

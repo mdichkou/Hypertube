@@ -103,58 +103,20 @@ import axios from "axios";
 import i18n from '../i18n'
 
 export default {
-  mounted() {},
-  name: "Video",
-  created() {
-    this.loader = true;
-    this.id = this.$route.params.id;
-
-    const token = window.localStorage.getItem("token");
-    if (token) axios.defaults.headers.common["x-auth-token"] = token;
-    else delete axios.defaults.headers.common["x-auth-token"];
-
-    axios
-      .post("http://localhost:3001/video/search/getimg", { imdb_id: this.id })
-      .then(resp => {
-        this.data = resp.data;
-        if (resp.data == "ERROR") this.$router.push({ name: "home" });
-        delete axios.defaults.headers.common["x-auth-token"];
-        axios.get("https://api.themoviedb.org/3/find/" + this.id + "?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&language=en-US&external_source=imdb_id")
-          .then(resp2 => {
-            if (resp2.data.movie_results[0])
-            {
-              this.bgImg ="http://image.tmdb.org/t/p/w1280" + resp2.data.movie_results[0].poster_path;
-            }
-          });
-      })
-      .catch(err => {
-         this.$router.push({path: `/${i18n.locale}/login`});
-      });
-    delete axios.defaults.headers.common["x-auth-token"];
-    axios
-      .get(
-        "https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" +
-          this.id
-      )
-      .then(resp => {
-        this.listHashes2 = resp.data.data.movies[0].torrents;
-      })
-      .catch(err => {
-         this.$router.push({path: `/${i18n.locale}/login`});
-      });
-    // add
-    axios.defaults.headers.common["x-auth-token"] = token;
-    axios
-      .post("http://localhost:3001/video/extraApi", { imdb_id: this.id })
-      .then(resp => {
-        this.otherHashes2 = resp.data.slice(0, 5);
-        this.loader = false;
-      })
-      .catch(err => {
-         this.$router.push({path: `/${i18n.locale}/login`});
-      });
+  mounted() {
+      if (this.$store.getters.status == 'auth')
+          this.init();
+      else
+      {
+          this.$store.watch(
+          (state, getters) => getters.status,
+          (newValue, oldValue) => {
+          if (newValue == 'auth')
+              this.init();
+          })
+      }
   },
-
+  name: "Video",
   data: () => ({
     id: "",
     data: null,
@@ -167,6 +129,55 @@ export default {
   }),
 
   methods: {
+    init()
+    {
+      this.loader = true;
+      this.id = this.$route.params.id;
+
+      const token = window.localStorage.getItem("token");
+      if (token) axios.defaults.headers.common["x-auth-token"] = token;
+      else delete axios.defaults.headers.common["x-auth-token"];
+
+      axios
+        .post("http://localhost:3001/video/search/getimg", { imdb_id: this.id })
+        .then(resp => {
+          this.data = resp.data;
+          if (resp.data == "ERROR") this.$router.push({ name: "home" });
+          delete axios.defaults.headers.common["x-auth-token"];
+          axios.get("https://api.themoviedb.org/3/find/" + this.id + "?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&language=en-US&external_source=imdb_id")
+            .then(resp2 => {
+              if (resp2.data.movie_results[0])
+              {
+                this.bgImg ="http://image.tmdb.org/t/p/w1280" + resp2.data.movie_results[0].poster_path;
+              }
+            });
+        })
+        .catch(err => {
+          this.$router.push({path: `/${i18n.locale}/login`});
+        });
+      delete axios.defaults.headers.common["x-auth-token"];
+      axios
+        .get(
+          "https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" +
+            this.id
+        )
+        .then(resp => {
+          this.listHashes2 = resp.data.data.movies[0].torrents;
+        })
+        .catch(err => {
+          this.$router.push({path: `/${i18n.locale}/login`});
+        });
+      // add
+      axios.defaults.headers.common["x-auth-token"] = token;
+      axios.post("http://localhost:3001/video/extraApi", { imdb_id: this.id })
+        .then(resp => {
+          this.otherHashes2 = resp.data.slice(0, 5);
+          this.loader = false;
+        })
+        .catch(err => {
+          this.$router.push({path: `/${i18n.locale}/login`});
+        });
+    },
     streamVideo(Hash) {
       this.$router.push({
         path: `/stream/${this.id}/${Hash.hash}`,

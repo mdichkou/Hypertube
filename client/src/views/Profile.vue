@@ -66,44 +66,17 @@ import Axios from "axios";
 export default {
   mounted() {
     this.loader = true;
-    setTimeout(() => {
-      if (
-        this.$route.params.id == undefined ||
-        !isNumeric(this.$route.params.id)
-      ) {
-        this.getPosters(this.$store.state.userData.id);
-        this.userData.username = this.$store.state.userData.username;
-        this.userData.first_name = this.$store.state.userData.first_name;
-        this.userData.last_name = this.$store.state.userData.last_name;
-        this.userData.avatar = this.$store.state.userData.avatar;
-      } else {
-        this.getPosters(this.$route.params.id);
-      }
-      this.loader = false;
-    }, 700);
-    const token = window.localStorage.getItem("token");
-    if (token) Axios.defaults.headers.common["x-auth-token"] = token;
-    else delete Axios.defaults.headers.common["x-auth-token"];
-    function isNumeric(value) {
-      return /^\d+$/.test(value);
-    }
-    if (this.$route.params.id != undefined && isNumeric(this.$route.params.id)
-    ) {
-      Axios.post("http://localhost:3001/profile/visit", {
-        id: this.$route.params.id
-      })
-        .then(res => {
-          if (res.data.status === "failure") {
-            this.snackbar = true;
-            this.text = res.data.msg;
-          } else {
-            this.userData = res.data.msg;
-          }
-        })
-        .catch(err => {
-          if (err.response.status == 401)
-            this.$router.push({ name: "home" });
-        });
+    if (this.$store.getters.status == 'auth')
+      this.init();
+    else
+    {
+      this.$store.watch(
+        (state, getters) => getters.status,
+        (newValue, oldValue) => {
+          if (newValue == 'auth')
+            this.init();
+        }
+      )
     }
   },
   data() {
@@ -143,6 +116,40 @@ export default {
     };
   },
   methods: {
+    init()
+    {
+      const token = window.localStorage.getItem("token");
+      if (token) Axios.defaults.headers.common["x-auth-token"] = token;
+      else delete Axios.defaults.headers.common["x-auth-token"];
+      function isNumeric(value) {
+        return /^\d+$/.test(value);
+      }
+
+      if (this.$route.params.id == undefined || !isNumeric(this.$route.params.id)) 
+      {
+        this.getPosters(this.$store.state.userData.id);
+        this.userData.username = this.$store.state.userData.username;
+        this.userData.first_name = this.$store.state.userData.first_name;
+        this.userData.last_name = this.$store.state.userData.last_name;
+        this.userData.avatar = this.$store.state.userData.avatar;
+      } 
+      else if (this.$route.params.id != undefined && isNumeric(this.$route.params.id)) 
+      {
+        Axios.post("http://localhost:3001/profile/visit", {id: this.$route.params.id})
+        .then(res => {
+          if (res.data.status === "failure") {
+            this.snackbar = true;
+            this.text = res.data.msg;
+          } else {
+            this.getPosters(this.$route.params.id);
+            this.userData = res.data.msg;
+          }
+        })
+        .catch(err => {
+        });
+      }
+      this.loader = false;
+    },
     getPosters(id) {
       Axios.post("http://localhost:3001/video/getHistory", {
         id: id

@@ -98,17 +98,24 @@ export default {
         Axios.get('http://localhost:3001/settings')
         .then(res => {
             if (res.data == "failure")
+            {
+                window.localStorage.removeItem('token')
                 this.$router.push({path: `/${i18n.locale}/login`})
+            }
             else
             {
                 this.userData = res.data
+                this.$store.dispatch('changeStatus', 'auth')
                 this.$store.dispatch('userData', res.data)
                 i18n.locale = res.data.lang
             }   
         })
         .catch(err => {
             if (err.response.status == 401)
+            {
+                window.localStorage.removeItem('token')
                 this.$router.push({path: `/${i18n.locale}/login`})
+            }
         })
     },
     data() {
@@ -132,6 +139,7 @@ export default {
         logoutUser()
         {
             window.localStorage.removeItem('token');
+            this.$store.dispatch('changeStatus', 'NaN')
             this.$router.push({path: `/${i18n.locale}/login`})
         },
         goToProfile(id)

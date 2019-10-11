@@ -151,11 +151,8 @@ export default {
     if (this.$route.params.status == "success") {
       this.snackbar2 = true;
     }
-    if (
-      (this.$route.params.provider == "github" ||
-        this.$route.params.provider == "google") &&
-      !window.localStorage.token
-    ) {
+    if ((this.$route.params.provider == "github" || this.$route.params.provider == "google") && !window.localStorage.token)
+    {
       this.provider = this.$route.params.provider;
       this.dialog = true;
       let path = this.$route.fullPath;
@@ -165,9 +162,11 @@ export default {
             window.localStorage.setItem("token", res.data.msg);
             this.$router.push({ name: "home" });
           } else {
-            this.$router.push({ path: `/${i18n.locale}/login` });
             this.snackbar = true;
             this.text = res.data.msg;
+            setTimeout(() => {
+              this.$router.push({ path: `/${i18n.locale}/login` });
+            }, 2500);
           }
         })
         .catch(error => {
@@ -231,7 +230,7 @@ export default {
             this.text = res.data.msg;
             setTimeout(() => {
               this.$router.push({ path: `/${i18n.locale}/login` });
-            }, 2000);
+            }, 2500);
           }
         })
         .catch(error => {
@@ -241,7 +240,6 @@ export default {
     githubLogin() {
       window.location =
         "https://github.com/login/oauth/authorize?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Flogin%2Fgithub&scope=user%3Aemail&client_id=27a9974ecf7cb9a53415";
-      //window.location = "https://github.com/login/oauth/authorize?client_id=27a9974ecf7cb9a53415&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Flogin%2Fgithub&scope=user%3Aemail&response_type=code&state=DmczMSlJxoEos8UWitSsGAoPm0mIqa34sHuSLCC5"
     },
     googleLogin() {
       window.location =

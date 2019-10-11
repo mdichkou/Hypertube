@@ -71,23 +71,37 @@ export default {
     };
   },
   mounted() {
-    const token = window.localStorage.getItem("token");
-    if (token) axios.defaults.headers.common["x-auth-token"] = token;
-    else delete axios.defaults.headers.common["x-auth-token"];
-    this.reserve();
-    axios
-      .post("http://localhost:3001/video/getMyList")
-      .then(res => {
-        this.list = res.data.msg;
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    axios.post("http://localhost:3001/video/getListWatched").then(res => {
-      this.listWatched = res.data;
-    });
+      if (this.$store.getters.status == 'auth')
+          this.init();
+      else
+      {
+          this.$store.watch(
+          (state, getters) => getters.status,
+          (newValue, oldValue) => {
+          if (newValue == 'auth')
+              this.init();
+          })
+      }
   },
   methods: {
+    init()
+    {
+      const token = window.localStorage.getItem("token");
+      if (token) axios.defaults.headers.common["x-auth-token"] = token;
+      else delete axios.defaults.headers.common["x-auth-token"];
+      this.reserve();
+      axios
+        .post("http://localhost:3001/video/getMyList")
+        .then(res => {
+          this.list = res.data.msg;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      axios.post("http://localhost:3001/video/getListWatched").then(res => {
+        this.listWatched = res.data;
+      });
+    },
     addMovie(movie_id) {
       const token = window.localStorage.getItem("token");
       if (token) axios.defaults.headers.common["x-auth-token"] = token;

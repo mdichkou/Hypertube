@@ -98,105 +98,17 @@ import { mdiReply } from "@mdi/js";
 export default {
   name: "Streaming",
   mounted() {
-    this.id = this.$route.params.id;
-    this.hash = this.$route.params.hash;
-    const token = window.localStorage.getItem("token");
-    if (token) axios.defaults.headers.common["x-auth-token"] = token;
-    else delete axios.defaults.headers.common["x-auth-token"];
-
-    ///////////////
-
-    delete axios.defaults.headers.common["x-auth-token"];
-    axios
-      .get(
-        "https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" +
-          this.id
-      )
-      .then(resp => {
-        this.listHashes = JSON.stringify(resp.data.data.movies[0].torrents);
-        axios.defaults.headers.common["x-auth-token"] = token;
-        axios
-          .post("http://localhost:3001/video/extraApi", { imdb_id: this.id })
-          .then(res => {
-            this.listHashes += JSON.stringify(res.data.slice(0, 5));
-            if (
-              this.hash.length == 40 &&
-              (this.listHashes.includes(this.hash + '",') ||
-                this.listHashes.includes(this.hash + "&dn"))
-            )
-              this.loader = false;
-            else this.$router.push({ name: "home" });
-          })
-          .catch(err => {
-            this.$router.push({ path: `/${i18n.locale}/login` });
-          });
-      })
-      .catch(err => {
-        this.$router.push({ path: `/${i18n.locale}/login` });
-      });
-
-    //////////////
-
-    axios.defaults.headers.common["x-auth-token"] = token;
-    axios
-      .get("http://localhost:3001/video/checkHash/" + this.hash)
-      .then(res => {
-        if (res.data == "ERROR")
-          this.$router.push({ path: `/${i18n.locale}/login` });
-      })
-      .catch(err => {
-        this.$router.push({ path: `/${i18n.locale}/login` });
-      });
-    delete axios.defaults.headers.common["x-auth-token"];
-    axios
-      .get(
-        "https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" +
-          this.id
-      )
-      .then(res => {
-        const token = window.localStorage.getItem("token");
-        if (token) axios.defaults.headers.common["x-auth-token"] = token;
-        else delete axios.defaults.headers.common["x-auth-token"];
-
-        axios
-          .post("http://localhost:3001/video/getComments", { imdb_id: this.id })
-          .then(resp => {
-            resp.data.forEach(element => {
-              var obj = {
-                id: element.id,
-                comment: element.comment,
-                username: element.username,
-                avatar: element.avatar,
-                user_id: element.user_id,
-                created_at: element.created_at,
-                replys: []
-              };
-              axios
-                .post("http://localhost:3001/video/getReplys", {
-                  comment_id: element.id
-                })
-                .then(resp => {
-                  obj.replys = resp.data;
-                });
-              this.Comments.push(obj);
-            });
-          });
-        axios.post("http://localhost:3001/video/saveHistory", {
-          imdb_id: this.id
-        });
-
-        axios
-          .post("http://localhost:3001/video/getSubt", { imdb_id: this.id })
-          .then(resp => {
-            if (resp) this.SubTitles = resp.data;
-          })
-          .catch(err => {
-            this.$router.push({ path: `/${i18n.locale}/login` });
-          });
-      })
-      .catch(err => {
-        this.$router.push({ path: `/${i18n.locale}/login` });
-      });
+    if (this.$store.getters.status == 'auth')
+        this.init();
+    else
+    {
+        this.$store.watch(
+        (state, getters) => getters.status,
+        (newValue, oldValue) => {
+        if (newValue == 'auth')
+            this.init();
+        })
+    }
   },
   data: () => ({
     id: "",
@@ -212,6 +124,108 @@ export default {
     svgPath: mdiReply
   }),
   methods: {
+    init()
+    {
+      this.id = this.$route.params.id;
+      this.hash = this.$route.params.hash;
+      const token = window.localStorage.getItem("token");
+      if (token) axios.defaults.headers.common["x-auth-token"] = token;
+      else delete axios.defaults.headers.common["x-auth-token"];
+
+      ///////////////
+
+      delete axios.defaults.headers.common["x-auth-token"];
+      axios
+        .get(
+          "https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" +
+            this.id
+        )
+        .then(resp => {
+          this.listHashes = JSON.stringify(resp.data.data.movies[0].torrents);
+          axios.defaults.headers.common["x-auth-token"] = token;
+          axios
+            .post("http://localhost:3001/video/extraApi", { imdb_id: this.id })
+            .then(res => {
+              this.listHashes += JSON.stringify(res.data.slice(0, 5));
+              if (
+                this.hash.length == 40 &&
+                (this.listHashes.includes(this.hash + '",') ||
+                  this.listHashes.includes(this.hash + "&dn"))
+              )
+                this.loader = false;
+              else this.$router.push({ name: "home" });
+            })
+            .catch(err => {
+              this.$router.push({ path: `/${i18n.locale}/login` });
+            });
+        })
+        .catch(err => {
+          this.$router.push({ path: `/${i18n.locale}/login` });
+        });
+
+      //////////////
+
+      axios.defaults.headers.common["x-auth-token"] = token;
+      axios
+        .get("http://localhost:3001/video/checkHash/" + this.hash)
+        .then(res => {
+          if (res.data == "ERROR")
+            this.$router.push({ path: `/${i18n.locale}/login` });
+        })
+        .catch(err => {
+          this.$router.push({ path: `/${i18n.locale}/login` });
+        });
+      delete axios.defaults.headers.common["x-auth-token"];
+      axios
+        .get(
+          "https://yts.unblocked4u.net/api/v2/list_movies.json?query_term=" +
+            this.id
+        )
+        .then(res => {
+          const token = window.localStorage.getItem("token");
+          if (token) axios.defaults.headers.common["x-auth-token"] = token;
+          else delete axios.defaults.headers.common["x-auth-token"];
+
+          axios
+            .post("http://localhost:3001/video/getComments", { imdb_id: this.id })
+            .then(resp => {
+              resp.data.forEach(element => {
+                var obj = {
+                  id: element.id,
+                  comment: element.comment,
+                  username: element.username,
+                  avatar: element.avatar,
+                  user_id: element.user_id,
+                  created_at: element.created_at,
+                  replys: []
+                };
+                axios
+                  .post("http://localhost:3001/video/getReplys", {
+                    comment_id: element.id
+                  })
+                  .then(resp => {
+                    obj.replys = resp.data;
+                  });
+                this.Comments.push(obj);
+              });
+            });
+          axios.post("http://localhost:3001/video/saveHistory", {
+            imdb_id: this.id
+          });
+
+          axios
+            .post("http://localhost:3001/video/getSubt", { imdb_id: this.id })
+            .then(resp => {
+              if (resp) this.SubTitles = resp.data;
+            })
+            .catch(err => {
+              this.$router.push({ path: `/${i18n.locale}/login` });
+            });
+        })
+        .catch(err => {
+          this.$router.push({ path: `/${i18n.locale}/login` });
+        });
+    },
     AddComment: function() {
       if (this.comment.trim() !== "") {
         axios
