@@ -10,7 +10,7 @@
         indeterminate
       ></v-progress-circular>
     </v-layout>
-    <v-layout justify-space-around wrap>
+    <v-layout justify-space-around v-else wrap>
       <div class="embed-responsive embed-responsive-21by9">
         <video width="320" height="240" autoplay controls intrinsicsize controlslist="nodownload">
           <source :src="'http://localhost:3001/video/'+this.hash" type="video/mp4" />
