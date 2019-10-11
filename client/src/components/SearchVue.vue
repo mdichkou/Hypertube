@@ -182,21 +182,18 @@ export default {
     };
   },
   mounted() {
-      if (this.$store.getters.status == 'auth')
-          this.init();
-      else
-      {
-          this.$store.watch(
-          (state, getters) => getters.status,
-          (newValue, oldValue) => {
-          if (newValue == 'auth')
-              this.init();
-          })
-      }
+    if (this.$store.getters.status == "auth") this.init();
+    else {
+      this.$store.watch(
+        (state, getters) => getters.status,
+        (newValue, oldValue) => {
+          if (newValue == "auth") this.init();
+        }
+      );
+    }
   },
   methods: {
-    init()
-    {
+    init() {
       this.getPopulerMovie();
       this.loadingscroll = false;
       const el = document.getElementById("result");
@@ -254,20 +251,15 @@ export default {
       }
     },
     load_data: function() {
-      var Movie_tmp = [];
-      this.dataMovie_all.forEach(element => {
-        Movie_tmp.push(element);
-      });
+      var Movie_tmp = null;
+      Movie_tmp = this.dataMovie_all;
       if (Movie_tmp) {
         Movie_tmp = Movie_tmp.filter(word => {
           if (word.year >= this.slider2) {
             return true;
           } else return false;
         });
-        this.dataMovie = [];
-        sortJsonArray(Movie_tmp, "title").forEach(element => {
-          this.dataMovie.push(element);
-        });
+        this.dataMovie = Movie_tmp;
       }
     },
     getPopulerMovie() {
@@ -309,7 +301,6 @@ export default {
   cursor: pointer;
   background: rgba(0, 0, 0, 0.7) !important;
   max-height: 545px !important;
-
 }
 .circle-loader {
   position: absolute;

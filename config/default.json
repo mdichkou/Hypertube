@@ -3,7 +3,7 @@
     "host": "localhost",
     "port": 3306,
     "user": "root",
-    "password": "test",
+    "password": "mdichkou456852",
     "database": "Hyper_tube"
   },
   "Mail": {

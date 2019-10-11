@@ -1,6 +1,6 @@
 <template>
   <div class="containers fill-height fluid grid-list-xl">
-    <!-- <v-layout v-if="loader == true">
+    <v-layout v-if="loader == true">
       <v-progress-circular
         class="mx-auto my-3"
         :size="60"
@@ -9,7 +9,7 @@
         v-show="loader"
         indeterminate
       ></v-progress-circular>
-    </v-layout>-->
+    </v-layout>
     <v-layout justify-space-around wrap>
       <div class="embed-responsive embed-responsive-21by9">
         <video width="320" height="240" autoplay controls intrinsicsize controlslist="nodownload">
