@@ -5,7 +5,7 @@
         v-for="(movie,index) in posterList"
         :key="index"
         :loading="loading"
-        class="card-content card card-right col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12"
+        class="card-content cards card card-right col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12"
         >
             <v-img class="card-img-top" v-if="movie.poster" :src="movie.poster"></v-img>
             <div class="card-content-overlay"></div>
@@ -185,7 +185,9 @@ export default {
 .v-card__title{
  color: #fff !important;
 }
-
+.cards{
+ max-height: 700px !important;
+}
 .card-content .card-content-overlay {
   background: rgba(0, 0, 0, 0.7);
   position: absolute;
