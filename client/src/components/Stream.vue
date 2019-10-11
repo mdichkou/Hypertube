@@ -98,16 +98,15 @@ import { mdiReply } from "@mdi/js";
 export default {
   name: "Streaming",
   mounted() {
-    if (this.$store.getters.status == 'auth')
-        this.init();
-    else
-    {
-        this.$store.watch(
+    this.hash = this.$route.params.hash;
+    if (this.$store.getters.status == "auth") this.init();
+    else {
+      this.$store.watch(
         (state, getters) => getters.status,
         (newValue, oldValue) => {
-        if (newValue == 'auth')
-            this.init();
-        })
+          if (newValue == "auth") this.init();
+        }
+      );
     }
   },
   data: () => ({
@@ -124,10 +123,8 @@ export default {
     svgPath: mdiReply
   }),
   methods: {
-    init()
-    {
+    init() {
       this.id = this.$route.params.id;
-      this.hash = this.$route.params.hash;
       const token = window.localStorage.getItem("token");
       if (token) axios.defaults.headers.common["x-auth-token"] = token;
       else delete axios.defaults.headers.common["x-auth-token"];
@@ -187,7 +184,9 @@ export default {
           else delete axios.defaults.headers.common["x-auth-token"];
 
           axios
-            .post("http://localhost:3001/video/getComments", { imdb_id: this.id })
+            .post("http://localhost:3001/video/getComments", {
+              imdb_id: this.id
+            })
             .then(resp => {
               resp.data.forEach(element => {
                 var obj = {

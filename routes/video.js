@@ -228,7 +228,7 @@ router.post("/saveReply", auth, async (req, res) => {
 });
 
 router.post("/saveHistory", auth, async (req, res) => {
-  const query = "SELECT * FROM history where movie_id = ?";
+  const query = "SELECT * FROM history where movie_id = ? AND user_id = ?";
   const query2 = "INSERT INTO history (user_id,movie_id) values (?, ?)";
   const query3 = "UPDATE history SET watched_at = ? WHERE movie_id = ?";
   db.query(query, [req.body.imdb_id], (err, result) => {
