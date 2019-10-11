@@ -231,7 +231,7 @@ router.post("/saveHistory", auth, async (req, res) => {
   const query = "SELECT * FROM history where movie_id = ? AND user_id = ?";
   const query2 = "INSERT INTO history (user_id,movie_id) values (?, ?)";
   const query3 = "UPDATE history SET watched_at = ? WHERE movie_id = ?";
-  db.query(query, [req.body.imdb_id], (err, result) => {
+  db.query(query, [req.body.imdb_id, req.id], (err, result) => {
     if (err) console.log(err);
     if (result.length > 0) {
       db.query(query3, [new Date(), req.body.imdb_id], (err, result) => {
