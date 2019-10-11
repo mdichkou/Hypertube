@@ -308,7 +308,7 @@ export default {
   transform-style: preserve-3d;
   cursor: pointer;
   background: rgba(0, 0, 0, 0.7) !important;
-  max-height: 520px !important;
+  max-height: 545px !important;
 
 }
 .circle-loader {
