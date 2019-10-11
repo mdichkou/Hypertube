@@ -138,8 +138,11 @@ export default {
         Axios.post("http://localhost:3001/profile/visit", {id: this.$route.params.id})
         .then(res => {
           if (res.data.status === "failure") {
-            this.snackbar = true;
-            this.text = res.data.msg;
+            this.getPosters(this.$store.state.userData.id);
+            this.userData.username = this.$store.state.userData.username;
+            this.userData.first_name = this.$store.state.userData.first_name;
+            this.userData.last_name = this.$store.state.userData.last_name;
+            this.userData.avatar = this.$store.state.userData.avatar;
           } else {
             this.getPosters(this.$route.params.id);
             this.userData = res.data.msg;
