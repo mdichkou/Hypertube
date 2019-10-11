@@ -11,8 +11,8 @@ const auth = require("../middleware/auth");
 
 const OpenSubtitles = new OS({
   useragent: "TemporaryUserAgent",
-  username: "mdichkou",
-  password: "mdichkou456852",
+  username: "hyper_tube",
+  password: "2019",
   ssl: true
 });
 OpenSubtitles.login()
