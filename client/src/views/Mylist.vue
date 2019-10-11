@@ -1,6 +1,7 @@
 <template>
-    <v-layout class="justify-content-center containers fill-height fluid grid-list-xl">
-        <v-row v-if="this.empty > 0" class="div-right col-lg-9 col-md-8  col-sm-12 col-12">
+    <v-layout class="justify-content-center containers fill-height fluid grid-list-xl ">
+        <div class="container ">
+        <v-row v-if="this.empty > 0" class="col-lg-9 col-md-8  col-sm-12 col-12">
         <v-card
         v-for="(movie,index) in posterList"
         :key="index"
@@ -49,7 +50,9 @@
             <span class="white--text mt-1 ml-1">Empty List</span>
         </v-btn>
     </v-row>
+    </div>
   </v-layout>
+
 </template>
 
 <script>
