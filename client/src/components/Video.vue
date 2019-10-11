@@ -153,7 +153,7 @@ export default {
             });
         })
         .catch(err => {
-          this.$router.push({path: `/${i18n.locale}/login`});
+          this.$router.push({path: `/home`});
         });
       delete axios.defaults.headers.common["x-auth-token"];
       axios
@@ -165,7 +165,6 @@ export default {
           this.listHashes2 = resp.data.data.movies[0].torrents;
         })
         .catch(err => {
-          this.$router.push({path: `/${i18n.locale}/login`});
         });
       // add
       axios.defaults.headers.common["x-auth-token"] = token;
@@ -175,7 +174,6 @@ export default {
           this.loader = false;
         })
         .catch(err => {
-          this.$router.push({path: `/${i18n.locale}/login`});
         });
     },
     streamVideo(Hash) {

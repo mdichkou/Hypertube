@@ -98,6 +98,7 @@ import { mdiReply } from "@mdi/js";
 export default {
   name: "Streaming",
   mounted() {
+    this.id = this.$route.params.id;
     this.hash = this.$route.params.hash;
     if (this.$store.getters.status == "auth") this.init();
     else {
@@ -124,7 +125,6 @@ export default {
   }),
   methods: {
     init() {
-      this.id = this.$route.params.id;
       const token = window.localStorage.getItem("token");
       if (token) axios.defaults.headers.common["x-auth-token"] = token;
       else delete axios.defaults.headers.common["x-auth-token"];
