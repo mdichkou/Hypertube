@@ -21,6 +21,7 @@
             kind="subtitles"
             :srclang="subtitle.langcode"
             :label="subtitle.lang"
+            :default="prefLang(subtitle.langcode)"
           />
         </video>
       </div>
@@ -266,6 +267,13 @@ export default {
         this.reply = "";
       } else this.reply = "";
       this.seen = !this.seen;
+    },
+    prefLang(lang)
+    {
+      if (lang == this.$store.state.userData.lang)
+        return true;
+      else
+        return false;
     }
   }
 };
